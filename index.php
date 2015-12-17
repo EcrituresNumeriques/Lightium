@@ -12,7 +12,22 @@ if(notNull($_GET['article'])){
 }
 //history is required
 elseif(notNull($_GET['year'])){
-  echo('history');
+	if(notNull($_GET['day'])){
+		$current = drawCookieTrail($lang,NULL,NULL,$_GET['year'],$_GET['month'],$_GET['day']);
+		echo('<div class="flex-row-fluid flex-top wrapper">');
+		drawListing($file_db, $translation, $current,$lang,'day',$_GET['year']."/".$_GET['month']."/".$_GET['day']);
+	}
+	elseif(notNull($_GET['month'])){
+		$current = drawCookieTrail($lang,NULL,NULL,$_GET['year'],$_GET['month']);
+		echo('<div class="flex-row-fluid flex-top wrapper">');
+		drawListing($file_db, $translation, $current,$lang,'month',$_GET['year']."/".$_GET['month']);
+	}
+	else{
+		$current = drawCookieTrail($lang,NULL,NULL,$_GET['year']);
+		echo('<div class="flex-row-fluid flex-top wrapper">');
+		drawListing($file_db, $translation, $current,$lang,'year',$_GET['year']);
+	}
+	echo('</div>');
 }
 //Sub Category
 elseif(notNull($_GET['subcat'])){
@@ -55,7 +70,7 @@ else{
 	drawLead('index',$header['name'],$header['description']);
 	$current = drawCookieTrail($lang);
 	echo('<div class="flex-row-fluid flex-top wrapper">');
-	drawListing($file_db, $translation, $current,$lang,'index');
+	drawListing($file_db, $translation, $current,$lang,'index',NULL);
 	drawCalendar($file_db, $translation);
 	echo('</div>');
 }

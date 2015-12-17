@@ -187,6 +187,36 @@ elseif($action == "subcat"){
   $query->bindParam(':subcat',$what, SQLITE3_INTEGER);
   $query->execute() or die('Unable to fetch Items');
 }
+elseif($action == "day"){
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.day = :day AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
+  $query->bindParam(':lang',$lang, SQLITE3_TEXT);
+  $query->bindParam(':day',$day, SQLITE3_INTEGER);
+  $query->bindParam(':month',$month, SQLITE3_INTEGER);
+  $query->bindParam(':year',$year, SQLITE3_INTEGER);
+  $date = split("/",$what);
+  $day = $date[2];
+  $month = $date[1];
+  $year = $date[0];
+  $query->execute() or die('Unable to fetch day archive');
+}
+elseif($action == "month"){
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
+  $query->bindParam(':lang',$lang, SQLITE3_TEXT);
+  $query->bindParam(':month',$month, SQLITE3_INTEGER);
+  $query->bindParam(':year',$year, SQLITE3_INTEGER);
+  $date = split("/",$what);
+  $month = $date[1];
+  $year = $date[0];
+  $query->execute() or die('Unable to fetch day archive');
+}
+elseif($action == "year"){
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
+  $query->bindParam(':lang',$lang, SQLITE3_TEXT);
+  $query->bindParam(':year',$year, SQLITE3_INTEGER);
+  $date = split("/",$what);
+  $year = $date[0];
+  $query->execute() or die('Unable to fetch day archive');
+}
   $rowCount = 0;
   foreach($query as $row){
   $image = $tags = "";
@@ -206,6 +236,11 @@ elseif($action == "subcat"){
 		$title = $row['title'];
 		(notNull($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
 	}
+  elseif($action == "day" OR $action == "month" OR $action == "year"){
+    $url = "/".$lang."/".$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
+		$title = $row['title'];
+		(notNull($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
+  }
 ?>
   <article class="clear hyphenate">
     <?=$image?>
@@ -238,7 +273,7 @@ function drawCalendar($db, $translation){
   		<article class="clear hyphenate">
    			<h1><?=$translation['calendar_nothing']?></h1>
   		</article>
-	</section>	
+	</section>
 <?php
 }
 
