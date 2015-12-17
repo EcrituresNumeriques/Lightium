@@ -1,0 +1,233 @@
+@import url(https://fonts.googleapis.com/css?family=Lato|Merriweather);
+
+html,body{
+  margin:0;
+  padding:0;
+  font-family:"Merriweather";
+}
+h1,h2,h3,h4,h5,h6,a{
+  font-family:"lato";
+}
+p {
+  text-align:justify;
+}
+a {
+  text-decoration:none;
+  color:black;
+}
+.wrapper{
+    max-width:1024px;
+    margin-right:auto;
+    margin-left:auto;
+}
+@media only screen AND (max-width:1024px){
+  .wrapper{
+  padding:0 1rem;
+  }
+}
+.clear{
+  clear:both;
+}
+.white-bg{
+  background-color:white;
+  color:black;
+}
+.pad1 {
+  padding:1rem 0;
+}
+.pad2 {
+  padding:2rem 0;
+}
+.pad3 {
+  padding:3rem 0;
+}
+.flex-row-fluid{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+}
+@media only screen AND (max-width:1024px){
+  .flex-row-fluid{
+    flex-wrap:wrap;
+  }
+}
+
+@media only screen AND (max-width:600px){
+  .flex-row-fluid{
+    flex-wrap:wrap;
+    flex-direction:column;
+  }
+}
+
+.flex-center{
+  align-items:center;
+}
+.flex-top{
+  align-items:flex-start;
+}
+
+.flex0 {
+  flex: 0 0 auto;
+}
+.flex1 {
+  flex: 1 1 auto;
+}
+.flex2 {
+  flex: 2 2 auto;
+}
+.flex3 {
+  flex: 3 3 auto;
+}
+#menu > a > img {
+  /*max-height:150px;*/
+  display:block;
+  max-width: 90vw;
+}
+#menu > a {
+  display:block;
+  padding:1rem;
+  margin:0 1rem;
+  font-weight:bold;
+  text-decoration:none;
+}
+a.block {
+  padding:1rem;
+  display:block;
+}
+a.cat1{
+  color:#da4f70;
+}
+a.cat1:hover{
+  background-color:#da4f70;
+  color:white;
+}
+a.cat2{
+  color:#b565a7;
+}
+a.cat2:hover{
+  background-color:#b565a7;
+  color:white;
+}
+a.cat3, a.cat4, a.cat5,a.cat6{
+  color:#169c78;
+}
+a.cat3:hover,a.cat4:hover, a.cat5:hover,a.cat6:hover{
+  background-color:#169c78;
+  color:white;
+}
+a.home{
+  color:#05afef;
+}
+a.home:hover {
+  background-color:#05afef;
+  color:white;
+}
+#chapeau {
+  padding:3rem 0;
+  position:relative;
+}
+#chapeau > article > h1,#chapeau > article > h2 {
+  text-align:center;
+}
+
+#chapeau.cat3, #chapeau.cat4,#chapeau.cat5,#chapeau.cat6{
+  background-color:#169c78;
+  color:white;
+}
+
+#chapeau.cat1{
+  background-color:#da4f70;
+  color:white;
+}
+#chapeau.cat2{
+  background-color:#b565a7;
+  color:white;
+}
+#chapeau.index{
+  background-color:#05afef;
+  color:white;
+}
+#chapeau > article > h1 {
+  font-size:3rem;
+  margin:0 0 3rem 0;
+}
+#chapeau > article > #goRight,#chapeau > article > #goLeft{
+  position:absolute;
+  top:0;
+  bottom:0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#chapeau > article > #goRight{
+  right:0;
+}
+#chapeau > article > #goLeft {
+  left:0;
+}
+#chapeau > article > #goRight > a,#chapeau > article > #goLeft > a{
+  display:block;
+  text-decoration:none;
+  color:white;
+  padding:1rem;
+  font-size:4rem;
+}
+section#cookieTrail > p > a{
+  color:black;
+  font-weight: bold;
+  text-decoration: none;
+  display:inline-block;
+  margin:0 1rem;
+}
+
+section#listing {
+  padding:0 0 2rem 0;
+}
+
+section#listing > article {
+  clear:both;
+  padding:1rem 0;
+  border-bottom:1px solid #3498db
+}
+
+section#listing > article:last-child {
+  border-bottom:none;
+}
+
+section#listing > article > a.listingFloat{
+	padding:0;
+	float:left;
+	margin-right:1rem;
+}
+section#listing > article > a.listingFloat > img{
+	display:block;
+	max-height:150px;
+	max-width:150px;
+}
+section#calendar {
+	margin-left:1rem;
+	padding-left:1rem;
+	border-left: 1px solid #05afef;
+}
+
+section#calendar > h1 {
+	text-align:center;
+}
+section#article > article > h1{
+	text-align:center;
+	font-size:3rem;
+}
+
+section#article > article > h2{
+	text-align:justify;
+	font-weight:normal;
+	line-height:150%;
+	margin-bottom:5rem;
+}
+
+section#article > article > p {
+	text-indent:1.5em;
+	max-width:40em;
+	margin:1rem auto;
+	line-height:200%;
+}
