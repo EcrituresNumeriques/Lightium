@@ -115,6 +115,7 @@
     $file_db->exec("CREATE TABLE IF NOT EXISTS item_lang (id_item INTEGER, title TEXT, short TEXT, content TEXT, cleanstring TEXT, lang TEXT)");
     $file_db->exec("CREATE TABLE IF NOT EXISTS item_maj (id_item INTEGER, maj INTEGER, who TEXT)");
     $file_db->exec("CREATE TABLE IF NOT EXISTS user (id_user INTEGER PRIMARY KEY, token TEXT,username TEXT, salt TEXT, hash TEXT)");
+    header("location:".$_SERVER['PHP_SELF']);
 }
 
 ?>
