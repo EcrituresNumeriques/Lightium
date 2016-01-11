@@ -36,14 +36,9 @@ function inputSecurity($validate=null) {
 }
 
 function isEqual($what,$toWhat){
-	(isset($what) AND isset($toWhat) AND $what == $toWhat ? $return  = true : $return  = false );
-	return $return;
+	return (isset($what) AND isset($toWhat) AND $what == $toWhat ? true : false );
 }
 
-function notNull($what){
-	(!empty($what) ? $return  = true : $return  = false );
-	return $return;
-}
 
 function cleanString($string) {
    $utf8 = array(
@@ -81,13 +76,19 @@ function cleanString($string) {
    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
 }
 
-function drawLead($class, $name, $description){
+function drawLead($class, $name, $description,$type,$id,$translation,$lang){
+  $admin = "";
+  if(isLogedNC()){
+    $admin = '<a id="editLead" data-type="'.$type.'" data-lang="'.$lang.'" data-cat="'.$id.'" class="admin">'.$translation['admin_changeLead'].'</a>
+    ';
+  }
   ?>
   <section id="chapeau" class="<?=$class?>">
     <article class="wrapper">
       <!--<nav id="goLeft"><a href=""><</a></nav>
       <nav id="goRight"><a href="">></a></nav>-->
       <h1><?=$name?></h1>
+      <?=$admin?>
       <p><?=$description?></p>
     </article>
   </section>
@@ -97,27 +98,27 @@ function drawLead($class, $name, $description){
 function drawCookieTrail($lang = "",$category = "",$subCat = "",$year = "",$month = "",$day = "",$article = ""){
   $echo = "/".$lang."/";
   $echoLink = '/<a href="'.$echo.'">'.$lang.'</a>';
-  if(notNull($category)){
+  if(!empty($category)){
     $echo .= cleanString($category)."/";
     $echoLink .= '/<a href="'.$echo.'">'.$category.'</a>';
   }
-  if(notNull($subCat)){
+  if(!empty($subCat)){
     $echo .= cleanString($subCat)."/";
     $echoLink .= '/<a href="'.$echo.'">'.$subCat.'</a>';
   }
-  if(notNull($year)){
+  if(!empty($year)){
     $echo .= $year."/";
     $echoLink .= '/<a href="'.$echo.'">'.$year.'</a>';
   }
-  if(notNull($month)){
+  if(!empty($month)){
     $echo .= $month."/";
     $echoLink .= '/<a href="'.$echo.'">'.$month.'</a>';
   }
-  if(notNull($day)){
+  if(!empty($day)){
     $echo .= $day."/";
     $echoLink .= '/<a href="'.$echo.'">'.$day.'</a>';
   }
-  if(notNull($article)){
+  if(!empty($article)){
     $echo .= cleanString($article)."/";
     $echoLink .= '/<a href="'.$echo.'">'.$article.'</a>';
   }
@@ -129,7 +130,7 @@ function drawCookieTrail($lang = "",$category = "",$subCat = "",$year = "",$mont
   return $echo;
 }
 
-function drawArticle($db, $lang, $year, $month, $day, $cleanstring){
+function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation){
 	$query = $db->prepare("SELECT i.id_item,il.title, il.short,il.content, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year AND i.month = :month AND i.day = :day AND il.cleanstring LIKE :cleanstring LIMIT 0,1");
 	$query->bindParam(':lang',$lang, SQLITE3_TEXT);
 	$query->bindParam(':year',$year, SQLITE3_INTEGER);
@@ -138,10 +139,16 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring){
 	$query->bindParam(':cleanstring',$cleanstring, SQLITE3_TEXT);
 	$query->execute() or die('Unable to recover article');
 	$article = $query->fetch();
+  $admin = "";
+  if(isLogedNC()){
+    $admin = '<a id="editArticle" data-lang="'.$lang.'" data-cleanString="'.$cleanstring.'" data-year="'.$year.'" data-month="'.$month.'" data-day="'.$day.'" class="admin">'.$translation['admin_changeArticle'].'</a>
+    ';
+  }
 	?>
 		<section id="article" class="wrapper">
 			<article class="hyphenate">
 				<h1><?=$article['title']?></h1>
+        <?=$admin?>
 				<?=drawTags($lang,$article['subcat'])?>
 				<h2><?=$article['short']?></h2>
 				<?=$article['content']?>
@@ -170,22 +177,27 @@ function drawTags($lang, $tags){
 
 function drawListing($db, $translation, $current, $lang, $action, $what){
   echo('<section id="listing" class="flex3">');
-if($action == "cat"){
+  if($action == "cat"){
   $query = $db->prepare('SELECT csl.name,csl.image,csl.short FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cs.id_cat = :id_cat AND csl.lang LIKE :lang');
   $query->bindParam(":lang",$lang, SQLITE3_TEXT);
   $query->bindParam(":id_cat",$what, SQLITE3_INTEGER);
   $query->execute() or die('Unable to fetch Items');
+  //admin add subcat
+  $admin = '<a class="admin" id="newSubCat" data-cat="'.$what.'">'.$translation['admin_newSubCat'].'</a>';
 }
 elseif($action == "index"){
   $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->execute() or die('Unable to fetch Items');
+  //admin add item
+  $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "subcat"){
   $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':subcat',$what, SQLITE3_INTEGER);
   $query->execute() or die('Unable to fetch Items');
+  $admin = '<a class="admin" id="newItem" data-subcat="'.$what.'" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "day"){
   $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.day = :day AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
@@ -198,6 +210,7 @@ elseif($action == "day"){
   $month = $date[1];
   $year = $date[0];
   $query->execute() or die('Unable to fetch day archive');
+  $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "month"){
   $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
@@ -208,6 +221,7 @@ elseif($action == "month"){
   $month = $date[1];
   $year = $date[0];
   $query->execute() or die('Unable to fetch day archive');
+  $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "year"){
   $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
@@ -216,37 +230,44 @@ elseif($action == "year"){
   $date = split("/",$what);
   $year = $date[0];
   $query->execute() or die('Unable to fetch day archive');
+  $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
+  if(!isLogedNC()){
+    $admin = "";
+  }
+  else{
+    echo $admin;
+  }
   $rowCount = 0;
   foreach($query as $row){
   $image = $tags = "";
   $rowCount++;
 	if($action == "cat"){
 		$url = $current.cleanString($row['name']);
-  		(notNull($row['image']) ? $image = '<a href="'.$url.'" class="listingFloat block pushState"><img src="'.$row['image'].'"></a>' : $image = "");
+  		(!empty($row['image']) ? $image = '<a href="'.$url.'" class="listingFloat block pushState"><img src="'.$row['image'].'"></a>' : $image = "");
 		$title = $row['name'];
 	}
 	elseif($action == "index"){
 		$url = $current.$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
-		(notNull($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
+		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
 	}
 	elseif($action == "subcat"){
 		$url = $current.$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
-		(notNull($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
+		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
 	}
   elseif($action == "day" OR $action == "month" OR $action == "year"){
     $url = "/".$lang."/".$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
-		(notNull($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
+		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
   }
 ?>
   <article class="clear hyphenate">
     <?=$image?>
     <h1><a href="<?=$url?>" class="pushState"><?=$title?></a></h1>
     <p><?=$row['short']?></p><?php
-  if(notNull($tags)){
+  if(!empty($tags)){
 	drawTags($lang,$tags);
 	}
 ?>
@@ -278,6 +299,64 @@ function drawCalendar($db, $translation){
 }
 
 function echo404($what){
-  echo('not found : '.$what);
+  echo('<p class="wrapper">not found : '.$what.'</p>');
 }
+
+function isLoged(){
+  return (!empty($_SESSION['userId']) ? true : false);
+}
+function isLogedNC(){
+  //for non critical admin stuff (meaning they get catched anyway serverSide, and allow sign in via the API) / may be removed depending on discussion further on
+  return true;
+}
+
+function userLogin($db, $username, $password, $token){
+  error_log("In function");
+	if(isLoged()){
+		//already loged in!
+		$return = false;
+	}
+	else{
+	$login = $db->prepare("SELECT id_user, username, hash, salt FROM user WHERE username LIKE :username");
+	$login->bindParam(":username",$username);
+	$login->execute() or die('Unable to get userLogin');
+	$i = 0;
+		foreach($login as $user){
+			$i++;
+			if($_SESSION['token'] !=  $token){
+        //Not coming from the website
+				$return = false;
+			}
+			else{
+				  $password = crypt($password, '$6$rounds=1000$'.$user['salt']);
+    			$password = explode("$",$password);
+    			$hash = $password[4];
+				if($hash != $user['hash']){
+          //bad password
+					$return = false;
+				}
+				else{
+					//login successful
+					$_SESSION['userId'] = $user['id_user'];
+					$return = $user;
+				}
+        //in any case, refresh the token
+        $_SESSION['token'] = base64_encode(mcrypt_create_iv(8, MCRYPT_DEV_URANDOM));
+			}
+		}
+		if($i === 0){
+			$return = false;
+		}
+	}
+	return $return;
+}
+
+function userInfo($db, $userId){
+	$login = $db->prepare("SELECT id_user, username, hash, salt FROM user WHERE id_user = :id");
+	$login->bindParam(":id",$userId);
+	$login->execute() or die('Unable to get userInfo');
+	$return = $login->fetch();
+	return $return;
+}
+
 ?>

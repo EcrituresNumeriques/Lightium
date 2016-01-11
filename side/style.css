@@ -4,9 +4,11 @@ html,body{
   margin:0;
   padding:0;
   font-family:"Merriweather";
+  color:#rgb(26, 24, 25);
 }
 h1,h2,h3,h4,h5,h6,a{
   font-family:"lato";
+  color:black;
 }
 p {
   text-align:justify;
@@ -78,10 +80,19 @@ a {
 .flex3 {
   flex: 3 3 auto;
 }
+.floatLeft{
+  float:left;
+}
+.floatRight{
+  float: right;
+}
+
 #menu > a > img {
   /*max-height:150px;*/
   display:block;
   max-width: 90vw;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
 }
 #menu > a {
   display:block;
@@ -95,31 +106,31 @@ a.block {
   display:block;
 }
 a.cat1{
-  color:#da4f70;
+  color:#rgb(26, 24, 25);
 }
 a.cat1:hover{
-  background-color:#da4f70;
+  background-color:#rgb(26, 24, 25);
   color:white;
 }
 a.cat2{
-  color:#b565a7;
+  color:#rgb(26, 24, 25);
 }
 a.cat2:hover{
-  background-color:#b565a7;
+  background-color:#rgb(26, 24, 25);
   color:white;
 }
 a.cat3, a.cat4, a.cat5,a.cat6{
-  color:#169c78;
+  color:#rgb(26, 24, 25);
 }
 a.cat3:hover,a.cat4:hover, a.cat5:hover,a.cat6:hover{
-  background-color:#169c78;
+  background-color:#rgb(26, 24, 25);
   color:white;
 }
 a.home{
-  color:#05afef;
+  color:#rgb(26, 24, 25);
 }
 a.home:hover {
-  background-color:#05afef;
+  background-color:#rgb(26, 24, 25);
   color:white;
 }
 #chapeau {
@@ -128,24 +139,25 @@ a.home:hover {
 }
 #chapeau > article > h1,#chapeau > article > h2 {
   text-align:center;
+  color:white;
 }
 
 #chapeau.cat3, #chapeau.cat4,#chapeau.cat5,#chapeau.cat6{
-  background-color:#169c78;
-  color:white;
+  background-color:#rgb(26, 24, 25);
+  color:#EDEAE3;
 }
 
 #chapeau.cat1{
-  background-color:#da4f70;
-  color:white;
+  background-color:rgb(26, 24, 25);
+  color:#EDEAE3;
 }
 #chapeau.cat2{
-  background-color:#b565a7;
-  color:white;
+  background-color:rgb(26, 24, 25);
+  color:#EDEAE3;
 }
 #chapeau.index{
-  background-color:#05afef;
-  color:white;
+  background-color:rgb(26, 24, 25);
+  color:#EDEAE3;
 }
 #chapeau > article > h1 {
   font-size:3rem;
@@ -172,6 +184,11 @@ a.home:hover {
   padding:1rem;
   font-size:4rem;
 }
+#chapeau > article > a.admin{
+    text-align:center;
+    color:white;
+}
+
 section#cookieTrail > p > a{
   color:black;
   font-weight: bold;
@@ -230,4 +247,38 @@ section#article > article > p {
 	max-width:40em;
 	margin:1rem auto;
 	line-height:200%;
+}
+
+
+/* NOTE Administration style */
+#blackout{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background-color:hsla(360, 0%, 0%, 0.7);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+#blackout #popup{
+  background-color:white;
+  max-width:1024px;
+  padding:2em;
+  position:relative;
+}
+#blackout #popup #closePopup{
+  position:absolute;
+  top:0;
+  right:0;
+  margin:-1em -1em 0 0;
+  width:1em;
+  height:1em;
+  text-align:center;
+  padding:1em;
+  background-color:hsla(360, 0%, 20%, 1);
+  color:white;
+  border-radius: 2em;
+  cursor:pointer;
 }

@@ -1,11 +1,7 @@
 <?php
 	include('include/function.php');
 	//Protect the $_GET and $_POST variables
-	//session management
-	include('include/session.php');
-	//lang management
-	include('include/lang.php');
-	//Database connect
+	inputSecurity();
 	try {
     /**************************************
     * Create databases and                *
@@ -22,6 +18,13 @@
     // Print PDOException message
     echo "failed : ".$e->getMessage();
   }
+	//Updates or install
+	include('include/install.php');
+	//session management
+	include('include/session.php');
+	//lang management
+	include('include/lang.php');
+	//Database connect
 
 
 ?>

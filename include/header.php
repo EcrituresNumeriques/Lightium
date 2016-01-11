@@ -13,6 +13,10 @@
     foreach($result as $row){
       echo('    <a href="/'.$row['lang'].'/'.cleanString($row['name']).'" class="cat'.$row['id_cat'].' block pushState flex1" data-title="'.$row['name'].' / Chaire">'.$row['name'].'</a>'."\n");
     }
+    if(isLogedNC()){
+      ?>    <a class="block pushState flex1 admin" id="newCat"><?=$translation['admin_newCat']?></a>
+<?php
+    }
 ?>
   </nav>
 </header>
