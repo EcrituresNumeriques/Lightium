@@ -22,7 +22,13 @@ $translation = array(
 	"admin_newItemName" => "Nom de l'article",
 	"admin_newItemContent" => "Corps de l'article",
 	"admin_newItemShort" => "Chapeau de l'article",
-	"admin_newItemSubmit" => "Ajouter l'article"
+	"admin_newItemSubmit" => "Ajouter l'article",
+	"admin_editSettings" => "Modifier les paramètres du site",
+	"admin_settingsSiteName" => "Nom du site",
+	"admin_settingsSiteTitle" => "Titre du site",
+	"admin_settingsSiteMeta" => "Metadonnée",
+	"admin_settingsSiteDescription" => "Description du site",
+	"admin_editSettingsSubmit" => "Modifier"
 );
 
 

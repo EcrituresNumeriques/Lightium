@@ -88,6 +88,32 @@ $(document).ready(function(){
 						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
 			});
 		}
+		else if($(this).attr("id") == "editLead"){
+				if($(this).attr("data-type") == "index"){
+					//edit settings of the site
+					$("#popup").append('<h1>'+translation.admin_editSettings+'</h1>');
+					$("#popup").append('<form action="/api/" method="post"></form>');
+					$.post( '/api/', {action: "getSettings"},"json")
+					.done(function(data){
+						for(i = 0;i<data.length;i++){
+							if(i>0){
+								$("#popup > form").append('<hr>');
+							}
+							$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
+							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_settingsSiteName+'">');
+							$("#popup > form").append('<input type="text" value="'+data[i].title+'" name=title[] placeholder="'+translation.admin_settingsSiteTitle+'">');
+							$("#popup > form").append('<textarea name="meta[]" placeholder="'+translation.admin_settingsSiteMeta+'">'+data[i].meta+'</textarea>');
+							$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_settingsSiteDescription+'">'+data[i].description+'</textarea>');
+						}
+						$("#popup > form").append('<input type="hidden" name="action" value="editSettings">');
+						$("#popup > form").append('<input type="submit" value="'+translation.admin_editSettingsSubmit+'">');
+
+					})
+					.fail(function(d, textStatus, error) {
+								console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+					});
+				}
+		}
 		$("#closePopup").on("click",function(){
 			$("#blackout").remove();
 		});

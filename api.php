@@ -37,6 +37,8 @@ if(isLoged() AND !empty($_POST['action'])){
       //only request, do not show anything
       die();
     }
+
+  //add new stuff to the database
   elseif($_POST['action'] == "newCat"){
     // TODO Add Checkings
 
@@ -124,12 +126,12 @@ if(isLoged() AND !empty($_POST['action'])){
 
     //insert into item_lang
     $langItem = $file_db->prepare("INSERT INTO item_lang (id_item, title, short, content, cleanstring, lang) VALUES (:id_item,:title,:short,:content,:cleanstring,:lang)");
-    $langItem->bindParam(':id_item',$id_item);
-    $langItem->bindParam(':title',$title);
-    $langItem->bindParam(':short',$short);
-    $langItem->bindParam(':content',$content);
-    $langItem->bindParam(':cleanstring',$cleanstring);
-    $langItem->bindParam(':lang',$lang);
+    $langItem->bindParam(':id_item',$id_item, SQLITE3_INTEGER);
+    $langItem->bindParam(':title',$title, SQLITE3_TEXT);
+    $langItem->bindParam(':short',$short, SQLITE3_TEXT);
+    $langItem->bindParam(':content',$content, SQLITE3_TEXT);
+    $langItem->bindParam(':cleanstring',$cleanstring, SQLITE3_TEXT);
+    $langItem->bindParam(':lang',$lang, SQLITE3_TEXT);
     for ($i = 0; $i < count($_POST['lang']);$i++ ){
       // Execute statement
       $title = $_POST['name'][$i];
@@ -140,7 +142,40 @@ if(isLoged() AND !empty($_POST['action'])){
   		$langItem->execute() or die('Unable to add lang item');
     }
   }
-  else{print_r($_REQUEST);}
+  //modify stuff in the database
+  elseif($_POST['action'] == "getSettings"){
+        $result = $file_db->prepare('SELECT * FROM settings');
+        $result->execute() or die('AHAH');
+        foreach ($result as $setting) {
+          $settings[] = array(
+            "lang" => $setting['lang'],
+            "name" => $setting['name'],
+            "description" => $setting['description'],
+            "meta" => $setting['meta'],
+            "title" => $setting['title']
+          );
+        }
+        echo(json_encode($settings));
+        die();
+  }
+  elseif($_POST['action'] == "editSettings"){
+      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title WHERE lang LIKE :lang");
+      $edit->bindParam(":name",$name, SQLITE3_TEXT);
+      $edit->bindParam(":description",$description, SQLITE3_TEXT);
+      $edit->bindParam(":meta",$meta, SQLITE3_TEXT);
+      $edit->bindParam(":title",$title, SQLITE3_TEXT);
+      $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
+      for($i=0;$i<count($_POST['lang']);$i++){
+        $name = $_POST['name'][$i];
+        $description = $_POST['description'][$i];
+        $meta = $_POST['meta'][$i];
+        $title = $_POST['title'][$i];
+        $lang = $_POST['lang'][$i];
+        $edit->execute() or die('Unable to edit setting');
+      }
+
+  }
+  else{print_r($_REQUEST);die();}
 
 }
 
