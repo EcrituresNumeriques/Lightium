@@ -1,13 +1,22 @@
-@import url(https://fonts.googleapis.com/css?family=Lato|Merriweather);
-
+/*@import url(https://fonts.googleapis.com/css?family=Lato|Merriweather);*/
+@import url(https://fonts.googleapis.com/css?family=Istok+Web|Lora);
+@font-face {
+	font-family: 'IcoMoon-Free';
+	src: url('IcoMoon-Free.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
 html,body{
   margin:0;
   padding:0;
-  font-family:"Merriweather";
-  color:#rgb(26, 24, 25);
+  font-family: 'Lora', serif;
+  color:rgb(26, 24, 25);
+}
+body{
+  border-top: 2px solid #0056a7;
 }
 h1,h2,h3,h4,h5,h6,a{
-  font-family:"lato";
+  font-family: 'Istok Web', sans-serif;
   color:black;
 }
 p {
@@ -16,6 +25,12 @@ p {
 a {
   text-decoration:none;
   color:black;
+}
+
+a.admin:before{
+    font-family: "icoMoon-free";
+    content:"\e906";
+    margin-right:0.5em;
 }
 .wrapper{
     max-width:1024px;
@@ -29,6 +44,12 @@ a {
 }
 .clear{
   clear:both;
+}
+.black-bg{
+  background-color:black;
+}
+.grey-bg{
+  background-color:#58585a;
 }
 .white-bg{
   background-color:white;
@@ -87,78 +108,55 @@ a {
   float: right;
 }
 
-#menu > a > img {
+#logo > a > img {
   /*max-height:150px;*/
   display:block;
   max-width: 90vw;
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
 }
-#menu > a {
+#logo > a {
   display:block;
   padding:1rem;
   margin:0 1rem;
   font-weight:bold;
   text-decoration:none;
 }
+
+#menu > a {
+  background-color:black;
+  color:white;
+  transition: background-color 0.5s ease;
+}
+#menu > a:hover{
+  background-color:#0056a7;
+}
+
+#menu > a.home:before{
+  font-family: "icoMoon-free";
+  content:"\e900";
+  margin-right:0.5rem;
+}
 a.block {
-  padding:1rem;
+  padding:0.5rem 1rem;
   display:block;
 }
-a.cat1{
-  color:#rgb(26, 24, 25);
-}
-a.cat1:hover{
-  background-color:#rgb(26, 24, 25);
-  color:white;
-}
-a.cat2{
-  color:#rgb(26, 24, 25);
-}
-a.cat2:hover{
-  background-color:#rgb(26, 24, 25);
-  color:white;
-}
-a.cat3, a.cat4, a.cat5,a.cat6{
-  color:#rgb(26, 24, 25);
-}
-a.cat3:hover,a.cat4:hover, a.cat5:hover,a.cat6:hover{
-  background-color:#rgb(26, 24, 25);
-  color:white;
-}
-a.home{
-  color:#rgb(26, 24, 25);
-}
-a.home:hover {
-  background-color:#rgb(26, 24, 25);
-  color:white;
-}
 #chapeau {
-  padding:3rem 0;
+  margin:2rem;
   position:relative;
 }
-#chapeau > article > h1,#chapeau > article > h2 {
+
+#chapeau > article {
+  background-color:#0056a7;
+  padding:3rem 0;
+}
+
+#chapeau > article > h1,#chapeau > article > h2,#chapeau > article > p {
+  magin:0 3rem;
   text-align:center;
   color:white;
 }
 
-#chapeau.cat3, #chapeau.cat4,#chapeau.cat5,#chapeau.cat6{
-  background-color:#rgb(26, 24, 25);
-  color:#EDEAE3;
-}
-
-#chapeau.cat1{
-  background-color:rgb(26, 24, 25);
-  color:#EDEAE3;
-}
-#chapeau.cat2{
-  background-color:rgb(26, 24, 25);
-  color:#EDEAE3;
-}
-#chapeau.index{
-  background-color:rgb(26, 24, 25);
-  color:#EDEAE3;
-}
 #chapeau > article > h1 {
   font-size:3rem;
   margin:0 0 3rem 0;
