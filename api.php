@@ -173,7 +173,110 @@ if(isLoged() AND !empty($_POST['action'])){
         $lang = $_POST['lang'][$i];
         $edit->execute() or die('Unable to edit setting');
       }
-
+  }
+  elseif($_POST['action'] == "getCat"){
+          $result = $file_db->prepare('SELECT * FROM category_lang where id_cat = :cat');
+          $result->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
+          $result->execute() or die('AHAH');
+          foreach ($result as $cat) {
+            if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
+            $cats[] = array(
+              "lang" => $cat['lang'],
+              "name" => $cat['name'],
+              "description" => $cat['description'],
+              "image" => $cat['image']
+            );
+          }
+          echo(json_encode($cats));
+          die();
+  }
+  elseif($_POST['action'] == "editCat"){
+      $edit = $file_db->prepare("UPDATE category_lang SET name = :name, description = :description, image = :image, cleanstring = :cleanString WHERE lang LIKE :lang AND id_cat = :cat");
+      $edit->bindParam(":name",$name, SQLITE3_TEXT);
+      $edit->bindParam(":description",$description, SQLITE3_TEXT);
+      $edit->bindParam(":image",$image, SQLITE3_TEXT);
+      $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
+      $edit->bindParam(":cleanString",$cleanString, SQLITE3_TEXT);
+      $edit->bindParam(":cat",$cat, SQLITE3_INTEGER);
+      for($i=0;$i<count($_POST['lang']);$i++){
+        $name = $_POST['name'][$i];
+        $cleanString = cleanString($_POST['name'][$i]);
+        $description = $_POST['description'][$i];
+        $image = $_POST['image'][$i];
+        $cat = $_POST['cat'];
+        $lang = $_POST['lang'][$i];
+        $edit->execute() or die('Unable to edit setting');
+      }
+  }
+  elseif($_POST['action'] == "getSubCat"){
+          $result = $file_db->prepare('SELECT * FROM category_sub_lang where id_subcat = :cat');
+          $result->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
+          $result->execute() or die('AHAH');
+          foreach ($result as $cat) {
+            if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
+            $cats[] = array(
+              "lang" => $cat['lang'],
+              "name" => $cat['name'],
+              "description" => $cat['description'],
+              "short" => $cat['short'],
+              "image" => $cat['image']
+            );
+          }
+          echo(json_encode($cats));
+          die();
+  }
+  elseif($_POST['action'] == "editSubCat"){
+      $edit = $file_db->prepare("UPDATE category_sub_lang SET name = :name, description = :description, short = :short, image = :image, cleanstring = :cleanString WHERE lang LIKE :lang AND id_subcat = :cat");
+      $edit->bindParam(":name",$name, SQLITE3_TEXT);
+      $edit->bindParam(":description",$description, SQLITE3_TEXT);
+      $edit->bindParam(":short",$short, SQLITE3_TEXT);
+      $edit->bindParam(":image",$image, SQLITE3_TEXT);
+      $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
+      $edit->bindParam(":cleanString",$cleanString, SQLITE3_TEXT);
+      $edit->bindParam(":cat",$cat, SQLITE3_INTEGER);
+      for($i=0;$i<count($_POST['lang']);$i++){
+        $name = $_POST['name'][$i];
+        $cleanString = cleanString($_POST['name'][$i]);
+        $description = $_POST['description'][$i];
+        $short = $_POST['short'][$i];
+        $image = $_POST['image'][$i];
+        $cat = $_POST['cat'];
+        $lang = $_POST['lang'][$i];
+        $edit->execute() or die('Unable to edit setting');
+      }
+  }
+  elseif($_POST['action'] == "getItem"){
+    $result = $file_db->prepare('SELECT * FROM item_lang where id_item = :item');
+    $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
+    $result->execute() or die('AHAH');
+    foreach ($result as $cat) {
+      $cats[] = array(
+        "lang" => $cat['lang'],
+        "title" => $cat['title'],
+        "content" => $cat['content'],
+        "short" => $cat['short']
+      );
+    }
+    echo(json_encode($cats));
+    die();
+  }
+  elseif($_POST['action'] == "editItem"){
+      $edit = $file_db->prepare("UPDATE item_lang SET title = :title, content = :content, short = :short, cleanstring = :cleanString WHERE lang LIKE :lang AND id_item = :item");
+      $edit->bindParam(":title",$title, SQLITE3_TEXT);
+      $edit->bindParam(":content",$content, SQLITE3_TEXT);
+      $edit->bindParam(":short",$short, SQLITE3_TEXT);
+      $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
+      $edit->bindParam(":cleanString",$cleanString, SQLITE3_TEXT);
+      $edit->bindParam(":item",$item, SQLITE3_INTEGER);
+      for($i=0;$i<count($_POST['lang']);$i++){
+        $title = $_POST['title'][$i];
+        $cleanString = cleanString($_POST['title'][$i]);
+        $content = $_POST['content'][$i];
+        $short = $_POST['short'][$i];
+        $item = $_POST['item'];
+        $lang = $_POST['lang'][$i];
+        $edit->execute() or die('Unable to edit setting');
+      }
   }
   else{print_r($_REQUEST);die();}
 

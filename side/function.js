@@ -113,6 +113,82 @@ $(document).ready(function(){
 								console.error("getJSON failed, status: " + textStatus + ", error: "+error);
 					});
 				}
+				else if($(this).attr("data-type") == "cat"){
+					//edit cat
+					$("#popup").append('<h1>'+translation.admin_editCat+'</h1>');
+					$("#popup").append('<form action="/api/" method="post"></form>');
+					var cat = $(this).attr("data-cat");
+					$.post( '/api/', {action: "getCat", cat : cat},"json")
+					.done(function(data){
+						for(i = 0;i<data.length;i++){
+							if(i>0){
+								$("#popup > form").append('<hr>');
+							}
+							$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
+							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_catName+'">');
+							$("#popup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
+							$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_CatDescription+'">'+data[i].description+'</textarea>');
+						}
+						$("#popup > form").append('<input type="hidden" name="cat" value="'+cat+'">');
+						$("#popup > form").append('<input type="hidden" name="action" value="editCat">');
+						$("#popup > form").append('<input type="submit" value="'+translation.admin_editCatSubmit+'">');
+
+					})
+					.fail(function(d, textStatus, error) {
+								console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+					});
+				}
+				else if($(this).attr("data-type") == "subcat"){
+					//edit subCat
+					$("#popup").append('<h1>'+translation.admin_editSubCat+'</h1>');
+					$("#popup").append('<form action="/api/" method="post"></form>');
+					var cat = $(this).attr("data-cat");
+					$.post( '/api/', {action: "getSubCat", cat : cat},"json")
+					.done(function(data){
+						for(i = 0;i<data.length;i++){
+							if(i>0){
+								$("#popup > form").append('<hr>');
+							}
+							$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
+							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_subcatName+'">');
+							$("#popup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
+							$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_SubCatDescription+'">'+data[i].description+'</textarea>');
+							$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_SubCatshort+'">'+data[i].short+'</textarea>');
+						}
+						$("#popup > form").append('<input type="hidden" name="cat" value="'+cat+'">');
+						$("#popup > form").append('<input type="hidden" name="action" value="editSubCat">');
+						$("#popup > form").append('<input type="submit" value="'+translation.admin_editSubCatSubmit+'">');
+
+					})
+					.fail(function(d, textStatus, error) {
+								console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+					});
+				}
+		}
+		else if($(this).attr("id") == "editItem"){
+			//edit item
+			$("#popup").append('<h1>'+translation.admin_editItem+'</h1>');
+			$("#popup").append('<form action="/api/" method="post"></form>');
+			var item = $(this).attr("data-item");
+			$.post( '/api/', {action: "getItem", item : item},"json")
+			.done(function(data){
+				for(i = 0;i<data.length;i++){
+					if(i>0){
+						$("#popup > form").append('<hr>');
+					}
+					$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
+					$("#popup > form").append('<input type="text" value="'+data[i].title+'" name=title[] placeholder="'+translation.admin_itemTitle+'">');
+					$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_itemShort+'">'+data[i].short+'</textarea>');
+					$("#popup > form").append('<textarea name="content[]" placeholder="'+translation.admin_itemContent+'">'+data[i].content+'</textarea>');
+				}
+				$("#popup > form").append('<input type="hidden" name="item" value="'+item+'">');
+				$("#popup > form").append('<input type="hidden" name="action" value="editItem">');
+				$("#popup > form").append('<input type="submit" value="'+translation.admin_editItemSubmit+'">');
+
+			})
+			.fail(function(d, textStatus, error) {
+						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+			});
 		}
 		$("#closePopup").on("click",function(){
 			$("#blackout").remove();

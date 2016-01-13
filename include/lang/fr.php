@@ -28,7 +28,22 @@ $translation = array(
 	"admin_settingsSiteTitle" => "Titre du site",
 	"admin_settingsSiteMeta" => "Metadonnée",
 	"admin_settingsSiteDescription" => "Description du site",
-	"admin_editSettingsSubmit" => "Modifier"
+	"admin_editSettingsSubmit" => "Modifier",
+	"admin_CatName" => "Nom de la catégorie",
+	"admin_urlToImg" => "lien vers l'image",
+	"admin_CatDescription" => "Description de la catégorie",
+	"admin_editCatSubmit" => "Modifier la catégorie",
+	"admin_editCat" => "Modifier la catégorie",
+	"admin_SubCatName" => "Nom de la sous-catégorie",
+	"admin_SubCatDescription" => "Description de la sous-catégorie",
+	"admin_SubCatShort" => "Chapeau de la sous-catégorie",
+	"admin_editSubCatSubmit" => "Modifier la sous-catégorie",
+	"admin_editSubCat" => "Modifier la sous-catégorie",
+	"admin_editItem" => "Modifier l'article",
+	"admin_itemTitle" => "Titre de l'article",
+	"admin_itemContent" => "Corps de l'article",
+	"admin_itemShort" => "Chapeau de l'article'",
+	"admin_itemSubmit" => "Modifier l'article",
 );
 
 
