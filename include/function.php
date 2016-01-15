@@ -1,40 +1,5 @@
 <?php
 
-function inputSecurity($validate=null) {
-    if ($validate == null) {
-        foreach ($_REQUEST as $key => $val) {
-            if (is_string($val)) {
-                $_REQUEST[$key] = htmlentities($val);
-            } else if (is_array($val)) {
-                $_REQUEST[$key] = inputSecurity($val);
-            }
-        }
-        foreach ($_GET as $key => $val) {
-            if (is_string($val)) {
-                $_GET[$key] = htmlentities($val, ENT_QUOTES, 'UTF-8');
-            } else if (is_array($val)) {
-                $_GET[$key] = inputSecurity($val);
-            }
-        }
-        foreach ($_POST as $key => $val) {
-            if (is_string($val)) {
-                $_POST[$key] = htmlentities($val, ENT_QUOTES, 'UTF-8');
-            } else if (is_array($val)) {
-                $_POST[$key] = inputSecurity($val);
-            }
-        }
-    } else {
-        foreach ($validate as $key => $val) {
-            if (is_string($val)) {
-                $validate[$key] = htmlentities($val, ENT_QUOTES, 'UTF-8');
-            } else if (is_array($val)) {
-                $validate[$key] = inputSecurity($val);
-            }
-            return $validate;
-        }
-    }
-}
-
 function isEqual($what,$toWhat){
 	return (isset($what) AND isset($toWhat) AND $what == $toWhat ? true : false );
 }
