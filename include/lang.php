@@ -1,7 +1,7 @@
 <?php
 
 if(!isset($_GET['lang'])){
-  $lang = "FR";
+  $lang = "fr";
 	include('lang/fr.php');
 }
 else{
@@ -11,7 +11,7 @@ else{
 	include('lang/fr.php');
   }
   else{
-    $lang = "FR";
+    $lang = "fr";
 	include('lang/fr.php');
   }
 }

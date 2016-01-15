@@ -1,7 +1,7 @@
 <?php
 	include('include/function.php');
 	//Protect the $_GET and $_POST variables
-	inputSecurity();
+	//inputSecurity();
 	try {
     /**************************************
     * Create databases and                *
