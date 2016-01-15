@@ -1,7 +1,8 @@
 <?php
 	include('include/function.php');
-	//Protect the $_GET and $_POST variables
-	//inputSecurity();
+	//lang management
+	include('include/lang.php');
+	//Database connect
 	try {
     /**************************************
     * Create databases and                *
@@ -22,9 +23,8 @@
 	include('include/install.php');
 	//session management
 	include('include/session.php');
-	//lang management
-	include('include/lang.php');
-	//Database connect
+
+
 
 
 ?>
