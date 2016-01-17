@@ -125,7 +125,7 @@ $(document).ready(function(){
 								$("#popup > form").append('<hr>');
 							}
 							$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
-							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_catName+'">');
+							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_CatName+'">');
 							$("#popup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
 							$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_CatDescription+'">'+data[i].description+'</textarea>');
 						}
@@ -150,10 +150,10 @@ $(document).ready(function(){
 								$("#popup > form").append('<hr>');
 							}
 							$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
-							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_subcatName+'">');
+							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_SubCatName+'">');
 							$("#popup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
 							$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_SubCatDescription+'">'+data[i].description+'</textarea>');
-							$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_SubCatshort+'">'+data[i].short+'</textarea>');
+							$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_SubCatShort+'">'+data[i].short+'</textarea>');
 						}
 						$("#popup > form").append('<input type="hidden" name="cat" value="'+cat+'">');
 						$("#popup > form").append('<input type="hidden" name="action" value="editSubCat">');

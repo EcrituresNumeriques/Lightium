@@ -5,6 +5,9 @@
    $query->execute() or die("Could'nt exec user table check");
    $query = $query->fetch();
    if($query['yes']){
+
+
+     //Check if there is an User in the database
       $query = $file_db->query("SELECT count(*) as users FROM user");
       $query->execute() or die("Could'nt exec users check");
       $query = $query->fetch();
@@ -47,6 +50,9 @@
           die();
         }
       }
+
+
+      //Check if the website has languages defined
       $query = $file_db->query("SELECT count(*) as settings FROM settings");
       $query->execute() or die("Could'nt exec users check");
       $query = $query->fetch();
@@ -95,6 +101,34 @@
         }
 
 
+      }
+
+
+
+      //Check if the website has a version
+      $query = $file_db->query("SELECT count(*) as yes FROM sqlite_master WHERE type='table' AND name='version'");
+      $query->execute() or die("Could'nt exec user table check");
+      $query = $query->fetch();
+      if($query['yes']){
+        $version = $file_db->query("SELECT version,subversion,revision FROM version");
+        $version = $version->fetch();
+        //Nest every update here
+
+        //If version prior to version 1
+        if($version['version'] < 1){
+            if($version['subversion'] < 2){
+              if($version['revision'] < 3){
+                //VERSION 0.1.3 : Add version table + null filter in the API responses + add item even if there is no subCat + Javascript correction
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 3");
+              }
+            }
+        }
+
+
+      }
+      else{
+        $file_db->exec("CREATE TABLE IF NOT EXISTS version (version INTEGER, subversion INTEGER, revision INTEGER)");
+        $file_db->exec("INSERT INTO version (version, subversion, revision) VALUES (0,0,0)");
       }
 
 

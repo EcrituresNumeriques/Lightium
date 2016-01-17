@@ -24,6 +24,8 @@ if(isLoged() AND !empty($_POST['action'])){
       $result = $file_db->prepare('SELECT DISTINCT(id_subcat),name FROM category_sub_lang WHERE lang LIKE :lang');
       $result->bindParam(":lang",$_POST['lang']);
       $result->execute() or die('AHAH');
+        $tags = array();
+        $ids = array();
       foreach ($result as $subcat) {
         $tags[] = $subcat['name'];
         $subcatID[] = $subcat['id_subcat'];
@@ -147,6 +149,11 @@ if(isLoged() AND !empty($_POST['action'])){
         $result = $file_db->prepare('SELECT * FROM settings');
         $result->execute() or die('AHAH');
         foreach ($result as $setting) {
+          if($setting['name'] == "null" OR $setting['name'] == NULL){$setting['name'] = "";}
+          if($setting['description'] == "null" OR $setting['description'] == NULL){$setting['description'] = "";}
+          if($setting['meta'] == "null" OR $setting['meta'] == NULL){$setting['meta'] = "";}
+          if($setting['title'] == "null" OR $setting['title'] == NULL){$setting['title'] = "";}
+
           $settings[] = array(
             "lang" => $setting['lang'],
             "name" => $setting['name'],
@@ -180,6 +187,8 @@ if(isLoged() AND !empty($_POST['action'])){
           $result->execute() or die('AHAH');
           foreach ($result as $cat) {
             if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
+            if($cat['name'] == "null" OR $cat['name'] == NULL){$cat['name'] = "";}
+            if($cat['description'] == "null" OR $cat['description'] == NULL){$cat['description'] = "";}
             $cats[] = array(
               "lang" => $cat['lang'],
               "name" => $cat['name'],
@@ -214,6 +223,9 @@ if(isLoged() AND !empty($_POST['action'])){
           $result->execute() or die('AHAH');
           foreach ($result as $cat) {
             if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
+            if($cat['name'] == "null" OR $cat['name'] == NULL){$cat['name'] = "";}
+            if($cat['description'] == "null" OR $cat['description'] == NULL){$cat['description'] = "";}
+            if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
             $cats[] = array(
               "lang" => $cat['lang'],
               "name" => $cat['name'],
@@ -250,6 +262,9 @@ if(isLoged() AND !empty($_POST['action'])){
     $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
     $result->execute() or die('AHAH');
     foreach ($result as $cat) {
+      if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
+      if($cat['title'] == "null" OR $cat['title'] == NULL){$cat['title'] = "";}
+      if($cat['content'] == "null" OR $cat['content'] == NULL){$cat['content'] = "";}
       $cats[] = array(
         "lang" => $cat['lang'],
         "title" => $cat['title'],
