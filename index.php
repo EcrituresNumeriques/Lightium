@@ -72,7 +72,7 @@ else{
 	$current = drawCookieTrail($lang);
 	echo('<div class="flex-row-fluid flex-top wrapper">');
 	drawListing($file_db, $translation, $current,$lang,'index',NULL);
-	drawCalendar($file_db, $translation);
+	drawCalendar($file_db, $translation,$lang);
 	echo('</div>');
 }
 

@@ -252,9 +252,10 @@ if($rowCount < 1){
 echo('</section>');
 }
 
-function drawCalendar($db, $translation){
-	$calendar = $db->prepare("SELECT id_event, title, time, location, short, description FROM events WHERE time > :time LIMIT 0,5");
+function drawCalendar($db, $translation,$lang){
+	$calendar = $db->prepare("SELECT e.id_event, l.title, e.time, l.location, l.short, l.description FROM events e JOIN events_lang l ON e.id_event = l.id_event AND l.lang = :lang WHERE time > :time LIMIT 0,5");
 	$calendar->bindParam(":time",$time,SQLITE3_INTEGER);
+	$calendar->bindParam(":lang",$lang,SQLITE3_TEXT);
 	$time = time() - 60*60*24;
 	$calendar->execute() or die("Couldn't open event table");
 ?>
