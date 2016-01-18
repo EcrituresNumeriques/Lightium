@@ -122,6 +122,10 @@
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 3");
               }
             }
+            if($version['revision'] < 4){
+              $file_db->exec("CREATE TABLE IF NOT EXISTS events (id_event INTEGER PRIMARY KEY, title TEXT, time INTEGER, location TEXT, short TEXT, description TEXT)");
+              $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 4");
+            }
         }
 
 

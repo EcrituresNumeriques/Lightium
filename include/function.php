@@ -253,13 +253,36 @@ echo('</section>');
 }
 
 function drawCalendar($db, $translation){
+	$calendar = $db->prepare("SELECT id_event, title, time, location, short, description FROM events WHERE time > :time LIMIT 0,5");
+	$calendar->bindParam(":time",$time,SQLITE3_INTEGER);
+	$time = time() - 60*60*24;
+	$calendar->execute() or die("Couldn't open event table");
 ?>
 	<section id="calendar" class="flex1">
 		<h1><?=$translation['calendar_title']?></h1>
-  		<article class="clear hyphenate">
+  		<?php
+		  $rowCount = 0;
+		  foreach($calendar as $row){
+				$rowCount++;
+				$date = date("d/m/Y h:i",$row['time']);
+				?>
+				<article class="clear hyphenate">
+	   			<h1><?=$row['title']?></h1>
+					<h2><?=$row['date']?></h2>
+					<h2><?=$row['location']?></h2>
+					<p><?=$row['short']?></p>
+	  		</article>
+				<?php
+			}
+			if($rowCount < 1){
+			?>
+			<article class="clear hyphenate">
    			<h1><?=$translation['calendar_nothing']?></h1>
   		</article>
-	</section>
+			<?php
+		}
+			?>
+			</section>
 <?php
 }
 
