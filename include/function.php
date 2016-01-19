@@ -258,9 +258,15 @@ function drawCalendar($db, $translation,$lang){
 	$calendar->bindParam(":lang",$lang,SQLITE3_TEXT);
 	$time = time() - 60*60*24;
 	$calendar->execute() or die("Couldn't open event table");
+	$admin = "";
+	if(isLogedNC()){
+		$admin = '<a id="newCalendar" class="admin">'.$translation['admin_newCalendar'].'</a>
+		';
+	}
 ?>
 	<section id="calendar" class="flex1">
 		<h1><?=$translation['calendar_title']?></h1>
+		<?=$admin?>
   		<?php
 		  $rowCount = 0;
 		  foreach($calendar as $row){

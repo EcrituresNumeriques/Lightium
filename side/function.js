@@ -88,6 +88,32 @@ $(document).ready(function(){
 						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
 			});
 		}
+		else if($(this).attr("id") == "newCalendar"){
+			//New SubCategory
+			$("#popup").append('<h1>'+translation.admin_newCalendar+'</h1>');
+			$("#popup").append('<form action="/api/" method="post"></form>');
+			$("#popup > form").append('<input type="datetime-local" value="" name="datetime">');
+			$("#popup > form").append('<hr>');
+			$.post( '/api/', {action: "languages"},"json")
+			.done(function(data){
+				for(i = 0;i<data.length;i++){
+					if(i>0){
+						$("#popup > form").append('<hr>');
+					}
+					$("#popup > form").append('<input type="text" value="'+data[i]+'" name="lang[]" readonly>');
+					$("#popup > form").append('<input type="text" value="" name=title[] placeholder="'+translation.admin_newCalendarTitle+'">');
+					$("#popup > form").append('<input type="text" value="" name=location[] placeholder="'+translation.admin_newCalendarLocation+'">');
+					$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_newCalendarShort+'"></textarea>');
+					$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_newCalendarDescription+'"></textarea>');
+				}
+				$("#popup > form").append('<input type="hidden" name="action" value="newCalendar">');
+				$("#popup > form").append('<input type="submit" value="'+translation.admin_newCalendarSubmit+'">');
+
+			})
+			.fail(function(d, textStatus, error) {
+						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+				});
+		}
 		else if($(this).attr("id") == "editLead"){
 				if($(this).attr("data-type") == "index"){
 					//edit settings of the site

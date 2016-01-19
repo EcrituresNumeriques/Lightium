@@ -121,11 +121,12 @@
                 //VERSION 0.1.3 : Add version table + null filter in the API responses + add item even if there is no subCat + Javascript correction
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 3");
               }
-            }
-            if($version['revision'] < 4){
-              $file_db->exec("CREATE TABLE IF NOT EXISTS events (id_event INTEGER PRIMARY KEY, time INTEGER)");
-              $file_db->exec("CREATE TABLE IF NOT EXISTS events_lang (id_event INTEGER, title TEXT, location TEXT, short TEXT, description TEXT, lang TEXT)");
-              $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 4");
+              if($version['revision'] < 4){
+                //VERSION 0.1.4 : Add calendar table logics
+                $file_db->exec("CREATE TABLE IF NOT EXISTS events (id_event INTEGER PRIMARY KEY, time INTEGER)");
+                $file_db->exec("CREATE TABLE IF NOT EXISTS events_lang (id_event INTEGER, title TEXT, location TEXT, short TEXT, description TEXT, lang TEXT)");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 4");
+              }
             }
         }
 

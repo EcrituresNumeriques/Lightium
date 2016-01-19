@@ -44,6 +44,12 @@ $translation = array(
 	"admin_itemContent" => "Corps de l'article",
 	"admin_itemShort" => "Chapeau de l'article'",
 	"admin_itemSubmit" => "Modifier l'article",
+	"admin_newCalendar" => "Ajouter un évènement",
+	"admin_newCalendarTitle" => "Titre de l'évènement",
+	"admin_newCalendarShort" => "Chapeau de l'évènement",
+	"admin_newCalendarLocation" => "Lieu de l'évènement",
+	"admin_newCalendarDescription" => "Description de l'évènement",
+	"admin_newCalendarSubmit" => "Ajouter l'évènement"
 );
 
 
