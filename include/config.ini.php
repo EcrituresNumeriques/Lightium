@@ -23,7 +23,8 @@
 	include('include/install.php');
 	//session management
 	include('include/session.php');
-
+	//plugins management
+	//include('include/plugins.php');
 
 
 

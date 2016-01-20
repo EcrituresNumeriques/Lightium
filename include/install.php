@@ -127,6 +127,10 @@
                 $file_db->exec("CREATE TABLE IF NOT EXISTS events_lang (id_event INTEGER, title TEXT, location TEXT, short TEXT, description TEXT, lang TEXT)");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 4");
               }
+              if($version['revision'] < 5){
+                $file_db->exec("ALTER TABLE item ADD COLUMN zoterokey TEXT");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 5");
+              }
             }
         }
 

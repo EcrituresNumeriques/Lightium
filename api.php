@@ -25,7 +25,7 @@ if(isLoged() AND !empty($_POST['action'])){
       $result->bindParam(":lang",$_POST['lang']);
       $result->execute() or die('AHAH');
         $tags = array();
-        $ids = array();
+        $subcatID = array();
       foreach ($result as $subcat) {
         $tags[] = $subcat['name'];
         $subcatID[] = $subcat['id_subcat'];

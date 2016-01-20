@@ -3,6 +3,7 @@ function pushState(e, url, title){
 	history.pushState('', title, url);
 	document.title = title;
 }
+
 $(document).ready(function(){
 	$("a.pushState").on("click",function(e){
 		//pushState(e, $(this).attr("href"), $(this).attr("data-title"));
@@ -92,7 +93,18 @@ $(document).ready(function(){
 			//New SubCategory
 			$("#popup").append('<h1>'+translation.admin_newCalendar+'</h1>');
 			$("#popup").append('<form action="/api/" method="post"></form>');
-			$("#popup > form").append('<input type="datetime-local" value="" name="datetime">');
+
+			var today = new Date();
+	    var dd = today.getDate();
+	    var mm = today.getMonth()+1; //January is 0!
+	    var yyyy = today.getFullYear();
+			if(dd<10){dd='0'+dd}
+	    if(mm<10){mm='0'+mm}
+			var date = yyyy+'-'+mm+'-'+dd;
+
+			$("#popup > form").append('<input type="date" value="'+date+'" name="date">');
+			$("#popup > form").append('<input type="time" value="12:00" name="time">');
+
 			$("#popup > form").append('<hr>');
 			$.post( '/api/', {action: "languages"},"json")
 			.done(function(data){
