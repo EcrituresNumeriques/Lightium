@@ -54,4 +54,64 @@ echo('<pre>');
 print_r($zoteroFeed);
 echo('</pre>');
 
+
+// TODO Add Checkings
+
+
+//create new item
+$newItem = $file_db->prepare("INSERT OR IGNORE INTO item (id_item, year, month, day, published, time, zoterokey) VALUES (NULL,:year,:month,:day,:time,:published,:zoterokey)");
+foreach($zoteroFeed as $item){
+
+  $item['date'] = explode("-",$item['date']);
+  (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
+  (empty($item['date'][1])?$month = date("m"):$month = $item['date'][1]);
+  (empty($item['date'][2])?$day = date("d"):$day = $item['date'][2]);
+  $time = time();
+  $published = time();
+  $zoterokey = $item['key'];
+  $newItem->bindParam(':year',$year);
+  $newItem->bindParam(':month',$month);
+  $newItem->bindParam(':day',$day);
+  $newItem->bindParam(':time',$time);
+  $newItem->bindParam(':published',$published);
+  $newItem->bindParam(':zoterokey',$zoterokey);
+  $newItem->execute() or die('Unable to add item');
+  $id_item = $file_db->lastInsertId();
+
+  //insert into item_assoc
+  $addtag = $file_db->prepare("INSERT INTO item_assoc (id_item, id_subcat) VALUES (:item,:subcat)");
+  for($i = 0; $i < count($item['subcat']);$i++ ){
+    $addtag->bindParam(":item",$id_item);
+    $addtag->bindParam(":subcat",$item['subcat'][$i]);
+    $addtag->execute() or die();
+  }
+
+  //insert into item_lang
+  $langItem = $file_db->prepare("INSERT INTO item_lang (id_item, title, short, content, cleanstring, lang) VALUES (:id_item,:title,:short,:content,:cleanstring,:lang)");
+  $langItem->bindParam(':id_item',$id_item, SQLITE3_INTEGER);
+  $langItem->bindParam(':title',$title, SQLITE3_TEXT);
+  $langItem->bindParam(':short',$short, SQLITE3_TEXT);
+  $langItem->bindParam(':content',$content, SQLITE3_TEXT);
+  $langItem->bindParam(':cleanstring',$cleanstring, SQLITE3_TEXT);
+  $langItem->bindParam(':lang',$lang, SQLITE3_TEXT);
+
+    // Execute statement EN
+    $title = $item['title'];
+    $short = $item['short'];
+    $content = $item['content'];
+    $cleanstring = cleanString($item['title']);
+    $lang = "EN";
+    $langItem->execute() or die('Unable to add lang item');
+
+    // Execute statement EN
+    $title = $item['title'];
+    $short = $item['short'];
+    $content = $item['content'];
+    $cleanstring = cleanString($item['title']);
+    $lang = "FR";
+    $langItem->execute() or die('Unable to add lang item');
+
+
+}
+
 ?>

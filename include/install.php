@@ -129,6 +129,7 @@
               }
               if($version['revision'] < 5){
                 $file_db->exec("ALTER TABLE item ADD COLUMN zoterokey TEXT");
+                $file_db->exec("create unique index unique_zotero on item(zoterokey)");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 5");
               }
             }
