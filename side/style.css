@@ -112,13 +112,11 @@ a.admin:before{
   /*max-height:150px;*/
   display:block;
   max-width: 90vw;
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
 }
 #logo > a {
   display:block;
-  padding:1rem;
-  margin:0 1rem;
+  margin:0;
+	padding:0;
   font-weight:bold;
   text-decoration:none;
 }
@@ -152,9 +150,12 @@ a.block {
 }
 
 #chapeau > article > h1,#chapeau > article > h2,#chapeau > article > p {
-  magin:0 3rem;
+  margin:0 3rem;
   text-align:center;
   color:white;
+}
+#chapeau > article > p {
+	text-align:justify;
 }
 
 #chapeau > article > h1 {

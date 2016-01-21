@@ -1,7 +1,7 @@
 <body>
 <header class="white-bg">
   <nav id="logo" class="flex-row-fluid flex-center wrapper pad2">
-    <a href="/<?=$lang?>/" class="block"><img src="/img/HDlogo.png" id="logoImg" alt="logo" class="flex0"></a>
+    <a href="/<?=$lang?>/" class="block"><img src="/img/logo.jpg" id="logoImg" alt="logo" class="flex0"></a>
     <div class="flex1"></div>
   </nav>
   <div class="black-bg">
