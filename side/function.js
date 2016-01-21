@@ -208,17 +208,23 @@ $(document).ready(function(){
 			$("#popup").append('<h1>'+translation.admin_editItem+'</h1>');
 			$("#popup").append('<form action="/api/" method="post"></form>');
 			var item = $(this).attr("data-item");
-			$.post( '/api/', {action: "getItem", item : item},"json")
+			var lang = $(this).attr("data-lang");
+			$.post( '/api/', {action: "getItem", item : item, lang : lang},"json")
 			.done(function(data){
-				for(i = 0;i<data.length;i++){
+				for(i = 0;i<data.items.length;i++){
 					if(i>0){
 						$("#popup > form").append('<hr>');
 					}
-					$("#popup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
-					$("#popup > form").append('<input type="text" value="'+data[i].title+'" name=title[] placeholder="'+translation.admin_itemTitle+'">');
-					$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_itemShort+'">'+data[i].short+'</textarea>');
-					$("#popup > form").append('<textarea name="content[]" placeholder="'+translation.admin_itemContent+'">'+data[i].content+'</textarea>');
+					$("#popup > form").append('<input type="text" value="'+data.items[i].lang+'" name="lang[]" readonly>');
+					$("#popup > form").append('<input type="text" value="'+data.items[i].title+'" name=title[] placeholder="'+translation.admin_itemTitle+'">');
+					$("#popup > form").append('<textarea name="short[]" placeholder="'+translation.admin_itemShort+'">'+data.items[i].short+'</textarea>');
+					$("#popup > form").append('<textarea name="content[]" placeholder="'+translation.admin_itemContent+'">'+data.items[i].content+'</textarea>');
 				}
+				$("#popup > form").append('<hr>');
+				for(i = 0;i<data.tags.length;i++){
+					$("#popup > form").append('<input type="checkbox" name="tags[]" value="'+data.tags[i].id+'" id="tags'+data.tags[i].id+'" '+data.tags[i].checked+'><label for="tags'+data.tags[i].id+'">'+data.tags[i].name+'</label>');
+				}
+
 				$("#popup > form").append('<input type="hidden" name="item" value="'+item+'">');
 				$("#popup > form").append('<input type="hidden" name="action" value="editItem">');
 				$("#popup > form").append('<input type="submit" value="'+translation.admin_editItemSubmit+'">');

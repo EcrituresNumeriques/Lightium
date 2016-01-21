@@ -258,6 +258,19 @@ if(isLoged() AND !empty($_POST['action'])){
       }
   }
   elseif($_POST['action'] == "getItem"){
+    $result = $file_db->prepare('SELECT DISTINCT(c.id_subcat),c.name,i.id_item FROM category_sub_lang c LEFT JOIN item_assoc i ON c.id_subcat = i.id_subcat AND i.id_item = :item WHERE lang LIKE :lang');
+    $result->bindParam(":lang",$_POST['lang'], SQLITE3_TEXT);
+    $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
+    $result->execute() or die('AHAH');
+      $tags = array();
+    foreach ($result as $subcat) {
+      (empty($subcat['id_item'])?$subcat['id_item'] = "":$subcat['id_item'] = "checked");
+      $cats['tags'][] = array(
+        "name" => $subcat['name'],
+        "id" => $subcat['id_subcat'],
+        "checked" => $subcat['id_item']
+      );
+      }
     $result = $file_db->prepare('SELECT * FROM item_lang where id_item = :item');
     $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
     $result->execute() or die('AHAH');
@@ -265,7 +278,7 @@ if(isLoged() AND !empty($_POST['action'])){
       if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
       if($cat['title'] == "null" OR $cat['title'] == NULL){$cat['title'] = "";}
       if($cat['content'] == "null" OR $cat['content'] == NULL){$cat['content'] = "";}
-      $cats[] = array(
+      $cats['items'][] = array(
         "lang" => $cat['lang'],
         "title" => $cat['title'],
         "content" => $cat['content'],
@@ -291,6 +304,16 @@ if(isLoged() AND !empty($_POST['action'])){
         $item = $_POST['item'];
         $lang = $_POST['lang'][$i];
         $edit->execute() or die('Unable to edit setting');
+      }
+      //insert into item_assoc
+      $deltag = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item");
+      $deltag->bindParam(":item",$_POST['item']);
+      $deltag->execute() or die('Unable to remove tags');
+      $addtag = $file_db->prepare("INSERT INTO item_assoc (id_item, id_subcat) VALUES (:item,:subcat)");
+      for($i = 0; $i < count($_POST['tags']);$i++ ){
+        $addtag->bindParam(":item",$_POST['item']);
+        $addtag->bindParam(":subcat",$_POST['tags'][$i]);
+        $addtag->execute() or die();
       }
   }
   else{print_r($_REQUEST);die();}
