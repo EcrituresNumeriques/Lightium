@@ -208,7 +208,7 @@ section#cookieTrail > p > a{
     margin-bottom: 1rem;
     padding: 2rem;
     color: white;
-		background-color:#0056a7;
+		background-color:black;
 }
 section#listing {
   padding:0 0 2rem 0;
@@ -224,10 +224,6 @@ section#listing > article {
 section#listing > article > h1{
 	font-size: 1.5rem;
 	margin-top:0;
-}
-
-section#listing > article:last-child {
-  border-bottom:none;
 }
 
 section#listing > article > a.listingFloat{
@@ -288,7 +284,7 @@ section#article > article > p {
 }
 
 /* NOTE form style */
-form > input, form > textarea{
+form > input:not([type='checkbox']), form > textarea{
 	display:block;
 	margin:0.5rem 0;
 	padding:0.5rem;
@@ -296,7 +292,7 @@ form > input, form > textarea{
 	border:1px solid #c0c0c0;
 }
 form > input[type=submit]{
-	background-color:#0056a7;
+	background-color:black;
 	color:white;
 }
 
