@@ -14,6 +14,7 @@ html,body{
 }
 body{
   border-top: 2px solid #0056a7;
+	background-color:#f0f0f0;
 }
 h1,h2,h3,h4,h5,h6,a{
   font-family: 'Istok Web', sans-serif;
@@ -64,6 +65,11 @@ a.admin:before{
 .pad3 {
   padding:3rem 0;
 }
+.flex-row-wrap{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+}
 .flex-row-fluid{
   display:flex;
   flex-direction:row;
@@ -85,7 +91,7 @@ a.admin:before{
 .flex-center{
   align-items:center;
 }
-.flex-top{
+.flex-top,.flex-start{
   align-items:flex-start;
 }
 
@@ -120,13 +126,13 @@ a.admin:before{
   font-weight:bold;
   text-decoration:none;
 }
-
 #menu > a {
   background-color:black;
   color:white;
   transition: background-color 0.5s ease;
+	text-align: center;
 }
-#menu > a:hover{
+#menu > a:hover,#menu > a.active{
   background-color:#0056a7;
 }
 
@@ -140,7 +146,7 @@ a.block {
   display:block;
 }
 #chapeau {
-  margin:2rem;
+  margin:1rem;
   position:relative;
 }
 
@@ -187,7 +193,9 @@ a.block {
     text-align:center;
     color:white;
 }
-
+section#cookieTrail{
+	display:none;
+}
 section#cookieTrail > p > a{
   color:black;
   font-weight: bold;
@@ -202,8 +210,14 @@ section#listing {
 
 section#listing > article {
   clear:both;
-  padding:1rem 0;
-  border-bottom:1px solid #3498db
+  padding:2rem;
+	background-color:white;
+	border:1px solid #c0c0c0;
+	margin-bottom: 1rem;
+}
+section#listing > article > h1{
+	font-size: 1.5rem;
+	margin-top:0;
 }
 
 section#listing > article:last-child {
@@ -223,11 +237,20 @@ section#listing > article > a.listingFloat > img{
 section#calendar {
 	margin-left:1rem;
 	padding-left:1rem;
-	border-left: 1px solid #05afef;
+	border: 1px solid #c0c0c0;
+	background-color: white;
+	flex:0 0 300px;
 }
 
 section#calendar > h1 {
 	text-align:center;
+}
+section#article {
+	background-color: white;
+	padding-top: 3rem;
+}
+section#article > article > nav.flex-row-wrap{
+	justify-content: center;
 }
 section#article > article > h1{
 	text-align:center;
@@ -248,6 +271,14 @@ section#article > article > p {
 	line-height:200%;
 }
 
+.tags{
+	background-color:#0056a7;
+	color:white;
+	margin:0 1rem 1rem 0;
+}
+.tags:last-child{
+	margin-right:0;
+}
 
 /* NOTE Administration style */
 #blackout{

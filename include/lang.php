@@ -5,10 +5,10 @@ if(!isset($_GET['lang'])){
 	include('lang/fr.php');
 }
 else{
-  $langAllowed = array('FR');
-  if(in_array($_GET['lang'],$langAllowed)){
+  $langAllowed = array('fr','en');
+  if(in_array(strtolower($_GET['lang']),$langAllowed)){
     $lang = $_GET['lang'];
-	include('lang/fr.php');
+	include('lang/'.strtolower($_GET['lang']).'.php');
   }
   else{
     $lang = "fr";

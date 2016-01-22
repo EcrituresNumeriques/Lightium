@@ -54,7 +54,7 @@ function drawLead($class, $name, $description,$type,$id,$translation,$lang){
       <nav id="goRight"><a href="">></a></nav>-->
       <h1><?=$name?></h1>
       <?=$admin?>
-      <p><?=$description?></p>
+      <p class="hyphenate"><?=$description?></p>
     </article>
   </section>
   <?php
@@ -110,8 +110,8 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
     ';
   }
 	?>
-		<section id="article" class="wrapper">
-			<article class="hyphenate">
+		<section id="article">
+			<article class="hyphenate wrapper">
 				<h1><?=$article['title']?></h1>
         <?=$admin?>
 				<?=drawTags($lang,$article['subcat'])?>
@@ -130,11 +130,11 @@ function drawTags($lang, $tags){
     $subCatName = explode(';',$tags[1]);
     $catName = explode(';',$tags[2]);
   ?>
-	<nav class="flex-row-fluid flex-center">
+	<nav class="flex-row-wrap flex-start">
     <?php
     for($i = 0;$i < count($subCat);$i++){
       $url = '/'.$lang.'/'.cleanString($catName[$i]).'/'.cleanString($subCatName[$i]).'/';
-      ?><a href="<?=$url?>" class="cat<?=$subCat[$i]?> block"><?=$subCatName[$i]?></a><?php
+      ?><a href="<?=$url?>" class="cat<?=$subCat[$i]?> block tags"><?=$subCatName[$i]?></a><?php
     }  ?>
     </nav>
 	<?php
@@ -228,10 +228,10 @@ elseif($action == "year"){
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
   }
 ?>
-  <article class="clear hyphenate">
+  <article class="clear">
     <?=$image?>
     <h1><a href="<?=$url?>" class="pushState"><?=$title?></a></h1>
-    <p><?=$row['short']?></p><?php
+    <p class="hyphenate"><?=$row['short']?></p><?php
   if(!empty($tags)){
 	drawTags($lang,$tags);
 	}
