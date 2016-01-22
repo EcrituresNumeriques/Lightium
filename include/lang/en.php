@@ -1,5 +1,8 @@
 <?php
 $translation = array(
+	"username" => "Username",
+	"password" => "Password",
+	"addLanguage" => "Add a language",
 	"nav_home" => "Accueil",
 	"listing_nothing" => "Rien à afficher ici",
 	"listing_comeBack" => "Mais revenez plus tard, cette page sera remplie d'articles vraiment interressants!",
@@ -28,6 +31,7 @@ $translation = array(
 	"admin_settingsSiteTitle" => "Titre du site",
 	"admin_settingsSiteMeta" => "Metadonnée",
 	"admin_settingsSiteDescription" => "Description du site",
+	"admin_settingsSiteLang" => "Lang",
 	"admin_editSettingsSubmit" => "Modifier",
 	"admin_CatName" => "Nom de la catégorie",
 	"admin_urlToImg" => "lien vers l'image",

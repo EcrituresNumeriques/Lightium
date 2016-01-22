@@ -1,8 +1,7 @@
 <?php
 
 if(!isset($_GET['lang'])){
-  $lang = "fr";
-	include('lang/fr.php');
+  header("location:/fr/");
 }
 else{
   $langAllowed = array('fr','en');

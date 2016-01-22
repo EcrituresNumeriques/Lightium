@@ -203,7 +203,13 @@ section#cookieTrail > p > a{
   display:inline-block;
   margin:0 1rem;
 }
-
+#newItem,#newCalendar,#newSubCat{
+    border: 1px solid white;
+    margin-bottom: 1rem;
+    padding: 2rem;
+    color: white;
+		background-color:#0056a7;
+}
 section#listing {
   padding:0 0 2rem 0;
 }
@@ -236,7 +242,7 @@ section#listing > article > a.listingFloat > img{
 }
 section#calendar {
 	margin-left:1rem;
-	padding-left:1rem;
+	padding:2rem;
 	border: 1px solid #c0c0c0;
 	background-color: white;
 	flex:0 0 300px;
@@ -244,6 +250,7 @@ section#calendar {
 
 section#calendar > h1 {
 	text-align:center;
+	margin-top: 0;
 }
 section#article {
 	background-color: white;
@@ -278,6 +285,19 @@ section#article > article > p {
 }
 .tags:last-child{
 	margin-right:0;
+}
+
+/* NOTE form style */
+form > input, form > textarea{
+	display:block;
+	margin:0.5rem 0;
+	padding:0.5rem;
+	width:calc(100% - (1rem + 2px));
+	border:1px solid #c0c0c0;
+}
+form > input[type=submit]{
+	background-color:#0056a7;
+	color:white;
 }
 
 /* NOTE Administration style */

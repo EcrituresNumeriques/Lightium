@@ -43,8 +43,8 @@
           <head></head>
           <body>
             <form action="" method="post">
-            <input type="text" name="user" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
+            <input type="text" name="user" placeholder="<?=$translation['username']?>">
+            <input type="password" name="password" placeholder="<?=$translation['password']?>">
             <input type="submit">
           <?php
           die();
@@ -86,14 +86,14 @@
           <script type="text/javascript">
             $(document).ready(function(){
               $("#addLanguage").on("click",function(){
-                $("#submit").before(' <input id="languages" type="text" name="name[]" placeholder="Name"><textarea name="description[]" placeholder="Description"></textarea><textarea name="meta[]" placeholder="Meta"></textarea><input type="text" name="title[]" placeholder="Title"><input type="text" name="lang[]" placeholder="Lang"><hr>');
+                $("#submit").before(' <input id="languages" type="text" name="name[]" placeholder="<?=$translation['admin_settingsSiteName']?>"><textarea name="description[]" placeholder="<?=$translation['admin_settingsSiteDescription']?>"></textarea><textarea name="meta[]" placeholder="<?=$translation['admin_settingsSiteMeta']?>"></textarea><input type="text" name="title[]" placeholder="<?=$translation['admin_settingsSiteTitle']?>"><input type="text" name="lang[]" placeholder="<?=$translation['admin_settingsSiteLang']?>"><hr>');
               });
             });
           </script>
 
           </head>
           <body>
-            <p id="addLanguage">Add a language</p>
+            <p id="addLanguage"><?=$translation['addLanguage']?></p>
             <form action="" method="post">
             <input id="submit" type="submit">
           <?php
