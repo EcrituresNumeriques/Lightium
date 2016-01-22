@@ -163,8 +163,6 @@
     $file_db->exec("CREATE TABLE IF NOT EXISTS user (id_user INTEGER PRIMARY KEY, token TEXT,username TEXT, salt TEXT, hash TEXT)");
     $file_db->exec("CREATE TABLE IF NOT EXISTS events (id_event INTEGER PRIMARY KEY, time INTEGER)");
     $file_db->exec("CREATE TABLE IF NOT EXISTS events_lang (id_event INTEGER, title TEXT, location TEXT, short TEXT, description TEXT, lang TEXT)");
-    $file_db->exec("ALTER TABLE item ADD COLUMN zoterokey TEXT");
-    $file_db->exec("create unique index unique_zotero on item(zoterokey)");
     header("location:".$_SERVER['PHP_SELF']);
 }
 
