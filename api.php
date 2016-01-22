@@ -68,6 +68,40 @@ if(isLoged() AND !empty($_POST['action'])){
     }
 
   }
+    //add new stuff to the database
+    elseif($_POST['action'] == "newCalendar"){
+      // TODO Add Checkings
+
+      //create new category
+      $insert = "INSERT INTO events (id_event,time) VALUES (NULL,:time)";
+      $addEvent = $file_db->prepare($insert);
+      $addEvent->bindParam(":time",$datetime);
+      $date = DateTime::createFromFormat("Y-m-d H:i",$_POST['date']." ".$_POST['time']);
+      $datetime = $date->getTimestamp();
+      $addEvent->execute() or die('Unable to add the event');
+      $id_event = $file_db->lastInsertId();
+
+      //insert into category_lang
+      $insert = "INSERT INTO events_lang (id_event, title, short, location, description, lang) VALUES (:id_event,:title,:short,:location, :description, :lang)";
+      $stmt = $file_db->prepare($insert);
+      $stmt->bindParam(':id_event', $id_event, SQLITE3_INTEGER);
+      $stmt->bindParam(':title', $title, SQLITE3_TEXT);
+      $stmt->bindParam(':short', $short, SQLITE3_TEXT);
+      $stmt->bindParam(':location', $location, SQLITE3_TEXT);
+      $stmt->bindParam(':description', $description, SQLITE3_TEXT);
+      $stmt->bindParam(':lang', $lang, SQLITE3_TEXT);
+
+      for ($i = 0; $i < count($_POST['lang']);$i++ ){
+        // Execute statement
+        $title = $_POST['title'][$i];
+        $lang = $_POST['lang'][$i];
+        $description = $_POST['description'][$i];
+        $location = $_POST['location'][$i];
+        $short = $_POST['short'][$i];
+        $stmt->execute();
+      }
+
+    }
   elseif($_POST['action'] == "newSubCat"){
     // TODO Add Checkings
 

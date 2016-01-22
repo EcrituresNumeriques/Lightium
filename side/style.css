@@ -166,7 +166,7 @@ a.block {
 
 #chapeau > article > h1 {
   font-size:3rem;
-  margin:0 0 3rem 0;
+  margin:0 0 1rem 0;
 }
 #chapeau > article > #goRight,#chapeau > article > #goLeft{
   position:absolute;
@@ -243,11 +243,31 @@ section#calendar {
 	background-color: white;
 	flex:0 0 300px;
 }
-
 section#calendar > h1 {
 	text-align:center;
 	margin-top: 0;
 }
+section#calendar > article {
+	padding:1rem;
+	border:1px solid #c0c0c0;
+	margin-bottom: 1rem;
+}
+section#calendar > article > h1 {
+	margin-top: 0;
+	font-size: 1.5rem;
+	margin:0;
+}
+section#calendar > article > h2 {
+	margin: 0;
+	font-size: 1rem;
+}
+section#calendar > article > p {
+	margin: 0;
+	font-size: 1rem;
+}
+
+
+
 section#article {
 	background-color: white;
 	padding-top: 3rem;

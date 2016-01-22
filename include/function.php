@@ -96,7 +96,7 @@ function drawCookieTrail($lang = "",$category = "",$subCat = "",$year = "",$mont
 }
 
 function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation){
-	$query = $db->prepare("SELECT i.id_item,il.title, il.short,il.content, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year AND i.month = :month AND i.day = :day AND il.cleanstring LIKE :cleanstring LIMIT 0,1");
+	$query = $db->prepare("SELECT i.id_item,il.title, il.short,il.content, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year AND i.month = :month AND i.day = :day AND il.cleanstring LIKE :cleanstring LIMIT 0,1");
 	$query->bindParam(':lang',$lang, SQLITE3_TEXT);
 	$query->bindParam(':year',$year, SQLITE3_INTEGER);
 	$query->bindParam(':month',$month, SQLITE3_INTEGER);
@@ -125,7 +125,7 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
 }
 
 function drawTags($lang, $tags){
-	$tags = explode('/',$tags,3);
+	$tags = explode('#',$tags,3);
     $subCat = explode(';',$tags[0]);
     $subCatName = explode(';',$tags[1]);
     $catName = explode(';',$tags[2]);
@@ -151,21 +151,21 @@ function drawListing($db, $translation, $current, $lang, $action, $what){
   $admin = '<a class="admin" id="newSubCat" data-cat="'.$what.'">'.$translation['admin_newSubCat'].'</a>';
 }
 elseif($action == "index"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->execute() or die('Unable to fetch Items');
   //admin add item
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "subcat"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':subcat',$what, SQLITE3_INTEGER);
   $query->execute() or die('Unable to fetch Items');
   $admin = '<a class="admin" id="newItem" data-subcat="'.$what.'" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "day"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.day = :day AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.day = :day AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':day',$day, SQLITE3_INTEGER);
   $query->bindParam(':month',$month, SQLITE3_INTEGER);
@@ -178,7 +178,7 @@ elseif($action == "day"){
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "month"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.month = :month AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':month',$month, SQLITE3_INTEGER);
   $query->bindParam(':year',$year, SQLITE3_INTEGER);
@@ -189,7 +189,7 @@ elseif($action == "month"){
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "year"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '/' ||group_concat(csl.name,';') || '/' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year GROUP BY i.id_item ORDER BY time DESC");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':year',$year, SQLITE3_INTEGER);
   $date = split("/",$what);
@@ -253,7 +253,7 @@ echo('</section>');
 }
 
 function drawCalendar($db, $translation,$lang){
-	$calendar = $db->prepare("SELECT e.id_event, l.title, e.time, l.location, l.short, l.description FROM events e JOIN events_lang l ON e.id_event = l.id_event AND l.lang = :lang WHERE time > :time LIMIT 0,5");
+	$calendar = $db->prepare("SELECT e.id_event, l.title, e.time, l.location, l.short, l.description FROM events e JOIN events_lang l ON e.id_event = l.id_event AND l.lang LIKE :lang WHERE e.time > :time ORDER BY e.time ASC LIMIT 0,5");
 	$calendar->bindParam(":time",$time,SQLITE3_INTEGER);
 	$calendar->bindParam(":lang",$lang,SQLITE3_TEXT);
 	$time = time() - 60*60*24;
@@ -275,7 +275,7 @@ function drawCalendar($db, $translation,$lang){
 				?>
 				<article class="clear hyphenate">
 	   			<h1><?=$row['title']?></h1>
-					<h2><?=$row['date']?></h2>
+					<h2><?=$date?></h2>
 					<h2><?=$row['location']?></h2>
 					<p><?=$row['short']?></p>
 	  		</article>
