@@ -283,10 +283,8 @@ function drawCalendar($db, $translation,$lang){
 			}
 			if($rowCount < 1){
 			?>
-			<article class="clear hyphenate">
    			<h1><?=$translation['calendar_nothing']?></h1>
-  		</article>
-			<?php
+  		<?php
 		}
 			?>
 			</section>

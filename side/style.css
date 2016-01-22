@@ -245,7 +245,10 @@ section#calendar {
 }
 section#calendar > h1 {
 	text-align:center;
-	margin-top: 0;
+	margin-bottom: 0;
+}
+section#calendar > h1:last-child {
+	margin: 0;
 }
 section#calendar > article {
 	padding:1rem;
