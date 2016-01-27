@@ -271,7 +271,7 @@ function drawCalendar($db, $translation,$lang){
 		  $rowCount = 0;
 		  foreach($calendar as $row){
 				$rowCount++;
-				$date = date("d/m/Y h:i",$row['time']);
+				$date = date("d/m/Y H:i",$row['time']);
 				?>
 				<article class="clear hyphenate">
 	   			<h1><?=$row['title']?></h1>
