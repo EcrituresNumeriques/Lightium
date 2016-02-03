@@ -133,6 +133,12 @@
                 $file_db->exec("create unique index unique_zotero on item(zoterokey)");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 5");
               }
+              if($version['revision'] < 6){
+                $file_db->exec("ALTER TABLE category ADD COLUMN priority INTEGER");
+                $file_db->exec("CREATE TRIGGER setPriorityOnInsert AFTER INSERT ON category FOR EACH ROW WHEN NEW.priority IS NULL BEGIN UPDATE category SET priority = NEW.id_cat WHERE id_cat = NEW.id_cat; END;");
+                $file_db->exec("UPDATE category SET priority = id_cat");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 6");
+              }
             }
         }
 

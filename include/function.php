@@ -41,10 +41,10 @@ function cleanString($string) {
    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
 }
 
-function drawLead($class, $name, $description,$type,$id,$translation,$lang){
+function drawLead($class, $name, $description,$type,$id,$translation,$lang,$priority){
   $admin = "";
   if(isLogedNC()){
-    $admin = '<a id="editLead" data-type="'.$type.'" data-lang="'.$lang.'" data-cat="'.$id.'" class="admin">'.$translation['admin_changeLead'].'</a>
+    $admin = '<a id="editLead" data-type="'.$type.'" data-lang="'.$lang.'" data-cat="'.$id.'" data-priority="'.$priority.'" class="admin">'.$translation['admin_changeLead'].'</a>
     ';
   }
   ?>

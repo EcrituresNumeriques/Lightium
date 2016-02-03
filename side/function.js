@@ -155,6 +155,8 @@ $(document).ready(function(){
 					//edit cat
 					$("#popup").append('<h1>'+translation.admin_editCat+'</h1>');
 					$("#popup").append('<form action="/api/" method="post"></form>');
+					$("#popup > form").append('<input type="integer" value="'+$(this).attr("data-priority")+'" name="priority" placeholder="'+translation.admin_CatPriority+'">');
+					$("#popup > form").append('<hr>');
 					var cat = $(this).attr("data-cat");
 					$.post( '/api/', {action: "getCat", cat : cat},"json")
 					.done(function(data){

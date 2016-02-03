@@ -34,6 +34,7 @@ $translation = array(
 	"admin_settingsSiteLang" => "Lang",
 	"admin_editSettingsSubmit" => "Edit",
 	"admin_CatName" => "Name of the category",
+	"admin_CatPriority" => "Priority of the category",
 	"admin_urlToImg" => "URL to the image",
 	"admin_CatDescription" => "Description of the category",
 	"admin_editCatSubmit" => "Edit the category",

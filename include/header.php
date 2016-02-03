@@ -8,12 +8,12 @@
     <nav id="menu" class="flex-row-fluid flex-center wrapper">
   	<a href="/<?=$lang?>/" class="home block pushState flex0" data-title="Chaire"><?=$translation['nav_home']?></a>
   <?php
-      $result = $file_db->prepare('SELECT id_cat,name,lang,image FROM category_lang WHERE lang LIKE :lang');
+      $result = $file_db->prepare('SELECT cl.id_cat,name,lang,image,c.priority FROM category_lang cl JOIN category c ON c.id_cat = cl.id_cat WHERE lang LIKE :lang ORDER BY c.priority ASC');
       $result->bindParam(":lang",$lang);
       $result->execute() or die('AHAH');
       foreach($result as $row){
         (cleanString($row['name']) == $_GET['cat']? $class = " active": $class = "");
-        echo('    <a href="/'.strtolower($row['lang']).'/'.cleanString($row['name']).'" class="cat'.$row['id_cat'].' block pushState flex0'.$class.'" data-title="'.$row['name'].' / Chaire">'.$row['name'].'</a>'."\n");
+        echo('    <a href="/'.strtolower($row['lang']).'/'.cleanString($row['name']).'" class="cat'.$row['id_cat'].' block pushState flex0'.$class.'" data-priority="'.$row['priority'].'">'.$row['name'].'</a>'."\n");
       }
       if(isLogedNC()){
         ?>    <a class="block pushState flex0 admin" id="newCat"><?=$translation['admin_newCat']?></a>

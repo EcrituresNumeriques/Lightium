@@ -234,6 +234,35 @@ if(isLoged() AND !empty($_POST['action'])){
           die();
   }
   elseif($_POST['action'] == "editCat"){
+    //Update priority
+      $checkPriority = $file_db->prepare("SELECT priority FROM category WHERE id_cat = :cat");
+      $checkPriority->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
+      $checkPriority->execute() or die('Unable to check priority');
+      $checkPriority = $checkPriority->fetch();
+      if($checkPriority['priority'] != $_POST['priority']){
+        if($checkPriority['priority'] > $_POST['priority']){
+          //New priority is higher
+          $updatePriority = $file_db->prepare("UPDATE category SET priority = priority + 1 WHERE priority < :max AND priority >= :min");
+          $updatePriority->bindParam("min",$_POST['priority'],SQLITE3_INTEGER);
+          $updatePriority->bindParam("max",$checkPriority['priority'],SQLITE3_INTEGER);
+        }
+        else{
+          //New priority is lower
+          $updatePriority = $file_db->prepare("UPDATE category SET priority = priority - 1 WHERE priority <= :max AND priority > :min");
+          $updatePriority->bindParam("max",$_POST['priority'],SQLITE3_INTEGER);
+          $updatePriority->bindParam("min",$checkPriority['priority'],SQLITE3_INTEGER);
+        }
+        $updatePriority->execute() or die('Unable to shift priority');
+
+        //Update the cat priority
+        $priority = $file_db->prepare("UPDATE category SET priority = :priority WHERE id_cat = :cat");
+        $priority->bindParam(":priority",$_POST['priority'], SQLITE3_INTEGER);
+        $priority->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
+        $priority->execute() or die('Unable to set new priority');
+      }
+
+
+    //Update info
       $edit = $file_db->prepare("UPDATE category_lang SET name = :name, description = :description, image = :image, cleanstring = :cleanString WHERE lang LIKE :lang AND id_cat = :cat");
       $edit->bindParam(":name",$name, SQLITE3_TEXT);
       $edit->bindParam(":description",$description, SQLITE3_TEXT);

@@ -49,13 +49,13 @@ elseif(!empty($_GET['subcat'])){
 }
 //Category
 elseif(!empty($_GET['cat'])){
-  $category = $file_db->prepare("SELECT id_cat, name, image, description FROM category_lang WHERE cleanString LIKE :cat AND lang LIKE :lang");
+  $category = $file_db->prepare("SELECT cl.id_cat, name, image, description,c.priority FROM category_lang cl JOIN category c ON c.id_cat = cl.id_cat WHERE cleanString LIKE :cat AND lang LIKE :lang");
   $category->bindParam(":cat",$_GET['cat'], SQLITE3_TEXT);
   $category->bindParam(":lang",$lang, SQLITE3_TEXT);
   $category->execute() or die('unable to find category');
   $cat = $category->fetch();
   if(!empty($cat['name'])){
-    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'cat',$cat['id_cat'],$translation,$lang);
+    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'cat',$cat['id_cat'],$translation,$lang, $cat['priority']);
     $current = drawCookieTrail($lang,$cat['name']);
 	echo('<div class="flex-row-fluid wrapper">');
     drawListing($file_db, $translation, $current,$lang,'cat',$cat['id_cat']);
