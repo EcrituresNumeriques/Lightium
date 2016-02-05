@@ -8,5 +8,6 @@ php5enmod mcrypt
 cp apache2.conf /etc/apache2/apache2.conf
 cp php.ini /etc/php5/apache2/php.ini
 cp 000-default.conf /etc/apache2/sites-available/000-default.conf
+chown www-data:www-data /var/www
 #Add the https version here + all the ssl generation etc
 service apache2 start
