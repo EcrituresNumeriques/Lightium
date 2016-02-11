@@ -54,7 +54,13 @@ $translation = array(
 	"admin_newCalendarShort" => "Lead of the event",
 	"admin_newCalendarLocation" => "Location of the event",
 	"admin_newCalendarDescription" => "Description of the event",
-	"admin_newCalendarSubmit" => "Add the event"
+	"admin_newCalendarSubmit" => "Add the event",
+	"admin_plugins" => "Plugins",
+	"admin_editPlugins" => "Edit Plugins",
+	"admin_editPlugin" => "Edit",
+	"admin_deletePlugin" => "Delete",
+	"admin_newPlugin" => "Add a new plugin",
+	"admin_newlyPlugin" => "Newly created plugin"
 );
 
 

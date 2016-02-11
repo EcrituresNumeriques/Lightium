@@ -8,7 +8,7 @@ foreach($requete as $subcat){
 // create curl resource
 $curlZotero = curl_init();
 // set url
-curl_setopt($curlZotero, CURLOPT_URL, 'https://api.zotero.org/'.$settings['parameter1'].'/'.$settings['parameter2'].'/items?v=3&include=citation,data&limit=100&itemType=book&since='.$settings['parameter3']);
+curl_setopt($curlZotero, CURLOPT_URL, 'https://api.zotero.org/'.$settings['public1'].'/'.$settings['public2'].'/items?v=3&include=citation,data&limit=100&start='.$settings['int2'].$settings['public3'].'&since='.$settings['int1']);
 //return the transfer as a string
 curl_setopt($curlZotero, CURLOPT_RETURNTRANSFER, 1);
 // $output contains the output string
@@ -18,6 +18,7 @@ curl_close($curlZotero);
 $output = json_decode($output, true);
 $zoteroFeed = array();
 foreach($output as $object){
+($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);
 $content = $title = $short = $date = $tags = $key = "";
 (empty($object['links']['data']['extra'])?:$content .= $object['links']['data']['extra']."<br>");
 (empty($object['citation'])?:$content .= $object['citation']."<br>");
@@ -53,6 +54,8 @@ foreach($tags as $tag){
     "subcat" => $subcat
   );
 }
+
+
 echo('<pre>');
 print_r($zoteroFeed);
 echo('</pre>');
@@ -131,5 +134,22 @@ foreach($zoteroFeed as $item){
 
 
 }
+
+$count = count($output);
+
+if($count == 100){
+  $since = $settings[int1];
+  $start = $settings[int2]+100;
+}
+else{
+  $since = $lastVersion;
+  $start = 0;
+}
+//update the plugin table with the new info
+$updateZotero = $file_db("UPDATE plugins SET int1 = :since, int2 = :start WHERE id_plugin = :plugin");
+$updateZotero->bindParam(":since",$since,SQLITE3_INTEGER);
+$updateZotero->bindParam(":start",$start,SQLITE3_INTEGER);
+$updateZotero->bindParam(":plugin",$setting['id_plugin'],SQLITE3_INTEGER);
+$updateZotero->execute() or die("Unable to update the zoteroSinceStart");
 
 ?>

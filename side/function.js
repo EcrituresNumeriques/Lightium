@@ -236,6 +236,36 @@ $(document).ready(function(){
 						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
 			});
 		}
+		else if($(this).attr("id") == "plugins"){
+			//edit item
+			$("#popup").append('<h1>'+translation.admin_editPlugins+'</h1>');
+			$.post( '/api/', {action: "getPlugins"},"json")
+			.done(function(data){
+				for(i = 0;i<data.length;i++){
+					$("#popup").append('<div id="plugin'+data[i].id+'" class="pluginList"></div>');
+					$("#popup > #plugin"+data[i].id).append('<p>'+data[i].file+' ("'+data[i].public1+'","'+data[i].public2+'","'+data[i].public3+'")</p>');
+					$("#popup > #plugin"+data[i].id).append('<p class="editPlugin" data-id="'+data[i].id+'">'+translation.admin_editPlugin+'</p>');
+					$("#popup > #plugin"+data[i].id).append('<p class="deletePlugin" data-id="'+data[i].id+'">'+translation.admin_deletePlugin+'</p>');
+				}
+				$("#popup").append('<p id="newPlugin">'+translation.admin_newPlugin+'</p>');
+				$(".deletePlugin").on("click",function(){
+
+				});
+				$("#newPlugin").on("click",function(){
+					$.post( '/api/', {action: "newPlugin"},"json")
+					.done(function(datata){
+						$(".pluginList").last().after('<div id="plugin'+datata.id+'" class="pluginList"></div>');
+						$("#popup > #plugin"+datata.id).append('<p>'+translation.admin_newlyPlugin+'</p>');
+						$("#popup > #plugin"+datata.id).append('<p class="editPlugin" data-id="'+datata.id+'">'+translation.admin_editPlugin+'</p>');
+						$("#popup > #plugin"+datata.id).append('<p class="deletePlugin" data-id="'+datata.id+'">'+translation.admin_deletePlugin+'</p>');
+					})
+					.fail(function(data){});
+				});
+			})
+			.fail(function(d, textStatus, error) {
+						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+			});
+		}
 		$("#closePopup").on("click",function(){
 			$("#blackout").remove();
 		});

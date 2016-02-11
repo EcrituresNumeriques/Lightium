@@ -138,6 +138,10 @@
                 $file_db->exec("UPDATE category SET priority = id_cat");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 6");
               }
+              if($version['revision'] < 7){
+                $file_db->exec("CREATE TABLE IF NOT EXISTS plugins (id_plugin INTEGER PRIMARY KEY, file TEXT, public1 TEXT, public2 TEXT, public3 TEXT, int1 INTEGER DEFAULT 0, int2 INTEGER DEFAULT 0, int3 INTEGER DEFAULT 0,txt1 TEXT,txt2 TEXT,txt3 TEXT)");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 7");
+              }
             }
         }
 

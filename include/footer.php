@@ -1,6 +1,11 @@
 <?php
 if(isLoged()){
   //logOut
+  ?>
+  <footer>
+    <a class="admin" id="plugins"><?=$translation["admin_plugins"]?></a>
+  </footer>
+  <?php
 }
 else{
   //login

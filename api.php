@@ -40,7 +40,32 @@ if(isLoged() AND !empty($_POST['action'])){
       die();
     }
 
+    elseif($_POST['action'] == "getPlugins"){
+        $result = $file_db->prepare('SELECT id_plugin as id,file,public1, public2, public3 FROM plugins');
+        $result->execute() or die('AHAH');
+        $result = $result->fetchAll(PDO::FETCH_ASSOC);
+        $plugins = array();
+        foreach ($result as $plugin) {
+          ($plugin['file'] != NULL ?:$plugin['file'] = $translation['admin_newlyPlugin']);
+          ($plugin['public1'] != NULL ?:$plugin['public1'] = "");
+          ($plugin['public2'] != NULL ?:$plugin['public2'] = "");
+          ($plugin['public3'] != NULL ?:$plugin['public3'] = "");
+          $plugins[] = $plugin;
+        }
+        echo(JSON_encode($plugins));
+        //only request, do not show anything
+        die();
+    }
   //add new stuff to the database
+
+
+  elseif($_POST['action'] == "newPlugin"){
+    $file_db->query("INSERT INTO plugins DEFAULT VALUES");
+    $reponse['id'] = $file_db->lastInsertId();
+    $reponse['file'] = "empty";
+    echo(JSON_encode($reponse));
+    die();
+  }
   elseif($_POST['action'] == "newCat"){
     // TODO Add Checkings
 

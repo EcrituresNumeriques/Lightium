@@ -337,8 +337,14 @@ form > input[type=submit]{
 #blackout #popup{
   background-color:white;
   max-width:1024px;
+	max-height:calc(100vh - 8em);
+	width: calc(100vw - 8em);
   padding:2em;
   position:relative;
+}
+#blackout #popup form{
+	overflow-y: auto;
+	max-height:calc(100vh - 12em);
 }
 #blackout #popup #closePopup{
   position:absolute;
@@ -353,4 +359,20 @@ form > input[type=submit]{
   color:white;
   border-radius: 2em;
   cursor:pointer;
+}
+#blackout #popup .pluginList{
+	display:flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
+#blackout #popup .pluginList p{
+	flex:0 0 auto;
+	margin:0.5rem;
+	border-bottom:1px solid #c0c0c0;
+	cursor: pointer;
+}
+#blackout #popup .pluginList p:first-child{
+		flex:1 1 auto;
+		margin-right:1rem;
+		cursor:auto;
 }
