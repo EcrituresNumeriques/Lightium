@@ -146,10 +146,10 @@ else{
   $start = 0;
 }
 //update the plugin table with the new info
-$updateZotero = $file_db("UPDATE plugins SET int1 = :since, int2 = :start WHERE id_plugin = :plugin");
+$updateZotero = $file_db->prepare("UPDATE plugins SET int1 = :since, int2 = :start WHERE id_plugin = :plugin");
 $updateZotero->bindParam(":since",$since,SQLITE3_INTEGER);
 $updateZotero->bindParam(":start",$start,SQLITE3_INTEGER);
-$updateZotero->bindParam(":plugin",$setting['id_plugin'],SQLITE3_INTEGER);
+$updateZotero->bindParam(":plugin",$settings['id_plugin'],SQLITE3_INTEGER);
 $updateZotero->execute() or die("Unable to update the zoteroSinceStart");
 
 ?>

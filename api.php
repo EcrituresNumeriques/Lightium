@@ -63,8 +63,41 @@ if(isLoged() AND !empty($_POST['action'])){
     $file_db->query("INSERT INTO plugins DEFAULT VALUES");
     $reponse['id'] = $file_db->lastInsertId();
     $reponse['file'] = "empty";
+    $reponse['public1'] = "";
+    $reponse['public2'] = "";
+    $reponse['public3'] = "";
+    $reponse['int1'] = 0;
+    $reponse['int2'] = 0;
+    $reponse['int3'] = 0;
+    $reponse['txt1'] = "";
+    $reponse['txt2'] = "";
+    $reponse['txt3'] = "";
+    $plugins = scandir("plugins/");
+    $reponse = array("plugin" => $reponse, "pluginList" => array());
+    foreach($plugins as $plugin){
+      if(endsWith($plugin,".php")){
+        $plugin = substr($plugin,0,-4);
+        $reponse[pluginList][] = $plugin;
+      }
+    }
     echo(JSON_encode($reponse));
     die();
+  }
+  elseif($_POST['action'] == "retrievePlugin"){
+      $retrievePlugin = $file_db->prepare("SELECT id_plugin as id,file,public1, public2, public3, int1, int2, int3, txt1, txt2, txt3 FROM plugins where id_plugin = :plugin");
+      $retrievePlugin->bindParam(":plugin",$_POST[id],SQLITE3_INTEGER);
+      $retrievePlugin->execute() or die('unable to retrieve Plugin');
+      $reponse = $retrievePlugin->fetch(PDO::FETCH_ASSOC);
+      $plugins = scandir("plugins/");
+      $reponse = array("plugin" => $reponse, "pluginList" => array());
+      foreach($plugins as $plugin){
+        if(endsWith($plugin,".php")){
+          $plugin = substr($plugin,0,-4);
+          $reponse[pluginList][] = $plugin;
+        }
+      }
+      echo(JSON_encode($reponse));
+      die();
   }
   elseif($_POST['action'] == "newCat"){
     // TODO Add Checkings
@@ -399,10 +432,29 @@ if(isLoged() AND !empty($_POST['action'])){
       $deltag->execute() or die('Unable to remove tags');
       $addtag = $file_db->prepare("INSERT INTO item_assoc (id_item, id_subcat) VALUES (:item,:subcat)");
       for($i = 0; $i < count($_POST['tags']);$i++ ){
-        $addtag->bindParam(":item",$_POST['item']);
-        $addtag->bindParam(":subcat",$_POST['tags'][$i]);
+        $addtag->bindParam(":item",$_POST['item'],SQLITE3_INTEGER);
+        $addtag->bindParam(":subcat",$_POST['tags'][$i],SQLITE3_INTEGER);
         $addtag->execute() or die();
       }
+  }
+  elseif($_POST['action'] == "deletePlugin"){
+    $delete = $file_db->prepare("DELETE FROM plugins WHERE id_plugin = :plugin");
+    $delete->bindParam(":plugin", $_POST['plugin'],SQLITE3_INTEGER);
+    $delete->execute() or die('Unable to delete Plugin');
+    $response = array("error" => 0);
+    echo(JSON_encode($response));
+    die();
+  }
+  elseif($_POST['action'] == "editPlugin"){
+    $delete = $file_db->prepare("UPDATE plugins SET file = :file, public1 = :public1, public2 = :public2, public3 = :public3 WHERE id_plugin = :plugin");
+    if(endsWith($_POST['file'],".php")){$_POST[file] = substr($_POST['file'],0,-4);}
+    $delete->bindParam(":plugin", $_POST['id_plugin'],SQLITE3_INTEGER);
+    $delete->bindParam(":public1", $_POST['public1'],SQLITE3_TEXT);
+    $delete->bindParam(":public2", $_POST['public2'],SQLITE3_TEXT);
+    $delete->bindParam(":public3", $_POST['public3'],SQLITE3_TEXT);
+    $delete->bindParam(":file", $_POST['file'],SQLITE3_TEXT);
+    $delete->execute() or die('Unable to edit Plugin');
+    $response = array("error" => 0);
   }
   else{print_r($_REQUEST);die();}
 

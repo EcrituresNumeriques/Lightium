@@ -248,19 +248,32 @@ $(document).ready(function(){
 					$("#popup > #plugin"+data[i].id).append('<p class="deletePlugin" data-id="'+data[i].id+'">'+translation.admin_deletePlugin+'</p>');
 				}
 				$("#popup").append('<p id="newPlugin">'+translation.admin_newPlugin+'</p>');
-				$(".deletePlugin").on("click",function(){
 
-				});
+
 				$("#newPlugin").on("click",function(){
+					//open the editPlugin with a new plugin
 					$.post( '/api/', {action: "newPlugin"},"json")
-					.done(function(datata){
-						$(".pluginList").last().after('<div id="plugin'+datata.id+'" class="pluginList"></div>');
-						$("#popup > #plugin"+datata.id).append('<p>'+translation.admin_newlyPlugin+'</p>');
-						$("#popup > #plugin"+datata.id).append('<p class="editPlugin" data-id="'+datata.id+'">'+translation.admin_editPlugin+'</p>');
-						$("#popup > #plugin"+datata.id).append('<p class="deletePlugin" data-id="'+datata.id+'">'+translation.admin_deletePlugin+'</p>');
+					.done(function(data){
+						editPlugin(data);
 					})
 					.fail(function(data){});
 				});
+
+				$(".editPlugin").on("click",function(){
+					//open the editPlugin with a new plugin
+					$.post( '/api/', {action: "retrievePlugin", id : $(this).attr("data-id")},"json")
+					.done(function(data){
+						editPlugin(data);
+					})
+					.fail(function(data){});
+				});
+
+				$(".deletePlugin").on("click",function(){
+					$("#plugin"+$(this).attr("data-id")).remove();
+						$.post( '/api/', {action: "deletePlugin", plugin : $(this).attr("data-id")},"json").done(function(data){
+					});
+				});
+
 			})
 			.fail(function(d, textStatus, error) {
 						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
@@ -270,5 +283,38 @@ $(document).ready(function(){
 			$("#blackout").remove();
 		});
 	});
+
+
+	function editPlugin(data){
+		$("#popup").html('<div id="closePopup">X</div>');
+		$("#popup").append('<h1>'+translation.admin_editPlugins+'</h1>');
+		$("#popup").append('<form action="/api/" method="post"></form>');
+		$("#popup > form").append('<select name="file" id="pluginList"></select>');
+		for(i=0;i<data.pluginList.length;i++){
+			if(data.pluginList[i] == data.plugin.file){
+				var checked = " selected";
+			}
+			else{
+				var checked = "";
+			}
+			$("#popup > form > #pluginList").append('<option value="'+data.pluginList[i]+'"'+checked+'>'+data.pluginList[i]+'</option>');
+		}
+		$("#popup > form").append('<input type="text" value="'+data.plugin.public1+'" name="public1">');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.public2+'" name="public2">');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.public3+'" name="public3">');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.int1+'" name="int1" readonly>');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.int2+'" name="int2" readonly>');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.int3+'" name="int3" readonly>');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.txt1+'" name="txt1" readonly>');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.txt2+'" name="txt2" readonly>');
+		$("#popup > form").append('<input type="text" value="'+data.plugin.txt3+'" name="txt3" readonly>');
+		$("#popup > form").append('<input type="hidden" name="id_plugin" value="'+data.plugin.id+'">');
+		$("#popup > form").append('<input type="hidden" name="action" value="editPlugin">');
+		$("#popup > form").append('<input type="submit" value="'+translation.admin_editPlugin+'">');
+
+		$("#closePopup").on("click",function(){
+			$("#blackout").remove();
+		});
+	}
 
 });
