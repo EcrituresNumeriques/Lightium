@@ -29,8 +29,20 @@ $short = $object['data']['abstractNote'];
 $key = $object['key'];
 $date = $object['data']['date'];
 $tags = array();
-$tags[] = $object['data']['itemType'];
-$tags[] = $object['data']['itemType']."s";
+//filter for zoteroAPI itemType : book => Books, journalArticles => Articles, bookSection => "Book Chapters"
+if(!empty($object['data']['itemType'])){
+  if($object['data']['itemType'] == "book"){
+    $tags[] = $object['data']['itemType']."s";
+  }
+  elseif($object['data']['itemType'] == "journalArticles"){
+    $tags[] = "Articles";
+  }
+  elseif($object['data']['itemType'] == "bookSection"){
+    $tags[] = "Book Chapters";  
+  }
+}
+
+
 foreach($object['data']['creators'] as $creator){
   $tags[] = $creator['firstName']." ".$creator['lastName'];
 }
