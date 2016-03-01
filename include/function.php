@@ -107,7 +107,7 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
 	$article = $query->fetch();
   $admin = "";
   if(isLogedNC()){
-    $admin = '<a id="editItem" data-item="'.$article[id_item].'" data-lang="'.$lang.'" data-cleanString="'.$cleanstring.'" data-year="'.$year.'" data-month="'.$month.'" data-day="'.$day.'" class="admin">'.$translation['admin_changeArticle'].'</a>
+    $admin = '<a id="editItem" data-item="'.$article['id_item'].'" data-lang="'.$lang.'" data-cleanString="'.$cleanstring.'" data-year="'.$year.'" data-month="'.$month.'" data-day="'.$day.'" class="admin">'.$translation['admin_changeArticle'].'</a>
     ';
   }
 	?>

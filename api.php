@@ -77,7 +77,7 @@ if(isLoged() AND !empty($_POST['action'])){
     foreach($plugins as $plugin){
       if(endsWith($plugin,".php")){
         $plugin = substr($plugin,0,-4);
-        $reponse[pluginList][] = $plugin;
+        $reponse['pluginList'][] = $plugin;
       }
     }
     echo(JSON_encode($reponse));
@@ -85,7 +85,7 @@ if(isLoged() AND !empty($_POST['action'])){
   }
   elseif($_POST['action'] == "retrievePlugin"){
       $retrievePlugin = $file_db->prepare("SELECT id_plugin as id,file,public1, public2, public3, int1, int2, int3, txt1, txt2, txt3 FROM plugins where id_plugin = :plugin");
-      $retrievePlugin->bindParam(":plugin",$_POST[id],SQLITE3_INTEGER);
+      $retrievePlugin->bindParam(":plugin",$_POST['id'],SQLITE3_INTEGER);
       $retrievePlugin->execute() or die('unable to retrieve Plugin');
       $reponse = $retrievePlugin->fetch(PDO::FETCH_ASSOC);
       $plugins = scandir("plugins/");
@@ -93,7 +93,7 @@ if(isLoged() AND !empty($_POST['action'])){
       foreach($plugins as $plugin){
         if(endsWith($plugin,".php")){
           $plugin = substr($plugin,0,-4);
-          $reponse[pluginList][] = $plugin;
+          $reponse['pluginList'][] = $plugin;
         }
       }
       echo(JSON_encode($reponse));

@@ -17,6 +17,7 @@ $output = curl_exec($curlZotero);
 curl_close($curlZotero);
 $output = json_decode($output, true);
 $zoteroFeed = array();
+$lastVersion = $settings['int1'];
 foreach($output as $object){
 ($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);
 $content = $title = $short = $date = $tags = $key = "";
@@ -32,13 +33,13 @@ $tags = array();
 //filter for zoteroAPI itemType : book => Books, journalArticles => Articles, bookSection => "Book Chapters"
 if(!empty($object['data']['itemType'])){
   if($object['data']['itemType'] == "book"){
-    $tags[] = $object['data']['itemType']."s";
+    $tags[] = "books";
   }
-  elseif($object['data']['itemType'] == "journalArticles"){
+  elseif($object['data']['itemType'] == "journalArticle"){
     $tags[] = "Articles";
   }
   elseif($object['data']['itemType'] == "bookSection"){
-    $tags[] = "Book Chapters";  
+    $tags[] = "Book Chapters";
   }
 }
 
@@ -52,7 +53,9 @@ foreach($object['data']['tags'] as $tag){
 }
 foreach($tags as $tag){
   $tag = strtolower($tag);
-  $subcat[] = $assoc[$tag];
+    if(!empty($assoc[$tag])){
+    $subcat[] = $assoc[$tag];
+    }
 }
 
 
@@ -150,8 +153,8 @@ foreach($zoteroFeed as $item){
 $count = count($output);
 
 if($count == 100){
-  $since = $settings[int1];
-  $start = $settings[int2]+100;
+  $since = $settings['int1'];
+  $start = $settings['int2']+100;
 }
 else{
   $since = $lastVersion;
