@@ -142,6 +142,7 @@ function drawTags($lang, $tags){
 }
 
 function drawListing($db, $translation, $current, $lang, $action, $what){
+	$pagination = false;
   echo('<section id="listing" class="flex3">');
   if($action == "cat"){
   $query = $db->prepare('SELECT csl.name,csl.image,csl.short FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cs.id_cat = :id_cat AND csl.lang LIKE :lang');
@@ -152,16 +153,33 @@ function drawListing($db, $translation, $current, $lang, $action, $what){
   $admin = '<a class="admin" id="newSubCat" data-cat="'.$what.'">'.$translation['admin_newSubCat'].'</a>';
 }
 elseif($action == "index"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
-  $query->bindParam(':lang',$lang, SQLITE3_TEXT);
+	$pages = $db->prepare("SELECT COUNT(*) as count FROM item i");
+	$pages->execute() or die('Unable to fetch page Items');
+	$pages = $pages->fetch();
+	if(!empty($_GET['page']) OR $pages['count'] > 10){
+			$pagination = true;
+	}
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT :start,10");
+	$query->bindParam(':lang',$lang, SQLITE3_TEXT);
+  $query->bindParam(':start',$start, SQLITE3_INTEGER);
+	(!empty($_GET['page'])?$start=$pages['count'] - $_GET['page']*10:$start=0);
   $query->execute() or die('Unable to fetch Items');
   //admin add item
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "subcat"){
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,10");
+  $pages = $db->prepare("SELECT COUNT(*) as count FROM item i JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat WHERE i.published > 0");
+  $pages->bindParam(':subcat',$what, SQLITE3_INTEGER);
+  $pages->execute() or die('Unable to fetch page Items');
+	$pages = $pages->fetch();
+	if(!empty($_GET['page']) OR $pages['count'] > 10){
+			$pagination = true;
+	}
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT :start,10");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':subcat',$what, SQLITE3_INTEGER);
+  $query->bindParam(':start',$start, SQLITE3_INTEGER);
+	(!empty($_GET['page'])?$start=$pages['count'] - $_GET['page']*10:$start=0);
   $query->execute() or die('Unable to fetch Items');
   $admin = '<a class="admin" id="newItem" data-subcat="'.$what.'" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
@@ -250,7 +268,23 @@ if($rowCount < 1){
   </article>
 <?php
 }
+
+//draw the pagination
+if($pagination){
+	echo('<nav id="pagination">');
+	$selected = "";
+	if($start <= 0){$selected = ' class="selected"';}
+	echo('<a href="'.$current.'"'.$selected.'>'.$translation['last10'].'</a>');
+	for($i=$pages['count'];$i > 10;$i=$i-10){
+		$page = floor($i/10);
+		$selected = "";
+		if($_GET['page'] == $page){$selected = ' class="selected"';}
+		echo('<a href="'.$current.'page_'.$page.'"'.$selected.'>'.$page.'</a>');
+	}
+	echo('</nav>');
+}
 echo('</section>');
+
 }
 
 function drawCalendar($db, $translation,$lang){

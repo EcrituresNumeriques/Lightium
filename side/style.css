@@ -236,6 +236,17 @@ section#listing > article > a.listingFloat > img{
 	max-height:150px;
 	max-width:150px;
 }
+
+section#listing > nav#pagination > a {
+	display:inline-block;
+	border: 1px solid #c0c0c0;
+	padding : 0.2em 0.5em;
+	margin:0.2em;
+}
+section#listing > nav#pagination > a.selected {
+	color:#0056a7;
+	border-color: #0056a7;
+}
 section#calendar {
 	margin-left:1rem;
 	padding:2rem;
