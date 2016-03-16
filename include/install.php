@@ -156,6 +156,10 @@
                 $file_db->exec("CREATE TABLE IF NOT EXISTS customCSS (time INTEGER DEFAULT 0, CSS TEXT)");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 9");
               }
+              if($version['revision'] < 10){
+                $file_db->exec("INSERT INTO customCSS (time, CSS) VALUES (0,'')");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 10");
+              }
             }
         }
 
