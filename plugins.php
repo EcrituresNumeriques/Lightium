@@ -9,5 +9,5 @@ foreach ($plugins as $settings) {
   echo("$settings[file] executé");
 }
 die();
-//Google Calendar
+//Google Calendars
 ?>
