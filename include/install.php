@@ -148,6 +148,14 @@
                 $file_db->exec("ALTER TABLE events ADD COLUMN phase INTEGER");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 8");
               }
+              if($version['revision'] < 9){
+                $file_db->exec("ALTER TABLE settings ADD COLUMN logo TEXT");
+                $file_db->exec("ALTER TABLE category ADD COLUMN template TEXT");
+                $file_db->exec("ALTER TABLE category_sub ADD COLUMN template TEXT");
+                $file_db->exec("ALTER TABLE category_sub ADD COLUMN maxItem INTEGER DEFAULT 10");
+                $file_db->exec("CREATE TABLE IF NOT EXISTS customCSS (time INTEGER DEFAULT 0, CSS TEXT)");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 9");
+              }
             }
         }
 

@@ -1,5 +1,16 @@
 <?php
 include('include/config.ini.php');
+//Custom CSS AND JS
+if($_GET['action'] == "customCSS"){
+  $customCSS = $file_db->query("Select * FROM customCSS LIMIT 0,1");
+  $customCSS = $customCSS->fetch(PDO::FETCH_ASSOC);
+  header('Last-Modified: '.gmdate('D, d M Y H:i:s', $customCSS['time']).' GMT', true, 200);
+  header('Content-Type: text/css');
+  echo($customCSS['CSS']);
+  die();
+}
+
+
 header('Content-type: application/json');
 //treat request if admin and action is set
 if(isLoged() AND !empty($_POST['action'])){
@@ -39,6 +50,13 @@ if(isLoged() AND !empty($_POST['action'])){
       //only request, do not show anything
       die();
     }
+    elseif($_POST['action'] == "getCSS"){
+        $customCSS = $file_db->query("Select * FROM customCSS LIMIT 0,1");
+        $customCSS = $customCSS->fetch(PDO::FETCH_ASSOC);
+        echo(JSON_encode($customCSS));
+        //only request, do not show anything
+        die();
+    }
 
     elseif($_POST['action'] == "getPlugins"){
         $result = $file_db->prepare('SELECT id_plugin as id,file,public1, public2, public3 FROM plugins');
@@ -59,6 +77,14 @@ if(isLoged() AND !empty($_POST['action'])){
   //add new stuff to the database
 
 
+  elseif($_POST['action'] == "editCSS"){
+      $customCSS = $file_db->prepare("UPDATE customCSS SET CSS = :css, time = :time");
+      $customCSS->BindParam(":css",$_POST['CSS'],SQLITE3_TEXT);
+      $customCSS->BindParam(":time",$time,SQLITE3_INTEGER);
+      $time = time();
+      $customCSS->execute() or die('Unable to change CSS');
+
+  }
   elseif($_POST['action'] == "newPlugin"){
     $file_db->query("INSERT INTO plugins DEFAULT VALUES");
     $reponse['id'] = $file_db->lastInsertId();
@@ -245,23 +271,26 @@ if(isLoged() AND !empty($_POST['action'])){
           if($setting['description'] == "null" OR $setting['description'] == NULL){$setting['description'] = "";}
           if($setting['meta'] == "null" OR $setting['meta'] == NULL){$setting['meta'] = "";}
           if($setting['title'] == "null" OR $setting['title'] == NULL){$setting['title'] = "";}
+          if($setting['logo'] == "null" OR $setting['logo'] == NULL){$setting['logo'] = "";}
 
           $settings[] = array(
             "lang" => $setting['lang'],
             "name" => $setting['name'],
             "description" => $setting['description'],
             "meta" => $setting['meta'],
-            "title" => $setting['title']
+            "title" => $setting['title'],
+            "logo" => $setting['logo']
           );
         }
         echo(json_encode($settings));
         die();
   }
   elseif($_POST['action'] == "editSettings"){
-      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title WHERE lang LIKE :lang");
+      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title, logo = :logo WHERE lang LIKE :lang");
       $edit->bindParam(":name",$name, SQLITE3_TEXT);
       $edit->bindParam(":description",$description, SQLITE3_TEXT);
       $edit->bindParam(":meta",$meta, SQLITE3_TEXT);
+      $edit->bindParam(":logo",$logo, SQLITE3_TEXT);
       $edit->bindParam(":title",$title, SQLITE3_TEXT);
       $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
       for($i=0;$i<count($_POST['lang']);$i++){
@@ -269,23 +298,26 @@ if(isLoged() AND !empty($_POST['action'])){
         $description = $_POST['description'][$i];
         $meta = $_POST['meta'][$i];
         $title = $_POST['title'][$i];
+        $logo = $_POST['logo'][$i];
         $lang = $_POST['lang'][$i];
         $edit->execute() or die('Unable to edit setting');
       }
   }
   elseif($_POST['action'] == "getCat"){
-          $result = $file_db->prepare('SELECT * FROM category_lang where id_cat = :cat');
+          $result = $file_db->prepare('SELECT * FROM category_lang cl LEFT JOIN category c ON c.id_cat = cl.id_cat where cl.id_cat = :cat');
           $result->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
           $result->execute() or die('AHAH');
           foreach ($result as $cat) {
             if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
             if($cat['name'] == "null" OR $cat['name'] == NULL){$cat['name'] = "";}
             if($cat['description'] == "null" OR $cat['description'] == NULL){$cat['description'] = "";}
+            if($cat['template'] == "null" OR $cat['template'] == NULL){$cat['template'] = "";}
             $cats[] = array(
               "lang" => $cat['lang'],
               "name" => $cat['name'],
               "description" => $cat['description'],
-              "image" => $cat['image']
+              "image" => $cat['image'],
+              "template" => $cat['template']
             );
           }
           echo(json_encode($cats));
@@ -297,18 +329,24 @@ if(isLoged() AND !empty($_POST['action'])){
       $checkPriority->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
       $checkPriority->execute() or die('Unable to check priority');
       $checkPriority = $checkPriority->fetch();
+      //Update template
+      $updateTemplate = $file_db->prepare("UPDATE category SET template = :template WHERE id_cat = :cat");
+      $updateTemplate->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
+      $updateTemplate->bindParam(":template",$_POST['template'],SQLITE3_TEXT);
+      $updateTemplate->execute() or die('Unable to set new template');
+
       if($checkPriority['priority'] != $_POST['priority']){
         if($checkPriority['priority'] > $_POST['priority']){
           //New priority is higher
           $updatePriority = $file_db->prepare("UPDATE category SET priority = priority + 1 WHERE priority < :max AND priority >= :min");
-          $updatePriority->bindParam("min",$_POST['priority'],SQLITE3_INTEGER);
-          $updatePriority->bindParam("max",$checkPriority['priority'],SQLITE3_INTEGER);
+          $updatePriority->bindParam(":min",$_POST['priority'],SQLITE3_INTEGER);
+          $updatePriority->bindParam(":max",$checkPriority['priority'],SQLITE3_INTEGER);
         }
         else{
           //New priority is lower
           $updatePriority = $file_db->prepare("UPDATE category SET priority = priority - 1 WHERE priority <= :max AND priority > :min");
-          $updatePriority->bindParam("max",$_POST['priority'],SQLITE3_INTEGER);
-          $updatePriority->bindParam("min",$checkPriority['priority'],SQLITE3_INTEGER);
+          $updatePriority->bindParam(":max",$_POST['priority'],SQLITE3_INTEGER);
+          $updatePriority->bindParam(":min",$checkPriority['priority'],SQLITE3_INTEGER);
         }
         $updatePriority->execute() or die('Unable to shift priority');
 
@@ -339,7 +377,7 @@ if(isLoged() AND !empty($_POST['action'])){
       }
   }
   elseif($_POST['action'] == "getSubCat"){
-          $result = $file_db->prepare('SELECT * FROM category_sub_lang where id_subcat = :cat');
+          $result = $file_db->prepare('SELECT * FROM category_sub_lang csl LEFT JOIN category_sub cs ON cs.id_subcat = csl.id_subcat where csl.id_subcat = :cat');
           $result->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
           $result->execute() or die('AHAH');
           foreach ($result as $cat) {
@@ -347,18 +385,30 @@ if(isLoged() AND !empty($_POST['action'])){
             if($cat['name'] == "null" OR $cat['name'] == NULL){$cat['name'] = "";}
             if($cat['description'] == "null" OR $cat['description'] == NULL){$cat['description'] = "";}
             if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
+            if($cat['template'] == "null" OR $cat['template'] == NULL){$cat['template'] = "";}
+            if($cat['maxItem'] == "null" OR $cat['maxItem'] == NULL){$cat['maxItem'] = "";}
             $cats[] = array(
               "lang" => $cat['lang'],
               "name" => $cat['name'],
               "description" => $cat['description'],
               "short" => $cat['short'],
-              "image" => $cat['image']
+              "image" => $cat['image'],
+              "maxItem" => $cat['maxItem'],
+              "template" => $cat['template'],
             );
           }
           echo(json_encode($cats));
           die();
   }
   elseif($_POST['action'] == "editSubCat"){
+
+      //Update template and maxItem
+      $updateTemplate = $file_db->prepare("UPDATE category_sub SET template = :template, maxItem = :items WHERE id_subcat = :cat");
+      $updateTemplate->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
+      $updateTemplate->bindParam(":items",$_POST['maxItem'], SQLITE3_INTEGER);
+      $updateTemplate->bindParam(":template",$_POST['template'],SQLITE3_TEXT);
+      $updateTemplate->execute() or die('Unable to set new template');
+
       $edit = $file_db->prepare("UPDATE category_sub_lang SET name = :name, description = :description, short = :short, image = :image, cleanstring = :cleanString WHERE lang LIKE :lang AND id_subcat = :cat");
       $edit->bindParam(":name",$name, SQLITE3_TEXT);
       $edit->bindParam(":description",$description, SQLITE3_TEXT);

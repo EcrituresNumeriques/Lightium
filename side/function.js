@@ -141,6 +141,7 @@ $(document).ready(function(){
 							$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_settingsSiteName+'">');
 							$("#popup > form").append('<input type="text" value="'+data[i].title+'" name=title[] placeholder="'+translation.admin_settingsSiteTitle+'">');
 							$("#popup > form").append('<textarea name="meta[]" placeholder="'+translation.admin_settingsSiteMeta+'">'+data[i].meta+'</textarea>');
+							$("#popup > form").append('<input type="text" value="'+data[i].logo+'" name=logo[] placeholder="'+translation.admin_settingslogoTitle+'">');
 							$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_settingsSiteDescription+'">'+data[i].description+'</textarea>');
 						}
 						$("#popup > form").append('<input type="hidden" name="action" value="editSettings">');
@@ -156,10 +157,11 @@ $(document).ready(function(){
 					$("#popup").append('<h1>'+translation.admin_editCat+'</h1>');
 					$("#popup").append('<form action="/api/" method="post"></form>');
 					$("#popup > form").append('<input type="integer" value="'+$(this).attr("data-priority")+'" name="priority" placeholder="'+translation.admin_CatPriority+'">');
-					$("#popup > form").append('<hr>');
 					var cat = $(this).attr("data-cat");
 					$.post( '/api/', {action: "getCat", cat : cat},"json")
 					.done(function(data){
+						$("#popup > form").append('<input type="text" value="'+data[0].template+'" name="template" placeholder="'+translation.admin_setTemplate+'">');
+						$("#popup > form").append('<hr>');
 						for(i = 0;i<data.length;i++){
 							if(i>0){
 								$("#popup > form").append('<hr>');
@@ -185,6 +187,9 @@ $(document).ready(function(){
 					var cat = $(this).attr("data-cat");
 					$.post( '/api/', {action: "getSubCat", cat : cat},"json")
 					.done(function(data){
+						$("#popup > form").append('<input type="text" value="'+data[0].template+'" name=template placeholder="'+translation.admin_setTemplate+'">');
+						$("#popup > form").append('<input type="text" value="'+data[0].maxItem+'" name=maxItem placeholder="'+translation.admin_maxItem+'">');
+						$("#popup > form").append('<hr>');
 						for(i = 0;i<data.length;i++){
 							if(i>0){
 								$("#popup > form").append('<hr>');
@@ -230,6 +235,21 @@ $(document).ready(function(){
 				$("#popup > form").append('<input type="hidden" name="item" value="'+item+'">');
 				$("#popup > form").append('<input type="hidden" name="action" value="editItem">');
 				$("#popup > form").append('<input type="submit" value="'+translation.admin_editItemSubmit+'">');
+
+			})
+			.fail(function(d, textStatus, error) {
+						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+			});
+		}
+		else if($(this).attr("id") == "CSS"){
+			//edit item
+			$("#popup").append('<h1>'+translation.admin_editCSS+'</h1>');
+			$("#popup").append('<form action="/api/" method="post"></form>');
+			$.post( '/api/', {action: "getCSS"},"json")
+			.done(function(data){
+				$("#popup > form").append('<textarea name="CSS" placeholder="'+translation.admin_editCSS+'">'+data.CSS+'</textarea>');
+				$("#popup > form").append('<input type="hidden" name="action" value="editCSS">');
+				$("#popup > form").append('<input type="submit" value="'+translation.admin_editCSSSubmit+'">');
 
 			})
 			.fail(function(d, textStatus, error) {

@@ -4,6 +4,7 @@ if(isLoged()){
   ?>
   <footer>
     <a class="admin" id="plugins"><?=$translation["admin_plugins"]?></a>
+    <a class="admin" id="CSS"><?=$translation["admin_css"]?></a>
   </footer>
   <?php
 }

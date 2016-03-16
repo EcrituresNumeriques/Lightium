@@ -1,7 +1,10 @@
+<?php
+(empty($header['logo'])?$logo = "/img/logo.png":$logo = $header['logo']);
+ ?>
 <body>
 <header class="white-bg">
   <nav id="logo" class="flex-row-fluid flex-center wrapper pad2">
-    <a href="/<?=$lang?>/" class="block"><img src="/img/logo.png" id="logoImg" alt="logo" class="flex0"></a>
+    <a href="/<?=$lang?>/" class="block"><img src="<?=$logo?>" id="logoImg" alt="logo" class="flex0"></a>
     <div class="flex1"></div>
   </nav>
   <div class="black-bg">
