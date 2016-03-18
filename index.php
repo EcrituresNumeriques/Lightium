@@ -41,7 +41,8 @@ elseif(!empty($_GET['subcat'])){
     $current = drawCookieTrail($lang,$_GET['cat'],$_GET['subcat']);
 		$template = $cat['template'];
 	echo('<div class="flex-row-fluid flex-top wrapper '.$template.'">');
-    drawListing($file_db, $translation, $current,$lang,'subcat',$cat['id_subcat']);
+		if($cat['maxItem'] == 0){$cat['maxItem'] = 9223372036854775807;}
+    drawListing($file_db, $translation, $current,$lang,'subcat',$cat['id_subcat'],$cat['maxItem']);
 	echo('</div>');
   }
   else{

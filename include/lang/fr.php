@@ -1,6 +1,8 @@
 <?php
 $translation = array(
 	"last10" => "10 derniers",
+	"lastX" => "dernières publications",
+	"lastAll" => "Tous",
 	"username" => "Nom d'utilisateur",
 	"password" => "Mot de passe",
 	"addLanguage" => "Ajouter une langue",

@@ -1,10 +1,9 @@
 <?php
 
-https://clients6.google.com/calendar/v3/calendars//events?calendarId=k8np7mdjtprb4njihmhuqqeajs%40group.calendar.google.com&singleEvents=true&timeZone=America%2FToronto&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin=2016-02-29T00%3A00%3A00-05%3A00&timeMax=2016-04-04T00%3A00%3A00-05%3A00&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs
+//https://clients6.google.com/calendar/v3/calendars//events?calendarId=k8np7mdjtprb4njihmhuqqeajs%40group.calendar.google.com&singleEvents=true&timeZone=America%2FToronto&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin=2016-02-29T00%3A00%3A00-05%3A00&timeMax=2016-04-04T00%3A00%3A00-05%3A00&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs
 
 //$settings['public1'] =  "k8np7mdjtprb4njihmhuqqeajs@group.calendar.google.com";
 //$settings['public2'] = "AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs";
-
 // https://www.googleapis.com/calendar/v3/calendars/k8np7mdjtprb4njihmhuqqeajs@group.calendar.google.com/events?key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs
 
 // create curl resource
