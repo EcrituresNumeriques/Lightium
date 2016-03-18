@@ -1,4 +1,4 @@
-# SimpleSubCat
+# Lightium
 
 Super simple website organized in a " Category / sub Category / item " hierarchy.
 
