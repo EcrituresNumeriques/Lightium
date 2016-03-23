@@ -51,6 +51,7 @@ $translation = array(
 	"admin_maxItem" => "Number of items by page",
 	"admin_editSubCat" => "Edit the subcategory",
 	"admin_editItem" => "Edit the article",
+	"admin_delItem" => "Remove the article",
 	"admin_itemTitle" => "Title of the article",
 	"admin_itemContent" => "Content of the article",
 	"admin_itemShort" => "Lead of the article'",

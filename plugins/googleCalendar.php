@@ -33,8 +33,8 @@ if($object['kind'] == "calendar#event"){
   $checkGKey = $file_db->prepare("SELECT id_event FROM events WHERE Gkey LIKE :GKey");
   $checkGKey->bindParam(":GKey",$object['id'], SQLITE3_TEXT);
   $checkGKey->execute() or die('Unable to retrieve Gkey');
-  $checkGKey = $checkGKey->fetchAll();
-  if($checkGKey){
+  $checkGKey = $checkGKey->fetch();
+  if(!empty($checkGKey)){
     //update info
     $query = $file_db->prepare("UPDATE events SET `time` = :time, endTime = :endTime, phase = :phase WHERE Gkey LIKE :GKey");
     $new = false;
@@ -77,11 +77,18 @@ if($object['kind'] == "calendar#event"){
   //Add event LANG
   if($new){
   $event_id = $file_db->lastInsertId();
-  $lang = $file_db->prepare("INSERT INTO events_lang (`id_event`, `title`, `location`, `short`, `description`, `lang`) VALUES (:event, :title, :location, NULL, :description, :lang)");
+  $lang = $file_db->prepare("INSERT INTO events_lang (`id_event`, `title`, `location`, `short`, `description`, `lang`) VALUES (:event, :title, :location, :short, :description, :lang)");
+  }
+  else{
+    $event_id = $checkGKey['id_event'];
+    echo("Updating $event_id");
+    $lang = $file_db->prepare("UPDATE events_lang SET title = :title, location = :location, description = :description, short = :short WHERE id_event = :event AND lang LIKE :lang");
+  }
   $lang->bindParam(":event",$event_id,SQLITE3_INTEGER);
   $lang->bindParam(":title",$object['summary'],SQLITE3_TEXT);
   $lang->bindParam(":location",$object['location'],SQLITE3_TEXT);
   $lang->bindParam(":description",$object['description'],SQLITE3_TEXT);
+  $lang->bindParam(":short",$object['htmlLink'],SQLITE3_TEXT);
   $lang->bindParam(":lang",$language,SQLITE3_TEXT);
   // Execute statement EN
   $language = "EN";
@@ -90,7 +97,7 @@ if($object['kind'] == "calendar#event"){
   // Execute statement EN
   $language = "FR";
   $lang->execute() or die('Unable to add lang item');
-  }
+
 }
 
 

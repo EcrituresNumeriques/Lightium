@@ -51,6 +51,7 @@ $translation = array(
 	"admin_editSubCat" => "Modifier la sous-catégorie",
 	"admin_maxItem" => "Nombre d'article par page",
 	"admin_editItem" => "Modifier l'article",
+	"admin_delItem" => "Supprimer l'article",
 	"admin_itemTitle" => "Titre de l'article",
 	"admin_itemContent" => "Corps de l'article",
 	"admin_itemShort" => "Chapeau de l'article'",

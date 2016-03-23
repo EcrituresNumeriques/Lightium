@@ -316,11 +316,10 @@ function drawCalendar($db, $translation,$lang){
 				$date = date("d/m/Y H:i",$row['time']);
 				?>
 				<article class="clear hyphenate">
-	   			<h1><?=$row['title']?></h1>
+	   			<h1><a href="<?=$row['short']?>" target="_blank"><?=$row['title']?></a></h1>
 					<h2><?=$date?></h2>
 					<h2><?=$row['location']?></h2>
-					<p><?=$row['short']?></p>
-	  		</article>
+					</article>
 				<?php
 			}
 			if($rowCount < 1){
