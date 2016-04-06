@@ -160,6 +160,43 @@
                 $file_db->exec("INSERT INTO customCSS (time, CSS) VALUES (0,'')");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 10");
               }
+              if($version['revision'] < 11){
+                $file_db->exec("ALTER TABLE settings ADD COLUMN host TEXT");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 1, revision = 11");
+              }
+              $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 0");
+            }
+            //Add the contact menu on
+            if($version['subversion'] < 3){
+              if($version['revision'] < 1){
+                $file_db->exec("CREATE TABLE IF NOT EXISTS contact (id_contact INTEGER PRIMARY KEY, lang TEXT, type INTEGER, value TEXT, priority INTEGER)");
+                $file_db->exec("CREATE TABLE IF NOT EXISTS contact_type (id_type INTEGER PRIMARY KEY, name TEXT, template TEXT)");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 1");
+              }
+              if($version['revision'] < 2){
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'E-mail','<a href=\"mailto:±VALUE±\" target=\"_blank\" class=\"contactEmail\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Phone','<p class=\"contactPhone\">±VALUE±</p>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Fax','<p class=\"contactFax\">±VALUE±</p>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Text','<p class=\"contactText\">±VALUE±</p>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Section','<h1 class=\"contactSection\">±VALUE±</h1>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Twitter','<a href=\"https://twitter.com/±VALUE±\" target=\"_blank\" class=\"contactTwitter\">@±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Facebook','<a href=\"https://www.facebook.com/±VALUE±\" target=\"_blank\" class=\"contactFacebook\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Gcalendar','<a href=\"https://www.facebook.com/±VALUE±\" target=\"_blank\" class=\"contactCalendar\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Github','<a href=\"https://github.com/±VALUE±\" target=\"_blank\" class=\"contactGithub\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Papyrus','<a href=\"https://papyrus.bib.umontreal.ca/xmlui/handle/±VALUE±\" target=\"_blank\" class=\"contactPapyrus\">Dépôt Papyrus</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Zotero','<a href=\"https://www.zotero.org/groups/±VALUE±\" target=\"_blank\" class=\"contactZotero\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Vimeo','<a href=\"https://vimeo.com/±VALUE±\" target=\"_blank\" class=\"contactVimeo\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'URL','<a href=\"±VALUE±\" target=\"_blank\" class=\"contactURL\">±VALUE±</a>')");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 2");
+              }
+              if($version['revision'] < 3){
+                $file_db->exec("CREATE TABLE IF NOT EXISTS summary (id_summary INTEGER PRIMARY KEY, id_subcat INTEGER, `group` INTEGER, rows INTEGER, priority INTEGER)");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 3");
+              }
+              if($version['revision'] < 4){
+                  $file_db->exec("ALTER TABLE item ADD COLUMN featured INTEGER");
+                  $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 4");
+              }
             }
         }
 

@@ -113,6 +113,21 @@ a.admin:before{
 .floatRight{
   float: right;
 }
+#langSwitch{
+	display:flex;
+	flex-wrap: nowrap;
+	flex-direction: row-reverse;
+}
+#langSwitch p{
+	flex:1 1 auto;
+	margin:0;
+	text-align: right;
+}
+#langSwitch a{
+	display:block;
+	flex:0 0 auto;
+	margin-left:0.5em;
+}
 
 #logo > a > img {
   /*max-height:150px;*/
@@ -203,7 +218,7 @@ section#cookieTrail > p > a{
   display:inline-block;
   margin:0 1rem;
 }
-#newItem,#newCalendar,#newSubCat{
+#newItem,#newCalendar,#newSubCat,#editContact{
     border: 1px solid white;
     margin-bottom: 1rem;
     padding: 2rem;
@@ -247,14 +262,22 @@ section#listing > nav#pagination > a.selected {
 	color:#0056a7;
 	border-color: #0056a7;
 }
-section#calendar {
+section#sidebar{
+	flex:0 0 300px;
 	margin-left:1rem;
+}
+section#contact{
 	padding:2rem;
 	border: 1px solid #c0c0c0;
 	background-color: white;
-	flex:0 0 300px;
+	margin-bottom:1rem;
 }
-section#calendar > h1 {
+section#calendar {
+	padding:2rem;
+	border: 1px solid #c0c0c0;
+	background-color: white;
+}
+section#calendar > h1, section#contact > h1 {
 	text-align:center;
 	margin-top: 0;
 }

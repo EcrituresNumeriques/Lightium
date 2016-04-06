@@ -144,7 +144,7 @@ function drawTags($lang, $tags){
 function drawListing($db, $translation, $current, $lang, $action, $what,$maxItem){
 	(!empty($maxItem)?:$maxItem = 10);
 	$pagination = false;
-  echo('<section id="listing" class="flex3">');
+  echo('<section id="listing" class="flex3 '.$action.'">');
   if($action == "cat"){
   $query = $db->prepare('SELECT csl.name,csl.image,csl.short FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cs.id_cat = :id_cat AND csl.lang LIKE :lang');
   $query->bindParam(":lang",$lang, SQLITE3_TEXT);
@@ -164,6 +164,9 @@ elseif($action == "index"){
 	$query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':start',$start, SQLITE3_INTEGER);
 	(!empty($_GET['page'])?$start=$pages['count'] - $_GET['page']*10:$start=0);
+	if($start == 0){
+		drawSommaire($db,$translation,$current,$lang,$action);
+	}
   $query->execute() or die('Unable to fetch Items');
   //admin add item
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
@@ -317,8 +320,8 @@ function drawCalendar($db, $translation,$lang){
 				?>
 				<article class="clear hyphenate">
 	   			<h1><a href="<?=$row['short']?>" target="_blank"><?=$row['title']?></a></h1>
-					<h2><?=$date?></h2>
-					<h2><?=$row['location']?></h2>
+					<h2 class="date"><?=$date?></h2>
+					<h2 class="location"><?=$row['location']?></h2>
 					</article>
 				<?php
 			}
@@ -330,6 +333,39 @@ function drawCalendar($db, $translation,$lang){
 			?>
 			</section>
 <?php
+}
+
+function drawContact($db,$translation,$lang){
+	$contact = $db->prepare("SELECT * FROM contact c LEFT JOIN contact_type t ON c.type = t.id_type");
+	$contact->execute() or die("Couldn't open event table");
+	$admin = "";
+	if(isLogedNC()){
+		$admin = '<a id="editContact" class="admin">'.$translation['admin_editContact'].'</a>
+		';
+	}
+	?>
+	<section id="contact">
+		<h1><?=$translation['contact_title']?></h1>
+		<?=$admin?>
+			<?php
+			$rowCount = 0;
+			foreach($contact as $row){
+				$rowCount++;
+				$html = str_replace("±VALUE±",$row['value'],$row['template']);
+				?>
+				<article>
+					<?=$html?>
+				</article>
+				<?php
+			}
+			if($rowCount < 1){
+			?>
+				<h1><?=$translation['contact_nothing']?></h1>
+			<?php
+		}
+			?>
+	</section>
+	<?php
 }
 
 function echo404($what){
@@ -401,6 +437,84 @@ function startsWith($haystack, $needle) {
 function endsWith($haystack, $needle) {
     // search forward starting from end minus needle length characters
     return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
+}
+
+function drawLang($db,$translation,$lang){
+?>
+	<nav id="langSwitch" class="wrapper">
+<?php
+	$checkLang = $db->query("SELECT lang FROM settings");
+	$checkLang = $checkLang->fetchAll();
+	foreach ($checkLang as $Lang) {
+		$siteLang = strtolower($Lang['lang']);
+		echo('<a href="/'.$siteLang.'/">['.$siteLang.']</a>');
+	}
+?>
+	<p><?php echo("$translation[seeInLanguage]"); ?></p>
+	</nav>
+<?php
+}
+
+
+function	drawSommaire($db,$translation,$current,$lang,$action){
+
+	//Display featured
+	$getFeatured = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.featured = 1 GROUP BY i.id_item ORDER BY time DESC LIMIT 0,1");
+	$getFeatured->bindParam(':lang',$lang, SQLITE3_TEXT);
+	$getFeatured->execute() or die('Unable to get featured article');
+	$featured = $getFeatured->fetch(PDO::FETCH_ASSOC);
+	$featured['url'] = $current.$featured['year']."/".$featured['month']."/".$featured['day']."/".cleanString($featured['title']);
+	(!empty($featured['subcat']) ? $tags = $featured['subcat'] : $tags = "");
+	?>
+		<div id="summary">
+			<div id="featured">
+				<article class="clear">
+			    <?=$featured['image']?>
+			    <h1><a href="<?=$featured['url']?>" class="pushState"><?=$featured['title']?></a></h1>
+
+			    <p class="hyphenate"><?php if(count_chars($featured['short']) > 512){echo substr($featured['short'],0,512)."...";}else{echo($featured['short']);} ?></p>
+					<?php
+			  if(!empty($tags)){
+				drawTags($lang,$tags);
+				}
+			?>
+			  <div class="clear"></div>
+			  </article>
+			</div>
+			<section id="summaryGroups">
+			<div class="group" id="group1">
+	<?php
+
+	//Display summary
+	$checkSommaire = $db->prepare("SELECT s.id_subcat, s.`group`, s.rows, csl.name FROM summary s LEFT JOIN category_sub_lang csl ON s.id_subcat = csl.id_subcat AND csl.lang LIKE :lang ORDER BY `group`, priority");
+	$checkSommaire->bindParam(":lang",$lang);
+	$checkSommaire->execute() or die('Unable to get summary');
+	$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,:maxItem");
+	$feed->bindParam(":lang",$lang);
+	$group = 1;
+
+	foreach ($checkSommaire as $row) {
+		$feed->bindParam(":maxItem",$row['rows']);
+		$feed->bindParam(":subcat",$row['id_subcat']);
+		$feed->execute() or die('Unable to retrieve summary groups');
+		if($row['group'] != $group){echo('</div><div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
+		?>
+		<h1><?=$row['name']?></h1>
+		<?php
+		 foreach ($feed as $article) {
+			$url = $current.$article['year']."/".$article['month']."/".$article['day']."/".cleanString($article['title']);
+		 	?>
+			<article class="clear">
+				<h1><a href="<?=$url?>" class="pushState"><?=$article['title']?></a></h1>
+			</article>
+			<?php
+		 }
+	}
+	?>
+		</div>
+	</section>
+	</div>
+	<?php
 }
 
 ?>

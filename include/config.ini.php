@@ -1,7 +1,5 @@
 <?php
 	include('include/function.php');
-	//lang management
-	include('include/lang.php');
 	//Database connect
 	try {
     /**************************************
@@ -21,6 +19,8 @@
   }
 	//Updates or install
 	include('include/install.php');
+	//lang management
+	include('include/lang.php');
 	//session management
 	include('include/session.php');
 	//plugins management

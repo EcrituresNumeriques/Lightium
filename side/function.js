@@ -36,6 +36,12 @@ $(document).ready(function(){
 		else if($(this).attr("id") == "plugins"){
 			pluginCenter(thisContext);
 		}
+		else if($(this).attr("id") == "editSummary"){
+			summaryCenter(thisContext);
+		}
+		else if($(this).attr("id") == "editContact"){
+			contactCenter();
+		}
 	});
 
 	function showAdmin(){
@@ -114,6 +120,8 @@ $(document).ready(function(){
 				$("#popup > form").append('<textarea name="content[]" placeholder="'+translation.admin_newItemContent+'"></textarea>');
 			}
 			$("#popup > form").append('<hr>');
+			$("#popup > form").append('<input type="checkbox" name="featured" value="1" id="featured"><label for="featured">'+translation.admin_featured+'</label>');
+			$("#popup > form").append('<hr>');
 			for(i = 0;i<data.tags.length;i++){
 				if(data.ids[i] == thisSubCat){var checked = "checked";}
 				else{var checked = "";}
@@ -185,8 +193,9 @@ $(document).ready(function(){
 					$("#popup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_settingsSiteName+'">');
 					$("#popup > form").append('<input type="text" value="'+data[i].title+'" name=title[] placeholder="'+translation.admin_settingsSiteTitle+'">');
 					$("#popup > form").append('<textarea name="meta[]" placeholder="'+translation.admin_settingsSiteMeta+'">'+data[i].meta+'</textarea>');
-					$("#popup > form").append('<input type="text" value="'+data[i].logo+'" name=logo[] placeholder="'+translation.admin_settingslogoTitle+'">');
+					$("#popup > form").append('<input type="text" value="'+data[i].logo+'" name=logo[] placeholder="'+translation.admin_settingsLogoDescription+'">');
 					$("#popup > form").append('<textarea name="description[]" placeholder="'+translation.admin_settingsSiteDescription+'">'+data[i].description+'</textarea>');
+					$("#popup > form").append('<input type="text" value="'+data[i].host+'" name=host[] placeholder="'+translation.admin_settingsHost+'">');
 				}
 				$("#popup > form").append('<input type="hidden" name="action" value="editSettings">');
 				$("#popup > form").append('<input type="submit" value="'+translation.admin_editSettingsSubmit+'">');
@@ -274,6 +283,29 @@ $(document).ready(function(){
 				$("#popup > form").append('<textarea name="content[]" placeholder="'+translation.admin_itemContent+'">'+data.items[i].content+'</textarea>');
 			}
 			$("#popup > form").append('<hr>');
+			if(data.info.featured == 1){
+				var selected = " checked";
+			}
+			else{
+				var selected = "";
+			}
+			$("#popup > form").append('<input type="checkbox" name="featured" value="1" id="featured"'+selected+'><label for="featured">'+translation.admin_featured+'</label>');
+			var today = new Date(data.info.time*1000);
+			var dd = today.getDate();
+			var mm = today.getMonth()+1; //January is 0!
+			var hh = today.getHours();
+			var mi = today.getMinutes();
+			var yyyy = today.getFullYear();
+			if(dd<10){dd='0'+dd}
+			if(mm<10){mm='0'+mm}
+			if(hh<10){hh='0'+hh}
+			if(mi<10){mi='0'+mi}
+			var date = yyyy+'-'+mm+'-'+dd;
+
+			$("#popup > form").append('<input type="date" value="'+date+'" name="date">');
+			$("#popup > form").append('<input type="time" value="'+hh+':'+mi+'" name="time">');
+
+			$("#popup > form").append('<hr>');
 			for(i = 0;i<data.tags.length;i++){
 				$("#popup > form").append('<input type="checkbox" name="tags[]" value="'+data.tags[i].id+'" id="tags'+data.tags[i].id+'" '+data.tags[i].checked+'><label for="tags'+data.tags[i].id+'">'+data.tags[i].name+'</label>');
 			}
@@ -305,6 +337,7 @@ $(document).ready(function(){
 	}
 
 	function pluginCenter(thisContext){
+		showAdmin();
 		$("#popup").append('<h1>'+translation.admin_editPlugins+'</h1>');
 		$.post( '/api/', {action: "getPlugins"},"json")
 		.done(function(data){
@@ -328,6 +361,7 @@ $(document).ready(function(){
 
 			$(".editPlugin").on("click",function(){
 				//open the editPlugin with a new plugin
+				thisContext = $(this);
 				$.post( '/api/', {action: "retrievePlugin", id : thisContext.attr("data-id")},"json")
 				.done(function(data){
 					editPlugin(data);
@@ -336,6 +370,7 @@ $(document).ready(function(){
 			});
 
 			$(".deletePlugin").on("click",function(){
+			thisContext = $(this);
 				$("#plugin"+thisContext.attr("data-id")).remove();
 					$.post( '/api/', {action: "deletePlugin", plugin : thisContext.attr("data-id")},"json").done(function(data){
 				});
@@ -374,6 +409,159 @@ $(document).ready(function(){
 		$("#popup > form").append('<input type="hidden" name="action" value="editPlugin">');
 		$("#popup > form").append('<input type="submit" value="'+translation.admin_editPlugin+'">');
 
+		$("#closePopup").on("click",function(){
+			$("#blackout").remove();
+		});
+	}
+
+	function contactCenter(){
+		showAdmin();
+		$("#popup").append('<h1>'+translation.admin_editContact+'</h1>');
+		$.post( '/api/', {action: "getContact"},"json")
+		.done(function(data){
+			for(i = 0;i<data.length;i++){
+				$("#popup").append('<div id="contact'+data[i].id+'" class="contactList"></div>');
+				$("#popup > #contact"+data[i].id).append('<p>'+data[i].type+' / '+data[i].value+'</p>');
+				$("#popup > #contact"+data[i].id).append('<p class="editContact" data-id="'+data[i].id+'">'+translation.admin_editPlugin+'</p>');
+				$("#popup > #contact"+data[i].id).append('<p class="deleteContact" data-id="'+data[i].id+'">'+translation.admin_deletePlugin+'</p>');
+			}
+			$("#popup").append('<p id="newContact">'+translation.admin_newContact+'</p>');
+
+
+			$("#newContact").on("click",function(){
+				//open the editPlugin with a new plugin
+				$.post( '/api/', {action: "newContact"},"json")
+				.done(function(data){
+					editContact(data);
+				})
+				.fail(function(data){});
+			});
+
+			$(".editContact").on("click",function(){
+				//open the editPlugin with a new plugin
+				thisContext = $(this);
+				$.post( '/api/', {action: "retrieveContact", id : thisContext.attr("data-id")},"json")
+				.done(function(data){
+					editContact(data);
+				})
+				.fail(function(data){});
+			});
+
+			$(".deleteContact").on("click",function(){
+				thisContext = $(this);
+				$("#contact"+thisContext.attr("data-id")).remove();
+					$.post( '/api/', {action: "deleteContact", contact : thisContext.attr("data-id")},"json").done(function(data){
+				});
+			});
+
+		})
+		.fail(function(d, textStatus, error) {
+					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+		});
+	}
+
+	function editContact(data){
+		$("#popup").html('<div id="closePopup">X</div>');
+		$("#popup").append('<h1>'+translation.admin_editContact+'</h1>');
+		$("#popup").append('<form action="/api/" method="post"></form>');
+		$("#popup > form").append('<select name="type" id="contactList"></select>');
+		for(i=0;i<data.contactList.length;i++){
+			if(data.contactList[i].id_type == data.contact.type){
+				var checked = " selected";
+			}
+			else{
+				var checked = "";
+			}
+			$("#popup > form > #contactList").append('<option value="'+data.contactList[i].id_type+'"'+checked+'>'+data.contactList[i].name+'</option>');
+		}
+		$("#popup > form").append('<input type="text" value="'+data.contact.value+'" name="value">');
+		$("#popup > form").append('<input type="text" value="'+data.contact.priority+'" name="priority">');
+		$("#popup > form").append('<input type="hidden" name="id_contact" value="'+data.contact.id+'">');
+		$("#popup > form").append('<input type="hidden" name="action" value="editContact">');
+		$("#popup > form").append('<input type="submit" value="'+translation.admin_editContact+'">');
+		$("#closePopup").on("click",function(){
+			$("#blackout").remove();
+		});
+	}
+	function summaryCenter(thisContext){
+		showAdmin();
+		$("#popup").append('<h1>'+translation.admin_editSummary+'</h1>');
+		$.post( '/api/', {action: "getSummary", lang : thisContext.data('lang')},"json")
+		.done(function(data){
+			var group = 0;
+			for(i = 0;i<data.length;i++){
+				if(data[i].group != group){
+					group = data[i].group;
+					$("#popup").append('<hr>');
+				}
+				$("#popup").append('<div id="summary'+data[i].id_summary+'" class="SummaryList"></div>');
+				$("#popup > #summary"+data[i].id_summary).append('<p>'+data[i].name+'</p>');
+				$("#popup > #summary"+data[i].id_summary).append('<p>'+data[i].group+'</p>');
+				$("#popup > #summary"+data[i].id_summary).append('<p>'+data[i].priority+'</p>');
+				$("#popup > #summary"+data[i].id_summary).append('<p class="editSummary" data-id="'+data[i].id_summary+'" data-lang="'+thisContext.data('lang')+'">'+translation.admin_editThisSummary+'</p>');
+				$("#popup > #summary"+data[i].id_summary).append('<p class="deleteSummary" data-id="'+data[i].id_summary+'">'+translation.admin_deleteSummary+'</p>');
+			}
+			$("#popup").append('<p id="newSummary" data-lang="'+thisContext.data('lang')+'">'+translation.admin_newSummary+'</p>');
+
+			$(".deleteSummary").on("click",function(){
+				var thisContext = $(this);
+				$.post( '/api/', {action: "deleteSummary", id : thisContext.data('id')},"json")
+				.done(function(data){
+					thisContext.parent("div").remove();
+				})
+				.fail(function(d, textStatus, error) {
+							console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+				});
+			});
+
+			$("#newSummary").on("click",function(){
+				var thisContext = $(this);
+				$.post( '/api/', {action: "newSummary", lang : thisContext.data('lang')},"json")
+				.done(function(data){
+					editSummary(data);
+				})
+				.fail(function(d, textStatus, error) {
+							console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+				});
+			});
+
+			$(".editSummary").on("click",function(){
+				var thisContext = $(this);
+				$.post( '/api/', {action: "getThisSummary", id : thisContext.data('id'), lang : thisContext.data('lang')},"json")
+				.done(function(data){
+					editSummary(data);
+				})
+				.fail(function(d, textStatus, error) {
+							console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+				});
+			});
+
+
+		})
+		.fail(function(d, textStatus, error) {
+					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+		});
+	}
+	function editSummary(data){
+		$("#popup").html('<div id="closePopup">X</div>');
+		$("#popup").append('<h1>'+translation.admin_editSummary+'</h1>');
+		$("#popup").append('<form action="/api/" method="post"></form>');
+		$("#popup > form").append('<select name="subcat" id="subcatList"></select>');
+		for(i=0;i<data.subcatList.length;i++){
+			if(data.subcatList[i].name == data.summary.name){
+				var checked = " selected";
+			}
+			else{
+				var checked = "";
+			}
+			$("#popup > form > #subcatList").append('<option value="'+data.subcatList[i].id_subcat+'"'+checked+'>'+data.subcatList[i].name+'</option>');
+		}
+		$("#popup > form").append('<input type="text" value="'+data.summary.group+'" name="group">');
+		$("#popup > form").append('<input type="text" value="'+data.summary.priority+'" name="priority">');
+		$("#popup > form").append('<input type="text" value="'+data.summary.rows+'" name="rows">');
+		$("#popup > form").append('<input type="hidden" name="id" value="'+data.summary.id_summary+'">');
+		$("#popup > form").append('<input type="hidden" name="action" value="editSummary">');
+		$("#popup > form").append('<input type="submit" value="'+translation.admin_editSummary+'">');
 		$("#closePopup").on("click",function(){
 			$("#blackout").remove();
 		});

@@ -10,7 +10,7 @@
   ?>
   <title><?=$header['title']?></title>
   <link href="/side/style.css" rel="stylesheet" type="text/css">
-  <link href="/side/customCss.css" rel="stylesheet" type="text/css">
+  <link href="/<?=$lang?>/side/customCss.css" rel="stylesheet" type="text/css">
   <script src="/side/jquery.js"></script>
   <script src="/side/function.js"></script>
   <script src="/side/hyphenator.js"></script>

@@ -2,14 +2,17 @@
 (empty($header['logo'])?$logo = "/img/logo.png":$logo = $header['logo']);
  ?>
 <body>
-<header class="white-bg">
+<header id="siteHeader">
+<?php drawLang($file_db,$translation,$lang); ?>
   <nav id="logo" class="flex-row-fluid flex-center wrapper pad2">
     <a href="/<?=$lang?>/" class="block"><img src="<?=$logo?>" id="logoImg" alt="logo" class="flex0"></a>
     <div class="flex1"></div>
   </nav>
   <div class="black-bg">
     <nav id="menu" class="flex-row-fluid flex-center wrapper">
-  	<a href="/<?=$lang?>/" class="home block pushState flex0" data-title="Chaire"><?=$translation['nav_home']?></a>
+      <?php
+      (empty($_GET['cat'])?$activation = " active":$activation = ""); ?>
+  	<a href="/<?=$lang?>/" class="home block pushState flex0<?=$activation?>" data-title="Chaire"><?=$translation['nav_home']?></a>
   <?php
       $result = $file_db->prepare('SELECT cl.id_cat,name,lang,image,c.priority FROM category_lang cl JOIN category c ON c.id_cat = cl.id_cat WHERE lang LIKE :lang ORDER BY c.priority ASC');
       $result->bindParam(":lang",$lang);

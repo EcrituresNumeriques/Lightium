@@ -74,9 +74,11 @@ else{
 	drawLead('index',$header['name'],$header['description'],'index',0,$translation,$lang);
 	$current = drawCookieTrail($lang);
 	echo('<div class="flex-row-fluid flex-top wrapper">');
-	drawListing($file_db, $translation, $current,$lang,'index',NULL);
+	drawListing($file_db, $translation, $current,$lang,'index',NULL, NULL);
+	echo('<section id="sidebar">');
+	drawContact($file_db, $translation,$lang);
 	drawCalendar($file_db, $translation,$lang);
-	echo('</div>');
+	echo('</section></div>');
 }
 
 ?>

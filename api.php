@@ -1,7 +1,7 @@
 <?php
 include('include/config.ini.php');
 //Custom CSS AND JS
-if($_GET['action'] == "customCSS"){
+if(!empty($_GET['action']) AND $_GET['action'] == "customCSS"){
   $customCSS = $file_db->query("Select * FROM customCSS LIMIT 0,1");
   $customCSS = $customCSS->fetch(PDO::FETCH_ASSOC);
   header('Last-Modified: '.gmdate('D, d M Y H:i:s', $customCSS['time']).' GMT', true, 200);
@@ -74,6 +74,39 @@ if(isLoged() AND !empty($_POST['action'])){
         //only request, do not show anything
         die();
     }
+    elseif($_POST['action'] == "getContact"){
+        $result = $file_db->prepare('SELECT c.id_contact as id,*,t.name as type,c.value FROM contact c LEFT JOIN contact_type t ON c.type = t.id_type ORDER BY c.priority ASC');
+        $result->execute() or die('AHAH');
+        $result = $result->fetchAll(PDO::FETCH_ASSOC);
+        $contacts = array();
+        foreach ($result as $contact) {
+          ($contact['id'] != NULL ?:$contact['id'] = $translation['admin_newlyContact']);
+          ($contact['type'] != NULL ?:$contact['type'] = 0);
+          ($contact['value'] != NULL ?:$contact['value'] = "");
+          $contacts[] = $contact;
+        }
+        echo(JSON_encode($contacts));
+        //only request, do not show anything
+        die();
+    }
+    elseif($_POST['action'] == "getSummary"){
+        $result = $file_db->prepare('SELECT s.id_summary, s.`group`, s.priority, sl.name FROM summary s LEFT JOIN category_sub_lang sl ON sl.id_subcat = s.id_subcat AND sl.lang LIKE :lang ORDER BY `group`, priority');
+        $result->bindParam(":lang",$_POST['lang']);
+        $result->execute() or die('AHAH');
+        $result = $result->fetchAll(PDO::FETCH_ASSOC);
+        $summaries = array();
+        foreach ($result as $summary) {
+          ($summary['group'] != NULL ?:$summary['group'] = 1);
+          ($summary['priority'] != NULL ?:$summary['priority'] = 1);
+          ($summary['name'] != NULL ?:$summary['name'] = "");
+          $summaries[] = $summary;
+        }
+        echo(JSON_encode($summaries));
+        //only request, do not show anything
+        die();
+    }
+
+
   //add new stuff to the database
 
 
@@ -114,6 +147,9 @@ if(isLoged() AND !empty($_POST['action'])){
       $retrievePlugin->bindParam(":plugin",$_POST['id'],SQLITE3_INTEGER);
       $retrievePlugin->execute() or die('unable to retrieve Plugin');
       $reponse = $retrievePlugin->fetch(PDO::FETCH_ASSOC);
+      ($reponse['public1'] == "null" OR $reponse['public1'] == NULL ? $reponse['public1'] = "":$reponse['public1'] = $reponse['public1']);
+      ($reponse['public2'] == "null" OR $reponse['public2'] == NULL ? $reponse['public2'] = "":$reponse['public2'] = $reponse['public2']);
+      ($reponse['public3'] == "null" OR $reponse['public3'] == NULL ? $reponse['public3'] = "":$reponse['public3'] = $reponse['public3']);
       $plugins = scandir("plugins/");
       $reponse = array("plugin" => $reponse, "pluginList" => array());
       foreach($plugins as $plugin){
@@ -122,6 +158,20 @@ if(isLoged() AND !empty($_POST['action'])){
           $reponse['pluginList'][] = $plugin;
         }
       }
+      echo(JSON_encode($reponse));
+      die();
+  }
+  elseif($_POST['action'] == "retrieveContact"){
+      $retrievePlugin = $file_db->prepare("SELECT id_contact as id,type,value, priority FROM contact where id_contact = :contact");
+      $retrievePlugin->bindParam(":contact",$_POST['id'],SQLITE3_INTEGER);
+      $retrievePlugin->execute() or die('unable to retrieve Contact');
+      $reponse = $retrievePlugin->fetch(PDO::FETCH_ASSOC);
+      ($reponse['type'] == "null" OR $reponse['type'] == NULL ? $reponse['type'] = "":$reponse['type'] = $reponse['type']);
+      ($reponse['value'] == "null" OR $reponse['value'] == NULL ? $reponse['value'] = "":$reponse['value'] = $reponse['value']);
+      ($reponse['priority'] == "null" OR $reponse['priority'] == NULL ? $reponse['priority'] = "":$reponse['priority'] = $reponse['priority']);
+      $contactType = $file_db->query("SELECT id_type, name, template FROM contact_type");
+      $contactType = $contactType->fetchAll(PDO::FETCH_ASSOC);
+      $reponse = array("contact" => $reponse, "contactList" => $contactType);
       echo(JSON_encode($reponse));
       die();
   }
@@ -221,18 +271,20 @@ if(isLoged() AND !empty($_POST['action'])){
     // TODO Add Checkings
 
     //create new item
-    $newItem = $file_db->prepare("INSERT INTO item (id_item, year, month, day, published, time) VALUES (NULL,:year,:month,:day,:time,:published)");
+    $newItem = $file_db->prepare("INSERT INTO item (id_item, year, month, day, published, time, featured) VALUES (NULL,:year,:month,:day,:time,:published,:featured)");
 
   	$year = date("Y");
   	$month = date("m");
   	$day = date("d");
   	$time = time();
   	$published = time();
+    $featured = $_POST['featured'];
     $newItem->bindParam(':year',$year);
   	$newItem->bindParam(':month',$month);
   	$newItem->bindParam(':day',$day);
   	$newItem->bindParam(':time',$time);
-  	$newItem->bindParam(':published',$published);
+    $newItem->bindParam(':published',$published);
+  	$newItem->bindParam(':featured',$featured);
     $newItem->execute() or die('Unable to add item');
     $id_item = $file_db->lastInsertId();
 
@@ -272,6 +324,7 @@ if(isLoged() AND !empty($_POST['action'])){
           if($setting['meta'] == "null" OR $setting['meta'] == NULL){$setting['meta'] = "";}
           if($setting['title'] == "null" OR $setting['title'] == NULL){$setting['title'] = "";}
           if($setting['logo'] == "null" OR $setting['logo'] == NULL){$setting['logo'] = "";}
+          if($setting['host'] == "null" OR $setting['host'] == NULL){$setting['host'] = "";}
 
           $settings[] = array(
             "lang" => $setting['lang'],
@@ -279,20 +332,22 @@ if(isLoged() AND !empty($_POST['action'])){
             "description" => $setting['description'],
             "meta" => $setting['meta'],
             "title" => $setting['title'],
-            "logo" => $setting['logo']
+            "logo" => $setting['logo'],
+            "host" => $setting['host']
           );
         }
         echo(json_encode($settings));
         die();
   }
   elseif($_POST['action'] == "editSettings"){
-      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title, logo = :logo WHERE lang LIKE :lang");
+      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title, logo = :logo, host = :host WHERE lang LIKE :lang");
       $edit->bindParam(":name",$name, SQLITE3_TEXT);
       $edit->bindParam(":description",$description, SQLITE3_TEXT);
       $edit->bindParam(":meta",$meta, SQLITE3_TEXT);
       $edit->bindParam(":logo",$logo, SQLITE3_TEXT);
       $edit->bindParam(":title",$title, SQLITE3_TEXT);
       $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
+      $edit->bindParam(":host",$host, SQLITE3_TEXT);
       for($i=0;$i<count($_POST['lang']);$i++){
         $name = $_POST['name'][$i];
         $description = $_POST['description'][$i];
@@ -300,6 +355,7 @@ if(isLoged() AND !empty($_POST['action'])){
         $title = $_POST['title'][$i];
         $logo = $_POST['logo'][$i];
         $lang = $_POST['lang'][$i];
+        $host = $_POST['host'][$i];
         $edit->execute() or die('Unable to edit setting');
       }
   }
@@ -429,6 +485,11 @@ if(isLoged() AND !empty($_POST['action'])){
       }
   }
   elseif($_POST['action'] == "getItem"){
+    $info = $file_db->prepare("SELECT time, featured FROM item WHERE id_item = :item");
+    $info->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
+    $info->execute() or die('Unable to fetch info from item');
+    $info = $info->fetch(PDO::FETCH_ASSOC);
+    $cats['info'] = $info;
     $result = $file_db->prepare('SELECT DISTINCT(c.id_subcat),c.name,i.id_item FROM category_sub_lang c LEFT JOIN item_assoc i ON c.id_subcat = i.id_subcat AND i.id_item = :item WHERE lang LIKE :lang');
     $result->bindParam(":lang",$_POST['lang'], SQLITE3_TEXT);
     $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
@@ -441,6 +502,8 @@ if(isLoged() AND !empty($_POST['action'])){
         "id" => $subcat['id_subcat'],
         "checked" => $subcat['id_item']
       );
+      $featured = $subcat['featured'];
+      $time = $subcat['time'];
       }
     $result = $file_db->prepare('SELECT * FROM item_lang where id_item = :item');
     $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
@@ -460,6 +523,14 @@ if(isLoged() AND !empty($_POST['action'])){
     die();
   }
   elseif($_POST['action'] == "editItem"){
+      $editItem = $file_db->prepare("UPDATE item SET featured = :featured, time = :time WHERE id_item = :item");
+      $editItem->bindParam(":item",$_POST['item']);
+      $editItem->bindParam(":featured",$_POST['featured']);
+      $editItem->bindParam(":time",$datetime);
+      $date = DateTime::createFromFormat("Y-m-d H:i",$_POST['date']." ".$_POST['time']);
+      $datetime = $date->getTimestamp();
+      $editItem->execute() or die('Unable to update general settings');
+
       $edit = $file_db->prepare("UPDATE item_lang SET title = :title, content = :content, short = :short, cleanstring = :cleanString WHERE lang LIKE :lang AND id_item = :item");
       $edit->bindParam(":title",$title, SQLITE3_TEXT);
       $edit->bindParam(":content",$content, SQLITE3_TEXT);
@@ -506,6 +577,88 @@ if(isLoged() AND !empty($_POST['action'])){
     $delete->execute() or die('Unable to edit Plugin');
     $response = array("error" => 0);
   }
+  elseif($_POST['action'] == "newContact"){
+    $file_db->query("INSERT INTO contact DEFAULT VALUES");
+    $reponse['id'] = $file_db->lastInsertId();
+    $reponse['type'] = "empty";
+    $reponse['value'] = "";
+    $reponse['priority'] = $file_db->lastInsertId();
+    $contactType = $file_db->query("SELECT id_type, name, template FROM contact_type");
+    $contactType = $contactType->fetchAll(PDO::FETCH_ASSOC);
+    $reponse = array("contact" => $reponse, "contactList" => $contactType);
+    echo(JSON_encode($reponse));
+    die();
+  }
+  elseif($_POST['action'] == "deleteContact"){
+    $delete = $file_db->prepare("DELETE FROM contact WHERE id_contact = :contact");
+    $delete->bindParam(":contact", $_POST['contact'],SQLITE3_INTEGER);
+    $delete->execute() or die('Unable to delete Contact');
+    $response = array("error" => 0);
+    echo(JSON_encode($response));
+    die();
+  }
+  elseif($_POST['action'] == "editContact"){
+    $delete = $file_db->prepare("UPDATE contact SET type = :type, value = :value, priority = :priority WHERE id_contact = :contact");
+    $delete->bindParam(":contact", $_POST['id_contact'],SQLITE3_INTEGER);
+    $delete->bindParam(":value", $_POST['value'],SQLITE3_TEXT);
+    $delete->bindParam(":priority", $_POST['priority'],SQLITE3_INTEGER);
+    $delete->bindParam(":type", $_POST['type'],SQLITE3_INTEGER);
+    $delete->execute() or die('Unable to edit Contact');
+    $response = array("error" => 0);
+  }
+  elseif($_POST['action'] == "deleteSummary"){
+    $delete = $file_db->prepare("DELETE FROM summary WHERE id_summary = :id");
+    $delete->bindParam(":id", $_POST['id'],SQLITE3_INTEGER);
+    $delete->execute() or die('Unable to delete Contact');
+    $response = array("error" => 0);
+    echo(JSON_encode($response));
+    die();
+  }
+  elseif($_POST['action'] == "newSummary"){
+    $file_db->query("INSERT INTO summary (id_subcat, `group`, priority, rows) VALUES (0, 1, 1, 3)");
+    $reponse['id_summary'] = $file_db->lastInsertId();
+    $reponse['name'] = "";
+    $reponse['priority'] = 1;
+    $reponse['rows'] = 3;
+    $reponse['group'] = $file_db->lastInsertId();
+    $subcatList = $file_db->prepare("SELECT id_subcat, name FROM category_sub_lang where lang LIKE :lang");
+    $subcatList->bindParam(":lang",$_POST['lang']);
+    $subcatList->execute() or die('Unable to fetch subcat names');
+    $subcatList = $subcatList->fetchAll(PDO::FETCH_ASSOC);
+    $reponse = array("summary" => $reponse, "subcatList" => $subcatList);
+    echo(JSON_encode($reponse));
+    die();
+  }
+  elseif($_POST['action'] == "getThisSummary"){
+    $reponse = $file_db->prepare("SELECT s.id_summary, s.`group`, s.priority, s.rows,sl.name FROM summary s LEFT JOIN category_sub_lang sl ON sl.id_subcat = s.id_subcat AND sl.lang LIKE :lang WHERE s.id_summary = :summary");
+    $reponse->bindParam(":lang", $_POST['lang']);
+    $reponse->bindParam(":summary", $_POST['id']);
+    $reponse->execute() or die('Unable to fetch this summary');
+    $summary = $reponse->fetch(PDO::FETCH_ASSOC);
+    ($summary['group'] != NULL ?:$summary['group'] = 1);
+    ($summary['priority'] != NULL ?:$summary['priority'] = 1);
+    ($summary['rows'] != NULL ?:$summary['rows'] = 3);
+    ($summary['name'] != NULL ?:$summary['name'] = "");
+
+    $subcatList = $file_db->prepare("SELECT id_subcat, name FROM category_sub_lang where lang LIKE :lang");
+    $subcatList->bindParam(":lang",$_POST['lang']);
+    $subcatList->execute() or die('Unable to fetch subcat names');
+    $subcatList = $subcatList->fetchAll(PDO::FETCH_ASSOC);
+    $reponse = array("summary" => $summary, "subcatList" => $subcatList);
+    echo(JSON_encode($reponse));
+    die();
+  }
+  elseif($_POST['action'] == "editSummary"){
+    $delete = $file_db->prepare("UPDATE summary SET id_subcat = :subcat, `group` = :group, priority = :priority, rows = :rows WHERE id_summary = :summary");
+    $delete->bindParam(":subcat", $_POST['subcat'],SQLITE3_INTEGER);
+    $delete->bindParam(":group", $_POST['group'],SQLITE3_INTEGER);
+    $delete->bindParam(":priority", $_POST['priority'],SQLITE3_INTEGER);
+    $delete->bindParam(":rows", $_POST['rows'],SQLITE3_INTEGER);
+    $delete->bindParam(":summary", $_POST['id'],SQLITE3_INTEGER);
+    $delete->execute() or die('Unable to edit Contact');
+    $response = array("error" => 0);
+  }
+
   else{print_r($_REQUEST);die();}
 
 }

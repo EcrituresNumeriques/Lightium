@@ -1,5 +1,6 @@
 <?php
 $translation = array(
+	"seeInLanguage" => "browse website in: ",
 	"last10" => "last 10",
 	"lastX" => "last published",
 	"lastAll" => "All",
@@ -11,8 +12,11 @@ $translation = array(
 	"listing_comeBack" => "But come back later, there will be lots of interesting stuff here",
 	"calendar_title" => "Calendar",
 	"calendar_nothing" => "No event to come",
+	"contact_title" => "Contacts",
+	"contact_nothing" => "No contact registered",
 	"login_placeHolderName" => "Username",
 	"login_placeHolderPassword" => "Password",
+	"admin_featured" => "featured",
 	"admin_newCat" => "Add a category",
 	"admin_changeLead" => "Edit lead",
 	"admin_changeArticle" => "Edit article",
@@ -36,6 +40,7 @@ $translation = array(
 	"admin_settingsSiteDescription" => "Description of the website",
 	"admin_settingsLogoDescription" => "Logo of the website",
 	"admin_settingsSiteLang" => "Lang",
+	"admin_settingsHost" => "Host",
 	"admin_editSettingsSubmit" => "Edit",
 	"admin_CatName" => "Name of the category",
 	"admin_CatPriority" => "Priority of the category",
@@ -64,13 +69,22 @@ $translation = array(
 	"admin_newCalendarSubmit" => "Add the event",
 	"admin_plugins" => "Plugins",
 	"admin_css" => "Custom CSS",
+	"admin_summary" => "Summary",
 	"admin_editCSS" => "Custom CSS",
 	"admin_editCSSSubmit" => "Edit custom CSS",
 	"admin_editPlugins" => "Edit Plugins",
 	"admin_editPlugin" => "Edit",
 	"admin_deletePlugin" => "Delete",
 	"admin_newPlugin" => "Add a new plugin",
-	"admin_newlyPlugin" => "Newly created plugin"
+	"admin_newlyPlugin" => "Newly created plugin",
+	"admin_editContact" => "Manage contacts",
+	"admin_deleteContact" => "Delete",
+	"admin_newContact" => "Add a new contact",
+	"admin_newlyContact" => "Newly created contact",
+	"admin_editSummary" => "Manage summary",
+	"admin_editThisSummary" => "Edit",
+	"admin_deleteSummary" => "Delete",
+	"admin_newSummary" => "Add a new entry"
 );
 
 

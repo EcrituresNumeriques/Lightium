@@ -1,5 +1,6 @@
 <?php
 $translation = array(
+	"seeInLanguage" => "Voir le site en : ",
 	"last10" => "10 derniers",
 	"lastX" => "dernières publications",
 	"lastAll" => "Tous",
@@ -11,8 +12,11 @@ $translation = array(
 	"listing_comeBack" => "Mais revenez plus tard, cette page sera remplie d'articles vraiment interressants!",
 	"calendar_title" => "Calendrier",
 	"calendar_nothing" => "Pas d'évènement de prévu",
+	"contact_title" => "Contacts",
+	"contact_nothing" => "Pas de contacts enregistré",
 	"login_placeHolderName" => "Nom d'utilisateur",
 	"login_placeHolderPassword" => "Mot de passe",
+	"admin_featured" => "Mis en avant",
 	"admin_newCat" => "Ajouter une catégorie",
 	"admin_changeLead" => "Éditer le chapeau",
 	"admin_changeArticle" => "Éditer l'article",
@@ -36,6 +40,7 @@ $translation = array(
 	"admin_settingsSiteDescription" => "Description du site",
 	"admin_settingsLogoDescription" => "Logo du site",
 	"admin_settingsSiteLang" => "Langue du site",
+	"admin_settingsHost" => "Hôte",
 	"admin_editSettingsSubmit" => "Modifier",
 	"admin_CatName" => "Nom de la catégorie",
 	"admin_CatPriority" => "Priorité de la catégorie",
@@ -64,13 +69,22 @@ $translation = array(
 	"admin_newCalendarSubmit" => "Ajouter l'évènement",
 	"admin_plugins" => "Plugins",
 	"admin_css" => "CSS personalisé",
+	"admin_summary" => "Sommaire",
 	"admin_editCSS" => "CSS personalisé",
 	"admin_editCSSSubmit" => "Modifier le CSS personalisé",
 	"admin_editPlugins" => "Modifier les Plugins",
 	"admin_editPlugin" => "Modifier",
 	"admin_deletePlugin" => "Supprimer",
 	"admin_newPlugin" => "Ajouter un plugin",
-	"admin_newlyPlugin" => "Nouveau plugin"
+	"admin_newlyPlugin" => "Nouveau plugin",
+	"admin_editContact" => "Gérer les contacts",
+	"admin_deleteContact" => "Supprimer",
+	"admin_newContact" => "Ajouter un contact",
+	"admin_newlyContact" => "Nouveau contact",
+	"admin_editSummary" => "Gérer le sommaire",
+	"admin_editThisSummary" => "Éditer",
+	"admin_deleteSummary" => "Supprimer",
+	"admin_newSummary" => "Ajouter une entrée",
 );
 
 
