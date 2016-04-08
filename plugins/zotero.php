@@ -21,11 +21,13 @@ $lastVersion = $settings['int1'];
 foreach($output as $object){
 ($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);
 $content = $title = $short = $date = $tags = $key = "";
+$content = "<p>";
 (empty($object['links']['data']['extra'])?:$content .= $object['links']['data']['extra']."<br>");
 (empty($object['citation'])?:$content .= $object['citation']."<br>");
-(empty($object['data']['url'])?:$content .= $object['data']['url']."<br>");
+(empty($object['data']['url'])?:$content .= '<a href="'.$object['data']['url'].'" target="_blank">'.$object['data']['url']."</a><br>");
 (empty($object['links']['alternate']['href'])?:$content .= $object['links']['alternate']['href']."<br>");
-$title = $object['data']['title'];
+$content .= "</p>";
+(empty($object['citation'])?$title = $object['data']['title']:$title = $object['citation']);
 $short = $object['data']['abstractNote'];
 $key = $object['key'];
 $date = $object['data']['date'];
@@ -94,6 +96,11 @@ foreach($zoteroFeed as $item){
     $deleteTags = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item");
     $deleteTags->bindParam(":item",$id_item);
     $deleteTags->execute() or die('Unable to delete old tags');
+    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title, content = :content WHERE id_item = :item");
+    $updateTitle->bindParam(":item",$id_item,SQLITE3_INTEGER);
+    $updateTitle->bindParam(":content",$item['content'],SQLITE3_TEXT);
+    $updateTitle->bindParam(":title",$item['title'],SQLITE3_TEXT);
+    $updateTitle->execute() or die('Unable to update Zotekey');
   }
   else{
     $item['date'] = explode("-",$item['date']);

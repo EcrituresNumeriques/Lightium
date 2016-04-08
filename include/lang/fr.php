@@ -1,5 +1,6 @@
 <?php
 $translation = array(
+	"seeMore" => "Voir plus...",
 	"seeInLanguage" => "Voir le site en : ",
 	"last10" => "10 derniers",
 	"lastX" => "dernières publications",
@@ -54,6 +55,7 @@ $translation = array(
 	"admin_SubCatShort" => "Chapeau de la sous-catégorie",
 	"admin_editSubCatSubmit" => "Modifier la sous-catégorie",
 	"admin_editSubCat" => "Modifier la sous-catégorie",
+	"admin_priority" => "Priorité",
 	"admin_maxItem" => "Nombre d'article par page",
 	"admin_editItem" => "Modifier l'article",
 	"admin_delItem" => "Supprimer l'article",
@@ -85,6 +87,8 @@ $translation = array(
 	"admin_editThisSummary" => "Éditer",
 	"admin_deleteSummary" => "Supprimer",
 	"admin_newSummary" => "Ajouter une entrée",
+	"admin_dangerDeletePlaceholder" => "Pour supprimer, écrivez 'DELETE' ici",
+	"admin_dangerDeleteSubmit" => "Supprimer",
 );
 
 

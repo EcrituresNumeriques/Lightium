@@ -146,7 +146,7 @@ function drawListing($db, $translation, $current, $lang, $action, $what,$maxItem
 	$pagination = false;
   echo('<section id="listing" class="flex3 '.$action.'">');
   if($action == "cat"){
-  $query = $db->prepare('SELECT csl.name,csl.image,csl.short FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cs.id_cat = :id_cat AND csl.lang LIKE :lang');
+  $query = $db->prepare('SELECT csl.name,csl.image,csl.short FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cs.id_cat = :id_cat AND csl.lang LIKE :lang ORDER BY cs.priority ASC');
   $query->bindParam(":lang",$lang, SQLITE3_TEXT);
   $query->bindParam(":id_cat",$what, SQLITE3_INTEGER);
   $query->execute() or die('Unable to fetch Items');
@@ -164,9 +164,7 @@ elseif($action == "index"){
 	$query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':start',$start, SQLITE3_INTEGER);
 	(!empty($_GET['page'])?$start=$pages['count'] - $_GET['page']*10:$start=0);
-	if($start == 0){
-		drawSommaire($db,$translation,$current,$lang,$action);
-	}
+	drawSommaire($db,$translation,$current,$lang,$action,NULL);
   $query->execute() or die('Unable to fetch Items');
   //admin add item
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
@@ -186,6 +184,7 @@ elseif($action == "subcat"){
   $query->bindParam(':maxItem',$maxItem, SQLITE3_INTEGER);
 	(!empty($_GET['page'])?$start=$pages['count'] - $_GET['page']*$maxItem:$start=0);
   $query->execute() or die('Unable to fetch Items');
+	drawSommaire($db,$translation,$current,$lang,$action,$what);
   $admin = '<a class="admin" id="newItem" data-subcat="'.$what.'" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "day"){
@@ -336,7 +335,7 @@ function drawCalendar($db, $translation,$lang){
 }
 
 function drawContact($db,$translation,$lang){
-	$contact = $db->prepare("SELECT * FROM contact c LEFT JOIN contact_type t ON c.type = t.id_type");
+	$contact = $db->prepare("SELECT * FROM contact c LEFT JOIN contact_type t ON c.type = t.id_type ORDER BY priority ASC");
 	$contact->execute() or die("Couldn't open event table");
 	$admin = "";
 	if(isLogedNC()){
@@ -456,23 +455,32 @@ function drawLang($db,$translation,$lang){
 }
 
 
-function	drawSommaire($db,$translation,$current,$lang,$action){
-
+function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 	//Display featured
-	$getFeatured = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.featured = 1 GROUP BY i.id_item ORDER BY time DESC LIMIT 0,1");
+	if($action == "index"){
+			$getFeatured = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.featured = 1 GROUP BY i.id_item ORDER BY time DESC LIMIT 0,1");
+	}
+	elseif($action == "subcat"){
+			$getFeatured = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_assoc ia2 ON ia2.id_item = i.id_item AND ia2.id_subcat = :filter JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.featured = 1 GROUP BY i.id_item ORDER BY time DESC LIMIT 0,1");
+			$getFeatured->bindParam(":filter",$what,SQLITE3_INTEGER);
+	}
 	$getFeatured->bindParam(':lang',$lang, SQLITE3_TEXT);
 	$getFeatured->execute() or die('Unable to get featured article');
 	$featured = $getFeatured->fetch(PDO::FETCH_ASSOC);
-	$featured['url'] = $current.$featured['year']."/".$featured['month']."/".$featured['day']."/".cleanString($featured['title']);
 	(!empty($featured['subcat']) ? $tags = $featured['subcat'] : $tags = "");
 	?>
 		<div id="summary">
+		<?php
+		if($featured){
+			$featured['url'] = $current.$featured['year']."/".$featured['month']."/".$featured['day']."/".cleanString($featured['title']);
+			(!empty($featured['image'])?:$featured['image'] = "");
+			?>
 			<div id="featured">
 				<article class="clear">
 			    <?=$featured['image']?>
 			    <h1><a href="<?=$featured['url']?>" class="pushState"><?=$featured['title']?></a></h1>
 
-			    <p class="hyphenate"><?php if(count_chars($featured['short']) > 512){echo substr($featured['short'],0,512)."...";}else{echo($featured['short']);} ?></p>
+			    <p class="hyphenate"><?php if(strlen($featured['short']) > 512){echo substr($featured['short'],0,512)."...";}else{echo($featured['short']);} ?></p>
 					<?php
 			  if(!empty($tags)){
 				drawTags($lang,$tags);
@@ -481,6 +489,9 @@ function	drawSommaire($db,$translation,$current,$lang,$action){
 			  <div class="clear"></div>
 			  </article>
 			</div>
+			<?php
+			}
+			?>
 			<section id="summaryGroups">
 			<div class="group" id="group1">
 	<?php
@@ -489,12 +500,19 @@ function	drawSommaire($db,$translation,$current,$lang,$action){
 	$checkSommaire = $db->prepare("SELECT s.id_subcat, s.`group`, s.rows, csl.name FROM summary s LEFT JOIN category_sub_lang csl ON s.id_subcat = csl.id_subcat AND csl.lang LIKE :lang ORDER BY `group`, priority");
 	$checkSommaire->bindParam(":lang",$lang);
 	$checkSommaire->execute() or die('Unable to get summary');
+	if($action == "index"){
 	$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,:maxItem");
+	}
+	if($action == "subcat"){
+	$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat JOIN item_assoc iaa ON i.id_item = iaa.id_item AND iaa.id_subcat = :filter WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC");
+	$feed->bindParam(":filter",$what,SQLITE3_INTEGER);
+	}
+
 	$feed->bindParam(":lang",$lang);
 	$group = 1;
 
 	foreach ($checkSommaire as $row) {
-		$feed->bindParam(":maxItem",$row['rows']);
+		($action == "subcat"?:$feed->bindParam(":maxItem",$row['rows']));
 		$feed->bindParam(":subcat",$row['id_subcat']);
 		$feed->execute() or die('Unable to retrieve summary groups');
 		if($row['group'] != $group){echo('</div><div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
@@ -502,13 +520,25 @@ function	drawSommaire($db,$translation,$current,$lang,$action){
 		<h1><?=$row['name']?></h1>
 		<?php
 		 foreach ($feed as $article) {
+			if($action == "index"){
 			$url = $current.$article['year']."/".$article['month']."/".$article['day']."/".cleanString($article['title']);
+			}
+			elseif($action == "subcat"){
+				$url = "/".$lang."/".$article['year']."/".$article['month']."/".$article['day']."/".cleanString($article['title']);
+			}
 		 	?>
 			<article class="clear">
 				<h1><a href="<?=$url?>" class="pushState"><?=$article['title']?></a></h1>
 			</article>
 			<?php
 		 }
+		if($action == "index"){
+		?>
+			<article class="clear">
+				<h1><a href="/<?=$lang?>/find/<?=cleanString($row['name'])?>" class="pushState"><?=$translation['seeMore']?></a></h1>
+			</article>
+		<?php
+	}
 	}
 	?>
 		</div>

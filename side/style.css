@@ -410,3 +410,7 @@ form > input[type=submit]{
 		margin-right:1rem;
 		cursor:auto;
 }
+div.dangerDelete{
+	padding:1em;
+	background-color:#f00;
+}

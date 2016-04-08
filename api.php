@@ -443,6 +443,7 @@ if(isLoged() AND !empty($_POST['action'])){
             if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
             if($cat['template'] == "null" OR $cat['template'] == NULL){$cat['template'] = "";}
             if($cat['maxItem'] == "null" OR $cat['maxItem'] == NULL){$cat['maxItem'] = "";}
+            if($cat['priority'] == "null" OR $cat['priority'] == NULL){$cat['priority'] = 1;}
             $cats[] = array(
               "lang" => $cat['lang'],
               "name" => $cat['name'],
@@ -451,6 +452,7 @@ if(isLoged() AND !empty($_POST['action'])){
               "image" => $cat['image'],
               "maxItem" => $cat['maxItem'],
               "template" => $cat['template'],
+              "priority" => $cat['priority'],
             );
           }
           echo(json_encode($cats));
@@ -459,9 +461,10 @@ if(isLoged() AND !empty($_POST['action'])){
   elseif($_POST['action'] == "editSubCat"){
 
       //Update template and maxItem
-      $updateTemplate = $file_db->prepare("UPDATE category_sub SET template = :template, maxItem = :items WHERE id_subcat = :cat");
+      $updateTemplate = $file_db->prepare("UPDATE category_sub SET template = :template, maxItem = :items, priority = :priority WHERE id_subcat = :cat");
       $updateTemplate->bindParam(":cat",$_POST['cat'], SQLITE3_INTEGER);
       $updateTemplate->bindParam(":items",$_POST['maxItem'], SQLITE3_INTEGER);
+      $updateTemplate->bindParam(":priority",$_POST['priority'], SQLITE3_INTEGER);
       $updateTemplate->bindParam(":template",$_POST['template'],SQLITE3_TEXT);
       $updateTemplate->execute() or die('Unable to set new template');
 
@@ -658,6 +661,66 @@ if(isLoged() AND !empty($_POST['action'])){
     $delete->execute() or die('Unable to edit Contact');
     $response = array("error" => 0);
   }
+
+  elseif($_POST['action'] == "deleteCat"){
+    if($_POST['confirm'] == "DELETE"){
+      $deleteCat = $file_db->prepare("DELETE FROM category WHERE id_cat = :cat;");
+      $deleteCat->bindParam(":cat",$_POST['cat']);
+      $deleteCat->execute() or die("Unable to remove Category");
+
+      $deleteCatLang = $file_db->prepare("DELETE FROM category_lang WHERE id_cat = :cat;");
+      $deleteCatLang->bindParam(":cat",$_POST['cat']);
+      $deleteCatLang->execute() or die("Unable to remove Category");
+
+      $getSubCat = $file_db->prepare("SELECT id_subcat FROM category_sub WHERE id_cat = :cat");
+      $getSubCat->bindParam(":cat",$_POST['cat']);
+      $getSubCat->execute() or die("Unable to fetch subcat");
+      $subCats = $getSubCat->fetchALL(PDO::FETCH_ASSOC);
+      $deleteSubCat = $file_db->prepare("DELETE FROM category_sub WHERE id_subcat = :subcat;");
+      $deleteSubCatLang = $file_db->prepare("DELETE FROM category_sub_lang WHERE id_subcat = :subcat;");
+      $deleteSubCatAssoc = $file_db->prepare("DELETE FROM item_assoc WHERE id_subcat = :subcat");
+      $deleteSubCat->bindParam(":subcat",$id_subcat,SQLITE3_INTEGER);
+      $deleteSubCatLang->bindParam(":subcat",$id_subcat,SQLITE3_INTEGER);
+      $deleteSubCatAssoc->bindParam(":subcat",$id_subcat,SQLITE3_INTEGER);
+      foreach ($subCats as $subCat) {
+        $id_subcat = $subCat['id_subcat'];
+        $deleteSubCatLang->execute() or die('Unable to remove subCat');
+        $deleteSubCat->execute() or die('Unable to remove subCat');
+        $deleteSubCatAssoc->execute() or die('Unable to remove subCat');
+      }
+    }
+  }
+  elseif($_POST['action'] == "deleteSubCat"){
+    if($_POST['confirm'] == "DELETE"){
+      $deleteSubCat = $file_db->prepare("DELETE FROM category_sub WHERE id_subcat = :subcat;");
+      $deleteSubCatLang = $file_db->prepare("DELETE FROM category_sub_lang WHERE id_subcat = :subcat;");
+      $deleteSubCatAssoc = $file_db->prepare("DELETE FROM item_assoc WHERE id_subcat = :subcat");
+      $deleteSubCat->bindParam(":subcat",$id_subcat,SQLITE3_INTEGER);
+      $deleteSubCatLang->bindParam(":subcat",$id_subcat,SQLITE3_INTEGER);
+      $deleteSubCatAssoc->bindParam(":subcat",$id_subcat,SQLITE3_INTEGER);
+
+      $id_subcat = $_POST['subCat'];
+      $deleteSubCatLang->execute() or die('Unable to remove subCat');
+      $deleteSubCat->execute() or die('Unable to remove subCat');
+      $deleteSubCatAssoc->execute() or die('Unable to remove subCat');
+    }
+  }
+  elseif($_POST['action'] == "deleteItem"){
+    if($_POST['confirm'] == "DELETE"){
+      $deleteItem = $file_db->prepare("DELETE FROM item WHERE id_item = :item;");
+      $deleteItemLang = $file_db->prepare("DELETE FROM item_lang WHERE id_item = :item;");
+      $deleteItemAssoc = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item;");
+      $deleteItem->bindParam(":item",$item,SQLITE3_INTEGER);
+      $deleteItemLang->bindParam(":item",$item,SQLITE3_INTEGER);
+      $deleteItemAssoc->bindParam(":item",$item,SQLITE3_INTEGER);
+
+      $item = $_POST['item'];
+      $deleteItem->execute() or die('Unable to remove item');
+      $deleteItemLang->execute() or die('Unable to remove item');
+      $deleteItemAssoc->execute() or die('Unable to remove item');
+    }
+  }
+
 
   else{print_r($_REQUEST);die();}
 

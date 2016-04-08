@@ -208,6 +208,9 @@ $(document).ready(function(){
 		else if(thisContext.attr("data-type") == "cat"){
 			//edit cat
 			$("#popup").append('<h1>'+translation.admin_editCat+'</h1>');
+			$("#popup").append('<div class="dangerDelete"></div>');
+			$("#popup > div.dangerDelete").append('<form action="/api/" method="post"></form>');
+			$("#popup > div.dangerDelete > form").append('<input type="hidden" name="action" value="deleteCat"><input type="hidden" name="cat" value="'+thisContext.attr("data-cat")+'"><input type="text" name="confirm" value="" placeholder="'+translation.admin_dangerDeletePlaceholder+'"><input type="submit" value="'+translation.admin_dangerDeleteSubmit+'">');
 			$("#popup").append('<form action="/api/" method="post"></form>');
 			$("#popup > form").append('<input type="integer" value="'+thisContext.attr("data-priority")+'" name="priority" placeholder="'+translation.admin_CatPriority+'">');
 			var cat = thisContext.attr("data-cat");
@@ -236,12 +239,16 @@ $(document).ready(function(){
 		else if(thisContext.attr("data-type") == "subcat"){
 			//edit subCat
 			$("#popup").append('<h1>'+translation.admin_editSubCat+'</h1>');
+			$("#popup").append('<div class="dangerDelete"></div>');
+			$("#popup > div.dangerDelete").append('<form action="/api/" method="post"></form>');
+			$("#popup > div.dangerDelete > form").append('<input type="hidden" name="action" value="deleteSubCat"><input type="hidden" name="subCat" value="'+thisContext.attr("data-cat")+'"><input type="text" name="confirm" value="" placeholder="'+translation.admin_dangerDeletePlaceholder+'"><input type="submit" value="'+translation.admin_dangerDeleteSubmit+'">');
 			$("#popup").append('<form action="/api/" method="post"></form>');
 			var cat = thisContext.attr("data-cat");
 			$.post( '/api/', {action: "getSubCat", cat : cat},"json")
 			.done(function(data){
 				$("#popup > form").append('<input type="text" value="'+data[0].template+'" name=template placeholder="'+translation.admin_setTemplate+'">');
 				$("#popup > form").append('<input type="text" value="'+data[0].maxItem+'" name=maxItem placeholder="'+translation.admin_maxItem+'">');
+				$("#popup > form").append('<input type="text" value="'+data[0].priority+'" name=priority placeholder="'+translation.admin_priority+'">');
 				$("#popup > form").append('<hr>');
 				for(i = 0;i<data.length;i++){
 					if(i>0){
@@ -267,6 +274,9 @@ $(document).ready(function(){
 	function editItem(thisContext){
 		showAdmin();
 		$("#popup").append('<h1>'+translation.admin_editItem+'</h1>');
+		$("#popup").append('<div class="dangerDelete"></div>');
+		$("#popup > div.dangerDelete").append('<form action="/api/" method="post"></form>');
+		$("#popup > div.dangerDelete > form").append('<input type="hidden" name="action" value="deleteItem"><input type="hidden" name="item" value="'+thisContext.attr("data-item")+'"><input type="text" name="confirm" value="" placeholder="'+translation.admin_dangerDeletePlaceholder+'"><input type="submit" value="'+translation.admin_dangerDeleteSubmit+'">');
 		// Add the suppress item here : $("#popup").append('')
 		$("#popup").append('<form action="/api/" method="post"></form>');
 		var item = thisContext.attr("data-item");

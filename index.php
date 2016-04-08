@@ -61,7 +61,7 @@ elseif(!empty($_GET['cat'])){
     $current = drawCookieTrail($lang,$cat['name']);
 		$template = $cat['template'];
 	echo('<div class="flex-row-fluid wrapper '.$template.'">');
-    drawListing($file_db, $translation, $current,$lang,'cat',$cat['id_cat']);
+    drawListing($file_db, $translation, $current,$lang,'cat',$cat['id_cat'],NULL);
 	echo('</div>');
   }
   else{

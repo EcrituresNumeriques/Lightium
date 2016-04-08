@@ -181,7 +181,7 @@
                 $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Section','<h1 class=\"contactSection\">±VALUE±</h1>')");
                 $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Twitter','<a href=\"https://twitter.com/±VALUE±\" target=\"_blank\" class=\"contactTwitter\">@±VALUE±</a>')");
                 $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Facebook','<a href=\"https://www.facebook.com/±VALUE±\" target=\"_blank\" class=\"contactFacebook\">±VALUE±</a>')");
-                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Gcalendar','<a href=\"https://www.facebook.com/±VALUE±\" target=\"_blank\" class=\"contactCalendar\">±VALUE±</a>')");
+                $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Gcalendar','<a href=\"https://www.facebook.com/±VALUE±\" target=\"_blank\" class=\"contactCalendar\">Gcalendar</a>')");
                 $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Github','<a href=\"https://github.com/±VALUE±\" target=\"_blank\" class=\"contactGithub\">±VALUE±</a>')");
                 $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Papyrus','<a href=\"https://papyrus.bib.umontreal.ca/xmlui/handle/±VALUE±\" target=\"_blank\" class=\"contactPapyrus\">Dépôt Papyrus</a>')");
                 $file_db->exec("INSERT INTO contact_type (id_type, name, template) VALUES (NULL,'Zotero','<a href=\"https://www.zotero.org/groups/±VALUE±\" target=\"_blank\" class=\"contactZotero\">±VALUE±</a>')");
@@ -196,6 +196,15 @@
               if($version['revision'] < 4){
                   $file_db->exec("ALTER TABLE item ADD COLUMN featured INTEGER");
                   $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 4");
+              }
+              if($version['revision'] < 5){
+                $file_db->exec("UPDATE contact_type SET template = '<a href=\"https://www.zotero.org/groups/±VALUE±\" target=\"_blank\" class=\"contactZotero\">Zotero</a>' WHERE name = 'Zotero'");
+                $file_db->exec("UPDATE contact_type SET template = '<a href=\"https://github.com/±VALUE±\" target=\"_blank\" class=\"contactGithub\">Github</a>' WHERE name = 'Github'");
+                $file_db->exec("UPDATE contact_type SET template = '<a href=\"https://vimeo.com/±VALUE±\" target=\"_blank\" class=\"contactVimeo\">Vimeo</a>' WHERE name = 'Vimeo'");
+                $file_db->exec("UPDATE contact_type SET template = '<a href=\"https://www.facebook.com/±VALUE±\" target=\"_blank\" class=\"contactFacebook\">Facebook</a>' WHERE name = 'Facebook'");
+                $file_db->exec("UPDATE contact_type SET template = '<a href=\"https://calendar.google.com/calendar/embed?src=±VALUE±\" target=\"_blank\" class=\"contactCalendar\">Gcalendar</a>' WHERE name = 'Gcalendar'");
+                $file_db->exec("ALTER TABLE category_sub ADD COLUMN priority INTEGER DEFAULT 1");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 5");
               }
             }
         }
