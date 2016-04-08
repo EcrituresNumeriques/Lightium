@@ -1,6 +1,6 @@
 <?php
 $translation = array(
-	"seeMore" = "See more...",
+	"seeMore" => "See more...",
 	"seeInLanguage" => "browse website in: ",
 	"last10" => "last 10",
 	"lastX" => "last published",
