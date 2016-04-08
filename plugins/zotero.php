@@ -96,10 +96,12 @@ foreach($zoteroFeed as $item){
     $deleteTags = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item");
     $deleteTags->bindParam(":item",$id_item);
     $deleteTags->execute() or die('Unable to delete old tags');
-    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title, content = :content WHERE id_item = :item");
+    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content WHERE id_item = :item");
     $updateTitle->bindParam(":item",$id_item,SQLITE3_INTEGER);
     $updateTitle->bindParam(":content",$item['content'],SQLITE3_TEXT);
     $updateTitle->bindParam(":title",$item['title'],SQLITE3_TEXT);
+    $updateTitle->bindParam(":cleanstring",$cleanstring,SQLITE3_TEXT);
+    $cleanstring = cleanString($item['title']);
     $updateTitle->execute() or die('Unable to update Zotekey');
   }
   else{
