@@ -43,6 +43,18 @@ a.admin:before{
   padding:0 1rem;
   }
 }
+.relative{
+	position:relative;
+}
+.filler{
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height: 100%;
+}
+
 .clear{
   clear:both;
 }
@@ -160,6 +172,10 @@ a.block {
   padding:0.5rem 1rem;
   display:block;
 }
+a.block.noPad {
+	padding:0;
+}
+
 #chapeau {
   margin:1rem;
   position:relative;
@@ -241,15 +257,13 @@ section#listing > article > h1{
 	margin-top:0;
 }
 
-section#listing > article > a.listingFloat{
-	padding:0;
-	float:left;
-	margin-right:1rem;
-}
-section#listing > article > a.listingFloat > img{
+section#listing > article > img{
 	display:block;
 	max-height:150px;
 	max-width:150px;
+		padding:0;
+		float:left;
+		margin-right:1rem;
 }
 
 section#listing > nav#pagination > a {
@@ -413,4 +427,20 @@ form > input[type=submit]{
 div.dangerDelete{
 	padding:1em;
 	background-color:#f00;
+}
+
+div:not(.background) > section#listing > article {
+	background-image: none !important;
+}
+div.background > section#listing > article{
+	background-size: cover;
+	background-position: center;
+	margin:0;
+}
+div.background > section#listing > article > img {
+	display:none;
+}
+
+div.noList > section#listing > article,div.noList > section#listing > nav#pagination, div.noSummary > section#listing > div#summary{
+display:none;
 }

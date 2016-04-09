@@ -53,7 +53,7 @@ function drawLead($class, $name, $description,$type,$id,$translation,$lang,$prio
     <article class="wrapper">
       <!--<nav id="goLeft"><a href=""><</a></nav>
       <nav id="goRight"><a href="">></a></nav>-->
-      <h1><?=$name?></h1>
+      <h1 class="hyphenate"><?=$name?></h1>
       <?=$admin?>
       <p class="hyphenate"><?=$description?></p>
     </article>
@@ -228,11 +228,12 @@ elseif($action == "year"){
   }
   $rowCount = 0;
   foreach($query as $row){
-  $image = $tags = "";
+  $background = $image = $tags = "";
   $rowCount++;
 	if($action == "cat"){
 		$url = $current.cleanString($row['name']);
-  		(!empty($row['image']) ? $image = '<a href="'.$url.'" class="listingFloat block pushState"><img src="'.$row['image'].'"></a>' : $image = "");
+		(!empty($row['image']) ? $image = '<img src="'.$row['image'].'">' : $image = "");
+  	(!empty($row['image']) ? $background = 'style="background-image:url(\''.$row['image'].'\')"': $background = '');
 		$title = $row['name'];
 	}
 	elseif($action == "index"){
@@ -251,9 +252,10 @@ elseif($action == "year"){
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
   }
 ?>
-  <article class="clear">
+  <article class="clear relative" <?=$background?>>
+		<a href="<?=$url?>" class="pushState filler"></a>
     <?=$image?>
-    <h1><a href="<?=$url?>" class="pushState"><?=$title?></a></h1>
+    <h1><?=$title?></h1>
     <p class="hyphenate"><?=$row['short']?></p><?php
   if(!empty($tags)){
 	drawTags($lang,$tags);
