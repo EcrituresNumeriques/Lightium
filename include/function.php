@@ -228,7 +228,7 @@ elseif($action == "year"){
   }
   $rowCount = 0;
   foreach($query as $row){
-  $background = $image = $tags = "";
+  $calendarBackup = $background = $image = $tags = "";
   $rowCount++;
 	if($action == "cat"){
 		$url = $current.cleanString($row['name']);
@@ -245,13 +245,17 @@ elseif($action == "year"){
 		$url = $current.$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
+		if(isLogedNC()){
+		$calendarBackup = '<a id="editItem" data-item="'.$row['id_item'].'" data-lang="'.$lang.'" data-year="'.$row['year'].'" data-month="'.$row['month'].'" data-day="'.$row['day'].'" class="admin">EDIT</a>';
+		}
 	}
   elseif($action == "day" OR $action == "month" OR $action == "year"){
     $url = "/".$lang."/".$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
-  }
+		}
 ?>
+<?=$calendarBackup?>
   <article class="clear relative" <?=$background?>>
 		<a href="<?=$url?>" class="pushState filler"></a>
     <?=$image?>
