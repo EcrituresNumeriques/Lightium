@@ -55,7 +55,7 @@ function drawLead($class, $name, $description,$type,$id,$translation,$lang,$prio
       <nav id="goRight"><a href="">></a></nav>-->
       <h1 class="hyphenate"><?=$name?></h1>
       <?=$admin?>
-      <p class="hyphenate"><?=$description?></p>
+      <h2 class="hyphenate"><?=$description?></h2>
     </article>
   </section>
   <?php
@@ -255,7 +255,7 @@ elseif($action == "year"){
   <article class="clear relative" <?=$background?>>
 		<a href="<?=$url?>" class="pushState filler"></a>
     <?=$image?>
-    <h1><?=$title?></h1>
+    <h1 class="hyphenate"><?=$title?></h1>
     <p class="hyphenate"><?=$row['short']?></p><?php
   if(!empty($tags)){
 	drawTags($lang,$tags);
