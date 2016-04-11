@@ -34,6 +34,7 @@ $date = $object['data']['date'];
 $tags = array();
 //filter for zoteroAPI itemType : book => Books, journalArticles => Articles, bookSection => "Book Chapters"
 if(!empty($object['data']['itemType'])){
+  $tags[] = "Publications";
   if($object['data']['itemType'] == "book"){
     $tags[] = "books";
   }
@@ -107,8 +108,8 @@ foreach($zoteroFeed as $item){
   else{
     $item['date'] = explode("-",$item['date']);
     (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
-    (empty($item['date'][1])?$month = date("m"):$month = $item['date'][1]);
-    (empty($item['date'][2])?$day = date("d"):$day = $item['date'][2]);
+    (empty($item['date'][1])?$month = 1:$month = $item['date'][1]);
+    (empty($item['date'][2])?$day = 1:$day = array_shift(explode(" ",$item['date'][2])));
     $time = time();
     $published = time();
     $zoterokey = $item['key'];

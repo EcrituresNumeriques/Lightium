@@ -17,10 +17,10 @@
     // Print PDOException message
     echo "failed : ".$e->getMessage();
   }
-	//Updates or install
-	include('include/install.php');
 	//lang management
 	include('include/lang.php');
+	//Updates or install
+	include('include/install.php');
 	//session management
 	include('include/session.php');
 	//plugins management

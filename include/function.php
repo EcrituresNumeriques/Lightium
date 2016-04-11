@@ -170,7 +170,7 @@ elseif($action == "index"){
   $admin = '<a class="admin" id="newItem" data-lang="'.$lang.'">'.$translation['admin_newItem'].'</a>';
 }
 elseif($action == "subcat"){
-  $pages = $db->prepare("SELECT COUNT(*) as count FROM item i JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat WHERE i.published > 0");
+  $pages = $db->prepare("SELECT COUNT(*) as count FROM item i JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat WHERE i.published > 0 ORDER BY time DESC");
   $pages->bindParam(':subcat',$what, SQLITE3_INTEGER);
   $pages->execute() or die('Unable to fetch page Items');
 	$pages = $pages->fetch();
@@ -521,11 +521,13 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 		($action == "subcat"?:$feed->bindParam(":maxItem",$row['rows']));
 		$feed->bindParam(":subcat",$row['id_subcat']);
 		$feed->execute() or die('Unable to retrieve summary groups');
+		$feeds = $feed->fetchAll(PDO::FETCH_ASSOC);
+		if(count($feeds) > 0){
 		if($row['group'] != $group){echo('</div><div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
 		?>
 		<h1><?=$row['name']?></h1>
 		<?php
-		 foreach ($feed as $article) {
+		 foreach ($feeds as $article) {
 			if($action == "index"){
 			$url = $current.$article['year']."/".$article['month']."/".$article['day']."/".cleanString($article['title']);
 			}
@@ -544,6 +546,7 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 				<h1><a href="/<?=$lang?>/find/<?=cleanString($row['name'])?>" class="pushState"><?=$translation['seeMore']?></a></h1>
 			</article>
 		<?php
+	}
 	}
 	}
 	?>

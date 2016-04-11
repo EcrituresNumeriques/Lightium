@@ -12,7 +12,7 @@
     <nav id="menu" class="flex-row-fluid flex-center wrapper">
       <?php
       (empty($_GET['cat'])?$activation = " active":$activation = ""); ?>
-  	<a href="/<?=$lang?>/" class="home block pushState flex0<?=$activation?>" data-title="Chaire"><?=$translation['nav_home']?></a>
+  	<a href="/<?=$lang?>/" class="home block pushState flex0<?=$activation?>" data-title="Chaire"></a>
   <?php
       $result = $file_db->prepare('SELECT cl.id_cat,name,lang,image,c.priority FROM category_lang cl JOIN category c ON c.id_cat = cl.id_cat WHERE lang LIKE :lang ORDER BY c.priority ASC');
       $result->bindParam(":lang",$lang);

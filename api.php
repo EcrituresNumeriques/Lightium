@@ -488,7 +488,7 @@ if(isLoged() AND !empty($_POST['action'])){
       }
   }
   elseif($_POST['action'] == "getItem"){
-    $info = $file_db->prepare("SELECT time, featured FROM item WHERE id_item = :item");
+    $info = $file_db->prepare("SELECT `time`, featured FROM item WHERE id_item = :item");
     $info->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);
     $info->execute() or die('Unable to fetch info from item');
     $info = $info->fetch(PDO::FETCH_ASSOC);
@@ -505,8 +505,6 @@ if(isLoged() AND !empty($_POST['action'])){
         "id" => $subcat['id_subcat'],
         "checked" => $subcat['id_item']
       );
-      $featured = $subcat['featured'];
-      $time = $subcat['time'];
       }
     $result = $file_db->prepare('SELECT * FROM item_lang where id_item = :item');
     $result->bindParam(":item",$_POST['item'], SQLITE3_INTEGER);

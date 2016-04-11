@@ -166,7 +166,7 @@ a.admin:before{
 #menu > a.home:before{
   font-family: "icoMoon-free";
   content:"\e900";
-  margin-right:0.5rem;
+  margin-right:0rem;
 }
 a.block {
   padding:0.5rem 1rem;
@@ -390,7 +390,7 @@ form > input[type=submit]{
   padding:2em;
   position:relative;
 }
-#blackout #popup form{
+#blackout #popup #innerPopup{
 	overflow-y: auto;
 	max-height:calc(100vh - 12em);
 }

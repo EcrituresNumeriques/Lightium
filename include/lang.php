@@ -1,6 +1,7 @@
 <?php
 
 if(!isset($_GET['lang'])){
+  try{
   $checkLang = $file_db->prepare("SELECT lang FROM settings WHERE host LIKE :host");
   $checkLang->bindParam(":host",$_SERVER['HTTP_HOST'],SQLITE3_TEXT);
   $checkLang->execute() or die("Unable to retrieve lang setting");
@@ -13,7 +14,11 @@ if(!isset($_GET['lang'])){
     header("location:/fr/");
   }
   die();
+}catch(Exception $e){
+  header("location:/fr/");
 }
+}
+
 else{
   $langAllowed = array('fr','en');
   if(in_array(strtolower($_GET['lang']),$langAllowed)){
