@@ -206,6 +206,13 @@
                 $file_db->exec("ALTER TABLE category_sub ADD COLUMN priority INTEGER DEFAULT 1");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 5");
               }
+              if($version['revision'] < 6){
+                $file_db->exec("CREATE TABLE IF NOT EXISTS footer (time INTEGER DEFAULT 0, footer TEXT)");
+                $file_db->exec("INSERT INTO footer (time, footer) VALUES (0,'')");
+                $file_db->exec("CREATE TABLE IF NOT EXISTS header (time INTEGER DEFAULT 0, header TEXT)");
+                $file_db->exec("INSERT INTO header (time, header) VALUES (0,'')");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 6");
+              }
             }
         }
 
@@ -293,6 +300,11 @@
     $file_db->exec("UPDATE contact_type SET template = '<a href=\"https://calendar.google.com/calendar/embed?src=±VALUE±\" target=\"_blank\" class=\"contactCalendar\">Gcalendar</a>' WHERE name = 'Gcalendar'");
     $file_db->exec("ALTER TABLE category_sub ADD COLUMN priority INTEGER DEFAULT 1");
     $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 5");
+    $file_db->exec("CREATE TABLE IF NOT EXISTS footer (time INTEGER DEFAULT 0, footer TEXT)");
+    $file_db->exec("INSERT INTO footer (time, footer) VALUES (0,'')");
+    $file_db->exec("CREATE TABLE IF NOT EXISTS header (time INTEGER DEFAULT 0, header TEXT)");
+    $file_db->exec("INSERT INTO header (time, header) VALUES (0,'')");
+    $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 6");
 
     header("location:".$_SERVER['PHP_SELF']);
 }

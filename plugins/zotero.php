@@ -97,13 +97,24 @@ foreach($zoteroFeed as $item){
     $deleteTags = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item");
     $deleteTags->bindParam(":item",$id_item);
     $deleteTags->execute() or die('Unable to delete old tags');
-    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content WHERE id_item = :item");
+    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content, short = :short WHERE id_item = :item");
     $updateTitle->bindParam(":item",$id_item,SQLITE3_INTEGER);
     $updateTitle->bindParam(":content",$item['content'],SQLITE3_TEXT);
+    $updateTitle->bindParam(':short',$item['short'], SQLITE3_TEXT);
     $updateTitle->bindParam(":title",$item['title'],SQLITE3_TEXT);
     $updateTitle->bindParam(":cleanstring",$cleanstring,SQLITE3_TEXT);
     $cleanstring = cleanString($item['title']);
     $updateTitle->execute() or die('Unable to update Zotekey');
+    $item['date'] = explode("-",$item['date']);
+    (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
+    (empty($item['date'][1])?$month = 1:$month = $item['date'][1]);
+    (empty($item['date'][2])?$day = 1:$day = array_shift(explode(" ",$item['date'][2])));
+    $updateItem = $file_db->prepare("UPDATE item SET year = :year, month = :month, day = :day WHERE id_item = :item");
+    $updateItem->bindParam(":year",$year,SQLITE3_INTEGER);
+    $updateItem->bindParam(":month",$month,SQLITE3_INTEGER);
+    $updateItem->bindParam(":day",$day,SQLITE3_INTEGER);
+    $updateItem->bindParam(":item",$id_item,SQLITE3_INTEGER);
+    $updateItem->execute() or die('Unable to update Item');
   }
   else{
     $item['date'] = explode("-",$item['date']);

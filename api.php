@@ -57,6 +57,20 @@ if(isLoged() AND !empty($_POST['action'])){
         //only request, do not show anything
         die();
     }
+    elseif($_POST['action'] == "getHeader"){
+        $customHeader = $file_db->query("Select * FROM header LIMIT 0,1");
+        $customHeader = $customHeader->fetch(PDO::FETCH_ASSOC);
+        echo(JSON_encode($customHeader));
+        //only request, do not show anything
+        die();
+    }
+    elseif($_POST['action'] == "getFooter"){
+        $customFooter = $file_db->query("Select * FROM footer LIMIT 0,1");
+        $customFooter = $customFooter->fetch(PDO::FETCH_ASSOC);
+        echo(JSON_encode($customFooter));
+        //only request, do not show anything
+        die();
+    }
 
     elseif($_POST['action'] == "getPlugins"){
         $result = $file_db->prepare('SELECT id_plugin as id,file,public1, public2, public3 FROM plugins');
@@ -118,6 +132,22 @@ if(isLoged() AND !empty($_POST['action'])){
       $customCSS->execute() or die('Unable to change CSS');
 
   }
+    elseif($_POST['action'] == "editHeader"){
+        $customHeader = $file_db->prepare("UPDATE header SET header = :header, time = :time");
+        $customHeader->BindParam(":header",$_POST['header'],SQLITE3_TEXT);
+        $customHeader->BindParam(":time",$time,SQLITE3_INTEGER);
+        $time = time();
+        $customHeader->execute() or die('Unable to change Header');
+
+    }
+      elseif($_POST['action'] == "editFooter"){
+          $customFooter = $file_db->prepare("UPDATE footer SET footer = :footer, time = :time");
+          $customFooter->BindParam(":footer",$_POST['footer'],SQLITE3_TEXT);
+          $customFooter->BindParam(":time",$time,SQLITE3_INTEGER);
+          $time = time();
+          $customFooter->execute() or die('Unable to change Footer');
+
+      }
   elseif($_POST['action'] == "newPlugin"){
     $file_db->query("INSERT INTO plugins DEFAULT VALUES");
     $reponse['id'] = $file_db->lastInsertId();

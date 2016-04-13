@@ -33,6 +33,12 @@ $(document).ready(function(){
 		else if($(this).attr("id") == "CSS"){
 			editCSS();
 		}
+		else if($(this).attr("id") == "header"){
+			editHeader();
+		}
+		else if($(this).attr("id") == "footer"){
+			editFooter();
+		}
 		else if($(this).attr("id") == "plugins"){
 			pluginCenter(thisContext);
 		}
@@ -345,6 +351,37 @@ $(document).ready(function(){
 					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
 		});
 	}
+	function editHeader(){
+		showAdmin();
+		$("#innerPopup").append('<h1>'+translation.admin_editHeader+'</h1>');
+		$("#innerPopup").append('<form action="/api/" method="post"></form>');
+		$.post( '/api/', {action: "getHeader"},"json")
+		.done(function(data){
+			$("#innerPopup > form").append('<textarea name="header" placeholder="'+translation.admin_editHeader+'">'+data.header+'</textarea>');
+			$("#innerPopup > form").append('<input type="hidden" name="action" value="editHeader">');
+			$("#innerPopup > form").append('<input type="submit" value="'+translation.admin_editHeaderSubmit+'">');
+
+		})
+		.fail(function(d, textStatus, error) {
+					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+		});
+	}
+
+		function editFooter(){
+			showAdmin();
+			$("#innerPopup").append('<h1>'+translation.admin_editFooter+'</h1>');
+			$("#innerPopup").append('<form action="/api/" method="post"></form>');
+			$.post( '/api/', {action: "getFooter"},"json")
+			.done(function(data){
+				$("#innerPopup > form").append('<textarea name="footer" placeholder="'+translation.admin_editFooter+'">'+data.footer+'</textarea>');
+				$("#innerPopup > form").append('<input type="hidden" name="action" value="editFooter">');
+				$("#innerPopup > form").append('<input type="submit" value="'+translation.admin_editFooterSubmit+'">');
+
+			})
+			.fail(function(d, textStatus, error) {
+						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+			});
+		}
 
 	function pluginCenter(thisContext){
 		showAdmin();

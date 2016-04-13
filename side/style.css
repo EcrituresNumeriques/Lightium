@@ -1,5 +1,5 @@
 /*@import url(https://fonts.googleapis.com/css?family=Lato|Merriweather);*/
-@import url(https://fonts.googleapis.com/css?family=Istok+Web|Lora);
+@import url(https://fonts.googleapis.com/css?family=Oswald);
 @font-face {
 	font-family: 'IcoMoon-Free';
 	src: url('IcoMoon-Free.ttf') format('truetype');
@@ -9,7 +9,8 @@
 html,body{
   margin:0;
   padding:0;
-  font-family: 'Lora', serif;
+  font-family: 'Oswald', sans-serif;
+	letter-spacing: 0.5px;
   color:rgb(26, 24, 25);
 }
 body{
@@ -17,7 +18,7 @@ body{
 	background-color:#f0f0f0;
 }
 h1,h2,h3,h4,h5,h6,a{
-  font-family: 'Istok Web', sans-serif;
+  font-family: 'Oswald', sans-serif;
   color:black;
 }
 p {
