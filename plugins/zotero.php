@@ -1,10 +1,11 @@
 <?php
+
+
 $requete = $file_db->query("SELECT id_subcat,name FROM category_sub_lang");
 foreach($requete as $subcat){
   $subcat['name'] = strtolower($subcat['name']);
   $assoc[$subcat['name']] = $subcat['id_subcat'];
 }
-
 // create curl resource
 $curlZotero = curl_init();
 // set url
@@ -18,7 +19,9 @@ curl_close($curlZotero);
 $output = json_decode($output, true);
 $zoteroFeed = array();
 $lastVersion = $settings['int1'];
+
 foreach($output as $object){
+  echo("-- object--- <br>");
 ($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);
 $content = $title = $short = $date = $tags = $key = "";
 $content = "<p>";
@@ -31,6 +34,7 @@ $content .= "</p>";
 $short = $object['data']['abstractNote'];
 $key = $object['key'];
 $date = $object['data']['date'];
+echo($date);
 $tags = array();
 //filter for zoteroAPI itemType : book => Books, journalArticles => Articles, bookSection => "Book Chapters"
 if(!empty($object['data']['itemType'])){
@@ -85,7 +89,7 @@ echo('</pre>');
 //create new item
 $newItem = $file_db->prepare("INSERT OR IGNORE INTO item (id_item, year, month, day, published, time, zoterokey) VALUES (NULL,:year,:month,:day,:time,:published,:zoterokey)");
 foreach($zoteroFeed as $item){
-
+  echo("date : $item[date]");
   $checkZoteroKey = $file_db->prepare("SELECT id_item FROM item WHERE zoterokey LIKE :zotkey");
   $zoterokey = $item['key'];
   $checkZoteroKey->bindParam(':zotkey',$zoterokey, SQLITE3_TEXT);
@@ -109,10 +113,14 @@ foreach($zoteroFeed as $item){
     (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
     (empty($item['date'][1])?$month = 1:$month = $item['date'][1]);
     (empty($item['date'][2])?$day = 1:$day = array_shift(explode(" ",$item['date'][2])));
-    $updateItem = $file_db->prepare("UPDATE item SET year = :year, month = :month, day = :day WHERE id_item = :item");
+    unset($time);
+    $time = new DateTime($year."-".$month."-".$day);
+    $time = $time->getTimestamp();
+    $updateItem = $file_db->prepare("UPDATE item SET `time` = :time, year = :year, month = :month, day = :day WHERE id_item = :item");
     $updateItem->bindParam(":year",$year,SQLITE3_INTEGER);
     $updateItem->bindParam(":month",$month,SQLITE3_INTEGER);
     $updateItem->bindParam(":day",$day,SQLITE3_INTEGER);
+    $updateItem->bindParam(":time",$time,SQLITE3_INTEGER);
     $updateItem->bindParam(":item",$id_item,SQLITE3_INTEGER);
     $updateItem->execute() or die('Unable to update Item');
   }
@@ -121,7 +129,9 @@ foreach($zoteroFeed as $item){
     (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
     (empty($item['date'][1])?$month = 1:$month = $item['date'][1]);
     (empty($item['date'][2])?$day = 1:$day = array_shift(explode(" ",$item['date'][2])));
-    $time = time();
+    unset($time);
+    $time = new DateTime($year."-".$month."-".$day);
+    $time = $time->getTimestamp();
     $published = time();
     $zoterokey = $item['key'];
     $newItem->bindParam(':year',$year);

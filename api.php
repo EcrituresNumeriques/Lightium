@@ -598,9 +598,10 @@ if(isLoged() AND !empty($_POST['action'])){
     die();
   }
   elseif($_POST['action'] == "editPlugin"){
-    $delete = $file_db->prepare("UPDATE plugins SET file = :file, public1 = :public1, public2 = :public2, public3 = :public3 WHERE id_plugin = :plugin");
+    $delete = $file_db->prepare("UPDATE plugins SET file = :file, public1 = :public1, public2 = :public2, public3 = :public3,int1 = :inte1 WHERE id_plugin = :plugin");
     if(endsWith($_POST['file'],".php")){$_POST[file] = substr($_POST['file'],0,-4);}
     $delete->bindParam(":plugin", $_POST['id_plugin'],SQLITE3_INTEGER);
+    $delete->bindParam(":inte1", $_POST['int1'],SQLITE3_INTEGER);
     $delete->bindParam(":public1", $_POST['public1'],SQLITE3_TEXT);
     $delete->bindParam(":public2", $_POST['public2'],SQLITE3_TEXT);
     $delete->bindParam(":public3", $_POST['public3'],SQLITE3_TEXT);
