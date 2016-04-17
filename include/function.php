@@ -200,7 +200,7 @@ elseif($action == "subcat"){
 	if(!empty($_GET['page']) OR $pages['count'] > 10){
 			$pagination = true;
 	}
-  $query = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT :start,:maxItem");
+  $query = $db->prepare("SELECT i.id_item,il.title, il.short,il.image,il.caption, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item JOIN item_assoc ia2 ON i.id_item = ia2.id_item AND ia2.id_subcat = :subcat JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang JOIN category_sub cs ON ia.id_subcat = cs.id_subcat JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT :start,:maxItem");
   $query->bindParam(':lang',$lang, SQLITE3_TEXT);
   $query->bindParam(':subcat',$what, SQLITE3_INTEGER);
 	$query->bindParam(':start',$start, SQLITE3_INTEGER);
@@ -267,6 +267,7 @@ elseif($action == "year"){
 	elseif($action == "subcat"){
 		$url = $current.$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
+		(!empty($row['image']) ? $image = '<img src="'.$row['image'].'">' : $image = "");
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
 		if(isLogedNC()){
 		$calendarBackup = '<a id="editItem" data-item="'.$row['id_item'].'" data-lang="'.$lang.'" data-year="'.$row['year'].'" data-month="'.$row['month'].'" data-day="'.$row['day'].'" class="admin">EDIT</a>';
