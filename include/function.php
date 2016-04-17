@@ -50,7 +50,7 @@ function drawLead($class, $name, $description,$type,$id,$translation,$lang,$prio
   }
 	if(!empty($image)){
 		if(!empty($caption)){
-			$picture = '<figure><img src="'.$image.'" alt="'.addslashes($caption).'" /><figcaption>'.$caption.'</figcaption></figure>';
+			$picture = '<figure><img src="'.$image.'" alt="'.htmlentities($caption).'" /><figcaption>'.$caption.'</figcaption></figure>';
 		}
 		else{
 			$picture = '<figure><img src="'.$image.'"/></figure>';
