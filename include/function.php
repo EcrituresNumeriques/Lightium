@@ -575,8 +575,10 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 	}
 	}
 	}
+	if($group !== NULL){
+		echo('</div>');
+	}
 	?>
-		</div>
 	</section>
 	</div>
 	<?php
