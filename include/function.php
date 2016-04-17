@@ -138,9 +138,9 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
 				<h1><?=$article['title']?></h1>
 				<?=$url?>
         <?=$admin?>
-				<?=drawTags($lang,$article['subcat'])?>
 				<h2 class="hyphenate"><?=$article['short']?></h2>
 				<div class="hyphenate"><?=$article['content']?></div>
+			<?=drawTags($lang,$article['subcat'])?>
 			</article>
 		</section>
 
@@ -296,7 +296,7 @@ elseif($action == "year"){
 if($rowCount < 1){
 
 ?>
-  <article class="clear">
+  <article class="clear nothingToDisplay">
     <h1><?=$translation['listing_nothing']?></h1>
     <p><?=$translation['listing_comeBack']?></p>
   </article>
