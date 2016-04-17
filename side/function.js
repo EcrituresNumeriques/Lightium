@@ -263,6 +263,7 @@ $(document).ready(function(){
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_SubCatName+'">');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
+					$("#innerPopup > form").append('<input type="text" value="'+data[i].caption+'" name=caption[] placeholder="'+translation.admin_caption+'">');
 					$("#innerPopup > form").append('<textarea name="description[]" placeholder="'+translation.admin_SubCatDescription+'">'+data[i].description+'</textarea>');
 					$("#innerPopup > form").append('<textarea name="short[]" placeholder="'+translation.admin_SubCatShort+'">'+data[i].short+'</textarea>');
 				}
@@ -295,6 +296,10 @@ $(document).ready(function(){
 				}
 				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].lang+'" name="lang[]" readonly>');
 				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].title+'" name=title[] placeholder="'+translation.admin_itemTitle+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].url+'" name=url[] placeholder="'+translation.admin_itemURL+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].urlTitle+'" name=urlTitle[] placeholder="'+translation.admin_itemUrlTitle+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].image+'" name=image[] placeholder="'+translation.admin_itemImage+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].caption+'" name=imageCaption[] placeholder="'+translation.admin_itemImageCaption+'">');
 				$("#innerPopup > form").append('<textarea name="short[]" placeholder="'+translation.admin_itemShort+'">'+data.items[i].short+'</textarea>');
 				$("#innerPopup > form").append('<textarea name="content[]" placeholder="'+translation.admin_itemContent+'">'+data.items[i].content+'</textarea>');
 			}

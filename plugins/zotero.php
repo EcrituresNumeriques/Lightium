@@ -24,13 +24,9 @@ foreach($output as $object){
   echo("-- object--- <br>");
 ($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);
 $content = $title = $short = $date = $tags = $key = "";
-$content = "<p>";
-(empty($object['links']['data']['extra'])?:$content .= $object['links']['data']['extra']."<br>");
-(empty($object['citation'])?:$content .= $object['citation']."<br>");
-(empty($object['data']['url'])?:$content .= '<a href="'.$object['data']['url'].'" target="_blank">'.$object['data']['url']."</a><br>");
-(empty($object['links']['alternate']['href'])?:$content .= $object['links']['alternate']['href']."<br>");
-$content .= "</p>";
+$content = "<p>".$object['links']['data']['extra']."</p>";
 (empty($object['citation'])?$title = $object['data']['title']:$title = $object['citation']);
+$url = $object['data']['url'];
 $short = $object['data']['abstractNote'];
 $key = $object['key'];
 $date = $object['data']['date'];
@@ -68,6 +64,7 @@ foreach($tags as $tag){
 
   $zoteroFeed[] = array(
     "title" => $title,
+    "url" => $url,
     "short" => $short,
     "content" => $content,
     "date" => $date,
@@ -101,11 +98,12 @@ foreach($zoteroFeed as $item){
     $deleteTags = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item");
     $deleteTags->bindParam(":item",$id_item);
     $deleteTags->execute() or die('Unable to delete old tags');
-    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content, short = :short WHERE id_item = :item");
+    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content, short = :short,url = :url WHERE id_item = :item");
     $updateTitle->bindParam(":item",$id_item,SQLITE3_INTEGER);
     $updateTitle->bindParam(":content",$item['content'],SQLITE3_TEXT);
     $updateTitle->bindParam(':short',$item['short'], SQLITE3_TEXT);
     $updateTitle->bindParam(":title",$item['title'],SQLITE3_TEXT);
+    $updateTitle->bindParam(":url",$item['url'],SQLITE3_TEXT);
     $updateTitle->bindParam(":cleanstring",$cleanstring,SQLITE3_TEXT);
     $cleanstring = cleanString($item['title']);
     $updateTitle->execute() or die('Unable to update Zotekey');
@@ -122,7 +120,7 @@ foreach($zoteroFeed as $item){
     $updateItem->bindParam(":day",$day,SQLITE3_INTEGER);
     $updateItem->bindParam(":time",$time,SQLITE3_INTEGER);
     $updateItem->bindParam(":item",$id_item,SQLITE3_INTEGER);
-    $updateItem->execute() or die('Unable to update Item');
+    //$updateItem->execute() or die('Unable to update Item');
   }
   else{
     $item['date'] = explode("-",$item['date']);
@@ -144,9 +142,10 @@ foreach($zoteroFeed as $item){
     $id_item = $file_db->lastInsertId();
 
     //insert into item_lang
-    $langItem = $file_db->prepare("INSERT INTO item_lang (id_item, title, short, content, cleanstring, lang) VALUES (:id_item,:title,:short,:content,:cleanstring,:lang)");
+    $langItem = $file_db->prepare("INSERT INTO item_lang (id_item, title, short, content, cleanstring, lang, url) VALUES (:id_item,:title,:short,:content,:cleanstring,:lang, :url)");
     $langItem->bindParam(':id_item',$id_item, SQLITE3_INTEGER);
     $langItem->bindParam(':title',$title, SQLITE3_TEXT);
+    $langItem->bindParam(":url",$item['url'],SQLITE3_TEXT);
     $langItem->bindParam(':short',$short, SQLITE3_TEXT);
     $langItem->bindParam(':content',$content, SQLITE3_TEXT);
     $langItem->bindParam(':cleanstring',$cleanstring, SQLITE3_TEXT);

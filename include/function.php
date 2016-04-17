@@ -41,21 +41,34 @@ function cleanString($string) {
    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
 }
 
-function drawLead($class, $name, $description,$type,$id,$translation,$lang,$priority = ""){
+function drawLead($class, $name, $description,$type,$id,$translation,$lang,$priority = "",$image = "", $caption = ""){
   $admin = "";
 	(isset($priority)?: $priority = "");
   if(isLogedNC()){
     $admin = '<a id="editLead" data-type="'.$type.'" data-lang="'.$lang.'" data-cat="'.$id.'" data-priority="'.$priority.'" class="admin">'.$translation['admin_changeLead'].'</a>
     ';
   }
+	if(!empty($image)){
+		if(!empty($caption)){
+			$picture = '<figure><img src="'.$image.'" alt="'.$caption.'" /><figcaption>'.$caption.'</figcaption></figure>';
+		}
+		else{
+			$picture = '<figure><img src="'.$image.'"/></figure>';
+		}
+	}
+	else{
+		$picture = '';
+	}
   ?>
   <section id="chapeau" class="<?=$class?>">
     <article class="wrapper">
       <!--<nav id="goLeft"><a href=""><</a></nav>
       <nav id="goRight"><a href="">></a></nav>-->
-      <h1 class="hyphenate"><?=$name?></h1>
-      <?=$admin?>
+      <h1><?=$name?></h1>
+			<?=$admin?>
+      <?=$picture?>
       <h2 class="hyphenate"><?=$description?></h2>
+			<div class="clear"></div>
     </article>
   </section>
   <?php
@@ -97,7 +110,7 @@ function drawCookieTrail($lang = "",$category = "",$subCat = "",$year = "",$mont
 }
 
 function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation){
-	$query = $db->prepare("SELECT i.id_item,il.title, il.short,il.content, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year AND i.month = :month AND i.day = :day AND il.cleanstring LIKE :cleanstring LIMIT 0,1");
+	$query = $db->prepare("SELECT i.id_item,il.title, il.short,il.content,il.image,il.url,il.urlTitle,il.caption, i.year,i.month,i.day,ia.id_subcat,group_concat(cs.id_cat,';') || '#' ||group_concat(csl.name,';') || '#' ||group_concat(cl.name,';') as subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item LEFT JOIN item_assoc ia ON i.id_item = ia.id_item LEFT JOIN category_sub_lang csl ON ia.id_subcat = csl.id_subcat AND csl.lang LIKE :lang LEFT JOIN category_sub cs ON ia.id_subcat = cs.id_subcat LEFT JOIN category_lang cl ON cs.id_cat = cl.id_cat AND cl.lang LIKE :lang  WHERE i.published > 0 AND il.lang LIKE :lang AND i.year = :year AND i.month = :month AND i.day = :day AND il.cleanstring LIKE :cleanstring LIMIT 0,1");
 	$query->bindParam(':lang',$lang, SQLITE3_TEXT);
 	$query->bindParam(':year',$year, SQLITE3_INTEGER);
 	$query->bindParam(':month',$month, SQLITE3_INTEGER);
@@ -105,19 +118,29 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
 	$query->bindParam(':cleanstring',$cleanstring, SQLITE3_TEXT);
 	$query->execute() or die('Unable to recover article');
 	$article = $query->fetch();
-  $admin = "";
+  $admin = $url = "";
+	if(!empty($article['url'])){
+		if(!empty($article['urlTitle'])){
+			$url = '<div class="inlineCenter"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$article['urlTitle'].'</a></div>';
+		}
+		else{
+			$url = '<div class="inlineCenter"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$translation['accessThisDocument'].'</a></div>';
+		}
+	}
+
   if(isLogedNC()){
     $admin = '<a id="editItem" data-item="'.$article['id_item'].'" data-lang="'.$lang.'" data-cleanString="'.$cleanstring.'" data-year="'.$year.'" data-month="'.$month.'" data-day="'.$day.'" class="admin">'.$translation['admin_changeArticle'].'</a>
     ';
   }
 	?>
 		<section id="article">
-			<article class="hyphenate wrapper">
+			<article class="wrapper">
 				<h1><?=$article['title']?></h1>
+				<?=$url?>
         <?=$admin?>
 				<?=drawTags($lang,$article['subcat'])?>
-				<h2><?=$article['short']?></h2>
-				<?=$article['content']?>
+				<h2 class="hyphenate"><?=$article['short']?></h2>
+				<div class="hyphenate"><?=$article['content']?></div>
 			</article>
 		</section>
 
@@ -259,7 +282,7 @@ elseif($action == "year"){
   <article class="clear relative" <?=$background?>>
 		<a href="<?=$url?>" class="pushState filler"></a>
     <?=$image?>
-    <h1 class="hyphenate"><?=$title?></h1>
+    <h1><?=$title?></h1>
     <p class="hyphenate"><?=$row['short']?></p><?php
   if(!empty($tags)){
 	drawTags($lang,$tags);
@@ -543,7 +566,7 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 		if($action == "index"){
 		?>
 			<article class="clear">
-				<h1><a href="/<?=$lang?>/find/<?=cleanString($row['name'])?>" class="pushState"><?=$translation['seeMore']?></a></h1>
+				<h1><a href="/<?=$lang?>/find/<?=cleanString($row['name'])?>" class="pushState seeMore"><?=$translation['seeMore']?></a></h1>
 			</article>
 		<?php
 	}

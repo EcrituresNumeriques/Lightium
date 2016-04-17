@@ -31,13 +31,13 @@ elseif(!empty($_GET['year'])){
 }
 //Sub Category
 elseif(!empty($_GET['subcat'])){
-  $category = $file_db->prepare("SELECT cs.id_cat,cs.template,cs.maxItem, csl.id_subcat, csl.name, csl.image, csl.description FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cleanString LIKE :cat AND lang LIKE :lang");
+  $category = $file_db->prepare("SELECT cs.id_cat,cs.template,cs.maxItem, csl.id_subcat, csl.name, csl.image, csl.description, csl.caption FROM category_sub_lang csl JOIN category_sub cs ON csl.id_subcat = cs.id_subcat WHERE cleanString LIKE :cat AND lang LIKE :lang");
   $category->bindParam(":cat",$_GET['subcat'], SQLITE3_TEXT);
   $category->bindParam(":lang",$lang, SQLITE3_TEXT);
   $category->execute() or die('unable to find category');
   $cat = $category->fetch();
   if(!empty($cat['name'])){
-    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'subcat',$cat['id_subcat'],$translation,$lang);
+    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'subcat',$cat['id_subcat'],$translation,$lang,NULL, $cat['image'], $cat['caption']);
     $current = drawCookieTrail($lang,$_GET['cat'],$_GET['subcat']);
 		$template = $cat['template'];
 	echo('<div class="flex-row-fluid flex-top wrapper '.$template.'">');
@@ -57,7 +57,7 @@ elseif(!empty($_GET['cat'])){
   $category->execute() or die('unable to find category');
   $cat = $category->fetch();
   if(!empty($cat['name'])){
-    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'cat',$cat['id_cat'],$translation,$lang, $cat['priority']);
+    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'cat',$cat['id_cat'],$translation,$lang, $cat['priority'], NULL, NULL);
     $current = drawCookieTrail($lang,$cat['name']);
 		$template = $cat['template'];
 	echo('<div class="flex-row-fluid wrapper '.$template.'">');
@@ -71,7 +71,7 @@ elseif(!empty($_GET['cat'])){
 }
 //Index
 else{
-	drawLead('index',$header['name'],$header['description'],'index',0,$translation,$lang);
+	drawLead('index',$header['name'],$header['description'],'index',0,$translation,$lang,NULL, NULL, NULL);
 	$current = drawCookieTrail($lang);
 	echo('<div class="flex-row-fluid flex-top wrapper">');
 	drawListing($file_db, $translation, $current,$lang,'index',NULL, NULL);

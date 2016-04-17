@@ -14,7 +14,8 @@ if(isLoged()){
 else{
   //login
   ?>
-  <section>
+  <section id="logMeIn">
+    <p class="wrapper clickMe formToggle"><?=$translation['logMeIn']?></p>
     <form class="wrapper flex-row-fluid" method="post">
       <input type="hidden" value="<?=$_SESSION['token']?>" name="CRSFtoken">
       <input type="hidden" value="login" name="action">
