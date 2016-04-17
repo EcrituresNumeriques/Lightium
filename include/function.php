@@ -522,7 +522,6 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 			}
 			?>
 			<section id="summaryGroups">
-			<div class="group" id="group1">
 	<?php
 
 	//Display summary
@@ -538,7 +537,7 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 	}
 
 	$feed->bindParam(":lang",$lang);
-	$group = 1;
+	$group = NULL;
 
 	foreach ($checkSommaire as $row) {
 		($action == "subcat"?:$feed->bindParam(":maxItem",$row['rows']));
@@ -546,7 +545,10 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 		$feed->execute() or die('Unable to retrieve summary groups');
 		$feeds = $feed->fetchAll(PDO::FETCH_ASSOC);
 		if(count($feeds) > 0){
-		if($row['group'] != $group){echo('</div><div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
+		if($row['group'] != $group){
+			if($group === NULL){echo('<div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
+			else{echo('</div><div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
+			}
 		?>
 		<h1><?=$row['name']?></h1>
 		<?php

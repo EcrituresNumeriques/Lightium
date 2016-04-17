@@ -468,3 +468,7 @@ div.background > section#listing > article > img {
 div.noList > section#listing > article,div.noList > section#listing > nav#pagination, div.noSummary > section#listing > div#summary{
 display:none;
 }
+
+section#logMeIn > form {
+	display:none;
+}

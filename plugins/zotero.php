@@ -19,7 +19,6 @@ curl_close($curlZotero);
 $output = json_decode($output, true);
 $zoteroFeed = array();
 $lastVersion = $settings['int1'];
-
 foreach($output as $object){
   echo("-- object--- <br>");
 ($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);

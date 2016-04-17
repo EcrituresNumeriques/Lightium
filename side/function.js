@@ -5,6 +5,12 @@ function pushState(e, url, title){
 }
 
 $(document).ready(function(){
+
+	$("section#logMeIn > p").on("click",function(){
+		$(this).toggle();
+		console.log($(this).parent());
+		$("section#logMeIn > form").css("display","flex");
+	});
 	$("a.pushState").on("click",function(e){
 		//when the api will be ready, prepare this
 		//pushState(e, $(this).attr("href"), $(this).attr("data-title"));
@@ -263,7 +269,7 @@ $(document).ready(function(){
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_SubCatName+'">');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
-					$("#innerPopup > form").append('<input type="text" value="'+data[i].caption+'" name=caption[] placeholder="'+translation.admin_caption+'">');
+					$("#innerPopup > form").append('<input type="text" value=\''+data[i].caption+'\' name=caption[] placeholder="'+translation.admin_caption+'">');
 					$("#innerPopup > form").append('<textarea name="description[]" placeholder="'+translation.admin_SubCatDescription+'">'+data[i].description+'</textarea>');
 					$("#innerPopup > form").append('<textarea name="short[]" placeholder="'+translation.admin_SubCatShort+'">'+data[i].short+'</textarea>');
 				}
