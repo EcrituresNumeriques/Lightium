@@ -9,7 +9,7 @@ RUN php5enmod mcrypt
 ADD conf/apache2.conf /etc/apache2/apache2.conf
 ADD conf/php.ini /etc/php5/apache2/php.ini
 ADD conf/000-default.conf /etc/apache2/sites-available/000-default.conf
-RUN chown www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www
 
 EXPOSE 80
 EXPOSE 443

@@ -6,7 +6,11 @@ Example can be found at ecrituresnumeriques.ca
 
 To install via docker, you can use the following command
 
-docker run -p 80:80 -p 443:443 -v /backups/folders/lightium-database/:/var/www/data/ -v /opt/git/lightium/src/:/var/www/html/ --name NameOfTheContainer ecrituresnumeriques/lighitum
+    docker run -d -p 80:80 -p 443:443 -v /backup/folder/:/var/www/data/ --name Lightium ecrituresnumeriques/lightium
+
+To install multiple lightium, you can use the following command in addition to using github to update the code
+
+    docker run -d -p 80:80 -p 443:443 -v /backups/folders/lightium-database/:/var/www/data/ -v /opt/git/Lightium/src/:/var/www/html/ --name Lightium -e VIRTUAL_HOST=domain.com ecrituresnumeriques/lightium
 
 To install on your server, just copy the src/ folder to your server and execute index.php, the installation script will be invoked
 
