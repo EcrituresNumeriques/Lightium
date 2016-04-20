@@ -4,7 +4,11 @@ Super simple CMS organized in a " Category / sub Category / item " hierarchy.
 
 Example can be found at ecrituresnumeriques.ca
 
-To install, just copy the git repo to your server and execute index.php, the installation script will be invoked
+To install via docker, you can use the following command
+
+docker run -p 80:80 -p 443:443 -v /backup/folders/lightiumDatabase/:/var/www/data/ -v /opt/git/lightium/src/:/var/www/html/ --name NameOfTheContainer 
+
+To install on your server, just copy the src/ folder to your server and execute index.php, the installation script will be invoked
 
 Developped for the Canadian research chair of Digital textualities
 
