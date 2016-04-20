@@ -1,5 +1,5 @@
 /*@import url(https://fonts.googleapis.com/css?family=Lato|Merriweather);*/
-@import url(https://fonts.googleapis.com/css?family=Istok+Web|Lora);
+@import url(https://fonts.googleapis.com/css?family=Oswald);
 @font-face {
 	font-family: 'IcoMoon-Free';
 	src: url('IcoMoon-Free.ttf') format('truetype');
@@ -9,7 +9,8 @@
 html,body{
   margin:0;
   padding:0;
-  font-family: 'Lora', serif;
+  font-family: 'Oswald', sans-serif;
+	letter-spacing: 0.5px;
   color:rgb(26, 24, 25);
 }
 body{
@@ -17,7 +18,7 @@ body{
 	background-color:#f0f0f0;
 }
 h1,h2,h3,h4,h5,h6,a{
-  font-family: 'Istok Web', sans-serif;
+  font-family: 'Oswald', sans-serif;
   color:black;
 }
 p {
@@ -27,7 +28,15 @@ a {
   text-decoration:none;
   color:black;
 }
-
+div.inlineCenter{
+	text-align: center;
+}
+div.inlineCenter > a {
+	display:inline-block;
+	padding:1em 2em;
+	background-color:#0056a7;
+	color:white;
+}
 a.admin:before{
     font-family: "icoMoon-free";
     content:"\e906";
@@ -224,6 +233,19 @@ a.block.noPad {
     text-align:center;
     color:white;
 }
+
+#chapeau > article > figure {
+	float: left;
+	margin: 0 1em 0 0;
+	max-width: calc(512px - 1em);
+}
+
+#chapeau > article > figure > img {
+    display: block;
+		max-height: 380px;
+		max-width: calc(512px - 1em);
+}
+
 section#cookieTrail{
 	display:none;
 }
@@ -328,6 +350,7 @@ section#article {
 }
 section#article > article > nav.flex-row-wrap{
 	justify-content: center;
+	margin-top:1em;
 }
 section#article > article > h1{
 	text-align:center;
@@ -341,7 +364,7 @@ section#article > article > h2{
 	margin-bottom:5rem;
 }
 
-section#article > article > p {
+section#article > article > div.hyphenate > p {
 	text-indent:1.5em;
 	max-width:40em;
 	margin:1rem auto;
@@ -443,4 +466,8 @@ div.background > section#listing > article > img {
 
 div.noList > section#listing > article,div.noList > section#listing > nav#pagination, div.noSummary > section#listing > div#summary{
 display:none;
+}
+
+section#logMeIn > form {
+	display:none;
 }

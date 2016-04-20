@@ -1,10 +1,11 @@
 <?php
+
+
 $requete = $file_db->query("SELECT id_subcat,name FROM category_sub_lang");
 foreach($requete as $subcat){
   $subcat['name'] = strtolower($subcat['name']);
   $assoc[$subcat['name']] = $subcat['id_subcat'];
 }
-
 // create curl resource
 $curlZotero = curl_init();
 // set url
@@ -19,18 +20,16 @@ $output = json_decode($output, true);
 $zoteroFeed = array();
 $lastVersion = $settings['int1'];
 foreach($output as $object){
+  echo("-- object--- <br>");
 ($object['version'] > $lastVersion ? $lastVersion = $object['version'] : $lastVersion = $lastVersion);
 $content = $title = $short = $date = $tags = $key = "";
-$content = "<p>";
-(empty($object['links']['data']['extra'])?:$content .= $object['links']['data']['extra']."<br>");
-(empty($object['citation'])?:$content .= $object['citation']."<br>");
-(empty($object['data']['url'])?:$content .= '<a href="'.$object['data']['url'].'" target="_blank">'.$object['data']['url']."</a><br>");
-(empty($object['links']['alternate']['href'])?:$content .= $object['links']['alternate']['href']."<br>");
-$content .= "</p>";
+$content = "<p>".$object['links']['data']['extra']."</p>";
 (empty($object['citation'])?$title = $object['data']['title']:$title = $object['citation']);
+$url = $object['data']['url'];
 $short = $object['data']['abstractNote'];
 $key = $object['key'];
 $date = $object['data']['date'];
+echo($date);
 $tags = array();
 //filter for zoteroAPI itemType : book => Books, journalArticles => Articles, bookSection => "Book Chapters"
 if(!empty($object['data']['itemType'])){
@@ -64,6 +63,7 @@ foreach($tags as $tag){
 
   $zoteroFeed[] = array(
     "title" => $title,
+    "url" => $url,
     "short" => $short,
     "content" => $content,
     "date" => $date,
@@ -85,7 +85,7 @@ echo('</pre>');
 //create new item
 $newItem = $file_db->prepare("INSERT OR IGNORE INTO item (id_item, year, month, day, published, time, zoterokey) VALUES (NULL,:year,:month,:day,:time,:published,:zoterokey)");
 foreach($zoteroFeed as $item){
-
+  echo("date : $item[date]");
   $checkZoteroKey = $file_db->prepare("SELECT id_item FROM item WHERE zoterokey LIKE :zotkey");
   $zoterokey = $item['key'];
   $checkZoteroKey->bindParam(':zotkey',$zoterokey, SQLITE3_TEXT);
@@ -97,20 +97,38 @@ foreach($zoteroFeed as $item){
     $deleteTags = $file_db->prepare("DELETE FROM item_assoc WHERE id_item = :item");
     $deleteTags->bindParam(":item",$id_item);
     $deleteTags->execute() or die('Unable to delete old tags');
-    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content WHERE id_item = :item");
+    $updateTitle = $file_db->prepare("UPDATE item_lang SET title = :title,cleanstring = :cleanstring, content = :content, short = :short,url = :url WHERE id_item = :item");
     $updateTitle->bindParam(":item",$id_item,SQLITE3_INTEGER);
     $updateTitle->bindParam(":content",$item['content'],SQLITE3_TEXT);
+    $updateTitle->bindParam(':short',$item['short'], SQLITE3_TEXT);
     $updateTitle->bindParam(":title",$item['title'],SQLITE3_TEXT);
+    $updateTitle->bindParam(":url",$item['url'],SQLITE3_TEXT);
     $updateTitle->bindParam(":cleanstring",$cleanstring,SQLITE3_TEXT);
     $cleanstring = cleanString($item['title']);
     $updateTitle->execute() or die('Unable to update Zotekey');
+    $item['date'] = explode("-",$item['date']);
+    (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
+    (empty($item['date'][1])?$month = 1:$month = $item['date'][1]);
+    (empty($item['date'][2])?$day = 1:$day = array_shift(explode(" ",$item['date'][2])));
+    unset($time);
+    $time = new DateTime($year."-".$month."-".$day);
+    $time = $time->getTimestamp();
+    $updateItem = $file_db->prepare("UPDATE item SET `time` = :time, year = :year, month = :month, day = :day WHERE id_item = :item");
+    $updateItem->bindParam(":year",$year,SQLITE3_INTEGER);
+    $updateItem->bindParam(":month",$month,SQLITE3_INTEGER);
+    $updateItem->bindParam(":day",$day,SQLITE3_INTEGER);
+    $updateItem->bindParam(":time",$time,SQLITE3_INTEGER);
+    $updateItem->bindParam(":item",$id_item,SQLITE3_INTEGER);
+    //$updateItem->execute() or die('Unable to update Item');
   }
   else{
     $item['date'] = explode("-",$item['date']);
     (empty($item['date'][0])?$year = date("Y"):$year = $item['date'][0]);
     (empty($item['date'][1])?$month = 1:$month = $item['date'][1]);
     (empty($item['date'][2])?$day = 1:$day = array_shift(explode(" ",$item['date'][2])));
-    $time = time();
+    unset($time);
+    $time = new DateTime($year."-".$month."-".$day);
+    $time = $time->getTimestamp();
     $published = time();
     $zoterokey = $item['key'];
     $newItem->bindParam(':year',$year);
@@ -123,9 +141,10 @@ foreach($zoteroFeed as $item){
     $id_item = $file_db->lastInsertId();
 
     //insert into item_lang
-    $langItem = $file_db->prepare("INSERT INTO item_lang (id_item, title, short, content, cleanstring, lang) VALUES (:id_item,:title,:short,:content,:cleanstring,:lang)");
+    $langItem = $file_db->prepare("INSERT INTO item_lang (id_item, title, short, content, cleanstring, lang, url) VALUES (:id_item,:title,:short,:content,:cleanstring,:lang, :url)");
     $langItem->bindParam(':id_item',$id_item, SQLITE3_INTEGER);
     $langItem->bindParam(':title',$title, SQLITE3_TEXT);
+    $langItem->bindParam(":url",$item['url'],SQLITE3_TEXT);
     $langItem->bindParam(':short',$short, SQLITE3_TEXT);
     $langItem->bindParam(':content',$content, SQLITE3_TEXT);
     $langItem->bindParam(':cleanstring',$cleanstring, SQLITE3_TEXT);

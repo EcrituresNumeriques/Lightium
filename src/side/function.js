@@ -5,6 +5,12 @@ function pushState(e, url, title){
 }
 
 $(document).ready(function(){
+
+	$("section#logMeIn > p").on("click",function(){
+		$(this).toggle();
+		console.log($(this).parent());
+		$("section#logMeIn > form").css("display","flex");
+	});
 	$("a.pushState").on("click",function(e){
 		//when the api will be ready, prepare this
 		//pushState(e, $(this).attr("href"), $(this).attr("data-title"));
@@ -32,6 +38,12 @@ $(document).ready(function(){
 		}
 		else if($(this).attr("id") == "CSS"){
 			editCSS();
+		}
+		else if($(this).attr("id") == "header"){
+			editHeader();
+		}
+		else if($(this).attr("id") == "footer"){
+			editFooter();
 		}
 		else if($(this).attr("id") == "plugins"){
 			pluginCenter(thisContext);
@@ -257,6 +269,7 @@ $(document).ready(function(){
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].lang+'" name="lang[]" readonly>');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].name+'" name=name[] placeholder="'+translation.admin_SubCatName+'">');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].image+'" name=image[] placeholder="'+translation.admin_urlToImg+'">');
+					$("#innerPopup > form").append('<input type="text" value=\''+data[i].caption+'\' name=caption[] placeholder="'+translation.admin_caption+'">');
 					$("#innerPopup > form").append('<textarea name="description[]" placeholder="'+translation.admin_SubCatDescription+'">'+data[i].description+'</textarea>');
 					$("#innerPopup > form").append('<textarea name="short[]" placeholder="'+translation.admin_SubCatShort+'">'+data[i].short+'</textarea>');
 				}
@@ -289,6 +302,10 @@ $(document).ready(function(){
 				}
 				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].lang+'" name="lang[]" readonly>');
 				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].title+'" name=title[] placeholder="'+translation.admin_itemTitle+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].url+'" name=url[] placeholder="'+translation.admin_itemURL+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].urlTitle+'" name=urlTitle[] placeholder="'+translation.admin_itemUrlTitle+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].image+'" name=image[] placeholder="'+translation.admin_itemImage+'">');
+				$("#innerPopup > form").append('<input type="text" value="'+data.items[i].caption+'" name=imageCaption[] placeholder="'+translation.admin_itemImageCaption+'">');
 				$("#innerPopup > form").append('<textarea name="short[]" placeholder="'+translation.admin_itemShort+'">'+data.items[i].short+'</textarea>');
 				$("#innerPopup > form").append('<textarea name="content[]" placeholder="'+translation.admin_itemContent+'">'+data.items[i].content+'</textarea>');
 			}
@@ -345,6 +362,37 @@ $(document).ready(function(){
 					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
 		});
 	}
+	function editHeader(){
+		showAdmin();
+		$("#innerPopup").append('<h1>'+translation.admin_editHeader+'</h1>');
+		$("#innerPopup").append('<form action="/api/" method="post"></form>');
+		$.post( '/api/', {action: "getHeader"},"json")
+		.done(function(data){
+			$("#innerPopup > form").append('<textarea name="header" placeholder="'+translation.admin_editHeader+'">'+data.header+'</textarea>');
+			$("#innerPopup > form").append('<input type="hidden" name="action" value="editHeader">');
+			$("#innerPopup > form").append('<input type="submit" value="'+translation.admin_editHeaderSubmit+'">');
+
+		})
+		.fail(function(d, textStatus, error) {
+					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+		});
+	}
+
+		function editFooter(){
+			showAdmin();
+			$("#innerPopup").append('<h1>'+translation.admin_editFooter+'</h1>');
+			$("#innerPopup").append('<form action="/api/" method="post"></form>');
+			$.post( '/api/', {action: "getFooter"},"json")
+			.done(function(data){
+				$("#innerPopup > form").append('<textarea name="footer" placeholder="'+translation.admin_editFooter+'">'+data.footer+'</textarea>');
+				$("#innerPopup > form").append('<input type="hidden" name="action" value="editFooter">');
+				$("#innerPopup > form").append('<input type="submit" value="'+translation.admin_editFooterSubmit+'">');
+
+			})
+			.fail(function(d, textStatus, error) {
+						console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+			});
+		}
 
 	function pluginCenter(thisContext){
 		showAdmin();

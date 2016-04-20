@@ -2,11 +2,18 @@
 (empty($header['logo'])?$logo = "/img/logo.png":$logo = $header['logo']);
  ?>
 <body>
+<header>
+  <?php
+  $footer = $file_db->query("SELECT * FROM header LIMIT 0,1");
+  $footer = $footer->fetch(PDO::FETCH_ASSOC);
+  echo($footer['header']);
+  ?>
+</header>
 <header id="siteHeader">
-<?php drawLang($file_db,$translation,$lang); ?>
+
   <nav id="logo" class="flex-row-fluid flex-center wrapper pad2">
     <a href="/<?=$lang?>/" class="block"><img src="<?=$logo?>" id="logoImg" alt="logo" class="flex0"></a>
-    <div class="flex1"></div>
+    <div class="flex1"><?php drawLang($file_db,$translation,$lang); ?></div>
   </nav>
   <div class="black-bg">
     <nav id="menu" class="flex-row-fluid flex-center wrapper">

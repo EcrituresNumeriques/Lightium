@@ -57,6 +57,20 @@ if(isLoged() AND !empty($_POST['action'])){
         //only request, do not show anything
         die();
     }
+    elseif($_POST['action'] == "getHeader"){
+        $customHeader = $file_db->query("Select * FROM header LIMIT 0,1");
+        $customHeader = $customHeader->fetch(PDO::FETCH_ASSOC);
+        echo(JSON_encode($customHeader));
+        //only request, do not show anything
+        die();
+    }
+    elseif($_POST['action'] == "getFooter"){
+        $customFooter = $file_db->query("Select * FROM footer LIMIT 0,1");
+        $customFooter = $customFooter->fetch(PDO::FETCH_ASSOC);
+        echo(JSON_encode($customFooter));
+        //only request, do not show anything
+        die();
+    }
 
     elseif($_POST['action'] == "getPlugins"){
         $result = $file_db->prepare('SELECT id_plugin as id,file,public1, public2, public3 FROM plugins');
@@ -118,6 +132,22 @@ if(isLoged() AND !empty($_POST['action'])){
       $customCSS->execute() or die('Unable to change CSS');
 
   }
+    elseif($_POST['action'] == "editHeader"){
+        $customHeader = $file_db->prepare("UPDATE header SET header = :header, time = :time");
+        $customHeader->BindParam(":header",$_POST['header'],SQLITE3_TEXT);
+        $customHeader->BindParam(":time",$time,SQLITE3_INTEGER);
+        $time = time();
+        $customHeader->execute() or die('Unable to change Header');
+
+    }
+      elseif($_POST['action'] == "editFooter"){
+          $customFooter = $file_db->prepare("UPDATE footer SET footer = :footer, time = :time");
+          $customFooter->BindParam(":footer",$_POST['footer'],SQLITE3_TEXT);
+          $customFooter->BindParam(":time",$time,SQLITE3_INTEGER);
+          $time = time();
+          $customFooter->execute() or die('Unable to change Footer');
+
+      }
   elseif($_POST['action'] == "newPlugin"){
     $file_db->query("INSERT INTO plugins DEFAULT VALUES");
     $reponse['id'] = $file_db->lastInsertId();
@@ -438,6 +468,7 @@ if(isLoged() AND !empty($_POST['action'])){
           $result->execute() or die('AHAH');
           foreach ($result as $cat) {
             if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
+            if($cat['caption'] == "null" OR $cat['caption'] == NULL){$cat['caption'] = "";}
             if($cat['name'] == "null" OR $cat['name'] == NULL){$cat['name'] = "";}
             if($cat['description'] == "null" OR $cat['description'] == NULL){$cat['description'] = "";}
             if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
@@ -450,6 +481,7 @@ if(isLoged() AND !empty($_POST['action'])){
               "description" => $cat['description'],
               "short" => $cat['short'],
               "image" => $cat['image'],
+              "caption" => $cat['caption'],
               "maxItem" => $cat['maxItem'],
               "template" => $cat['template'],
               "priority" => $cat['priority'],
@@ -468,11 +500,12 @@ if(isLoged() AND !empty($_POST['action'])){
       $updateTemplate->bindParam(":template",$_POST['template'],SQLITE3_TEXT);
       $updateTemplate->execute() or die('Unable to set new template');
 
-      $edit = $file_db->prepare("UPDATE category_sub_lang SET name = :name, description = :description, short = :short, image = :image, cleanstring = :cleanString WHERE lang LIKE :lang AND id_subcat = :cat");
+      $edit = $file_db->prepare("UPDATE category_sub_lang SET name = :name, description = :description, short = :short, image = :image, cleanstring = :cleanString,caption = :caption WHERE lang LIKE :lang AND id_subcat = :cat");
       $edit->bindParam(":name",$name, SQLITE3_TEXT);
       $edit->bindParam(":description",$description, SQLITE3_TEXT);
       $edit->bindParam(":short",$short, SQLITE3_TEXT);
       $edit->bindParam(":image",$image, SQLITE3_TEXT);
+      $edit->bindParam(":caption",$caption, SQLITE3_TEXT);
       $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
       $edit->bindParam(":cleanString",$cleanString, SQLITE3_TEXT);
       $edit->bindParam(":cat",$cat, SQLITE3_INTEGER);
@@ -482,6 +515,7 @@ if(isLoged() AND !empty($_POST['action'])){
         $description = $_POST['description'][$i];
         $short = $_POST['short'][$i];
         $image = $_POST['image'][$i];
+        $caption = $_POST['caption'][$i];
         $cat = $_POST['cat'];
         $lang = $_POST['lang'][$i];
         $edit->execute() or die('Unable to edit setting');
@@ -513,9 +547,17 @@ if(isLoged() AND !empty($_POST['action'])){
       if($cat['short'] == "null" OR $cat['short'] == NULL){$cat['short'] = "";}
       if($cat['title'] == "null" OR $cat['title'] == NULL){$cat['title'] = "";}
       if($cat['content'] == "null" OR $cat['content'] == NULL){$cat['content'] = "";}
+      if($cat['image'] == "null" OR $cat['image'] == NULL){$cat['image'] = "";}
+      if($cat['caption'] == "null" OR $cat['caption'] == NULL){$cat['caption'] = "";}
+      if($cat['url'] == "null" OR $cat['url'] == NULL){$cat['url'] = "";}
+      if($cat['urlTitle'] == "null" OR $cat['urlTitle'] == NULL){$cat['urlTitle'] = "";}
       $cats['items'][] = array(
         "lang" => $cat['lang'],
         "title" => $cat['title'],
+        "url" => $cat['url'],
+        "urlTitle" => $cat['urlTitle'],
+        "image" => $cat['image'],
+        "caption" => $cat['caption'],
         "content" => $cat['content'],
         "short" => $cat['short']
       );
@@ -532,10 +574,14 @@ if(isLoged() AND !empty($_POST['action'])){
       $datetime = $date->getTimestamp();
       $editItem->execute() or die('Unable to update general settings');
 
-      $edit = $file_db->prepare("UPDATE item_lang SET title = :title, content = :content, short = :short, cleanstring = :cleanString WHERE lang LIKE :lang AND id_item = :item");
+      $edit = $file_db->prepare("UPDATE item_lang SET title = :title, content = :content, short = :short, cleanstring = :cleanString, url = :url, urlTitle = :urlTitle, image = :image, caption = :imageCaption WHERE lang LIKE :lang AND id_item = :item");
       $edit->bindParam(":title",$title, SQLITE3_TEXT);
       $edit->bindParam(":content",$content, SQLITE3_TEXT);
       $edit->bindParam(":short",$short, SQLITE3_TEXT);
+      $edit->bindParam(":url",$url, SQLITE3_TEXT);
+      $edit->bindParam(":urlTitle",$urlTitle, SQLITE3_TEXT);
+      $edit->bindParam(":image",$image, SQLITE3_TEXT);
+      $edit->bindParam(":imageCaption",$imageCaption, SQLITE3_TEXT);
       $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
       $edit->bindParam(":cleanString",$cleanString, SQLITE3_TEXT);
       $edit->bindParam(":item",$item, SQLITE3_INTEGER);
@@ -544,6 +590,10 @@ if(isLoged() AND !empty($_POST['action'])){
         $cleanString = cleanString($_POST['title'][$i]);
         $content = $_POST['content'][$i];
         $short = $_POST['short'][$i];
+        $url = $_POST['url'][$i];
+        $urlTitle = $_POST['urlTitle'][$i];
+        $image = $_POST['image'][$i];
+        $imageCaption = $_POST['imageCaption'][$i];
         $item = $_POST['item'];
         $lang = $_POST['lang'][$i];
         $edit->execute() or die('Unable to edit setting');
@@ -568,9 +618,10 @@ if(isLoged() AND !empty($_POST['action'])){
     die();
   }
   elseif($_POST['action'] == "editPlugin"){
-    $delete = $file_db->prepare("UPDATE plugins SET file = :file, public1 = :public1, public2 = :public2, public3 = :public3 WHERE id_plugin = :plugin");
+    $delete = $file_db->prepare("UPDATE plugins SET file = :file, public1 = :public1, public2 = :public2, public3 = :public3,int1 = :inte1 WHERE id_plugin = :plugin");
     if(endsWith($_POST['file'],".php")){$_POST[file] = substr($_POST['file'],0,-4);}
     $delete->bindParam(":plugin", $_POST['id_plugin'],SQLITE3_INTEGER);
+    $delete->bindParam(":inte1", $_POST['int1'],SQLITE3_INTEGER);
     $delete->bindParam(":public1", $_POST['public1'],SQLITE3_TEXT);
     $delete->bindParam(":public2", $_POST['public2'],SQLITE3_TEXT);
     $delete->bindParam(":public3", $_POST['public3'],SQLITE3_TEXT);
