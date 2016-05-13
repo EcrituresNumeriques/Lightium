@@ -476,7 +476,8 @@ function drawLang($db,$translation,$lang){
 	$checkLang = $checkLang->fetchAll();
 	foreach ($checkLang as $Lang) {
 		$siteLang = strtolower($Lang['lang']);
-		echo('<a href="/'.$siteLang.'/">['.$siteLang.']</a>');
+		($siteLang == $lang?$class=' class="active"':$class='');
+		echo('<a href="/'.$siteLang.'/"'.$class.'>'.$siteLang.'</a>');
 	}
 ?>
 	<p><?php echo("$translation[seeInLanguage]"); ?></p>
@@ -504,19 +505,21 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 		if($featured){
 			$featured['url'] = $current.$featured['year']."/".$featured['month']."/".$featured['day']."/".cleanString($featured['title']);
 			(!empty($featured['image'])?$image = '<img src="'.$featured['image'].'">':$image = "");
+			(!empty($featured['image']) ? $background = 'style="background-image:url(\''.$featured['image'].'\')"': $background = '');
 			?>
 			<div id="featured">
-				<article class="clear">
-			    <h1><a href="<?=$featured['url']?>" class="pushState"><?=$featured['title']?></a></h1>
-					<?=$image?>
-			    <p class="hyphenate"><?php if(strlen($featured['short']) > 512){echo substr($featured['short'],0,512)."...";}else{echo($featured['short']);} ?></p>
-					<?php
-			  if(!empty($tags)){
-				drawTags($lang,$tags);
-				}
-			?>
-			  <div class="clear"></div>
-			  </article>
+			<article class="clear relative featured" <?=$background?>>
+				<a href="<?=$featured['url']?>" class="pushState filler"></a>
+				<?=$image?>
+				<h1><?=$featured['title']?></h1>
+				<p class="hyphenate"><?php if(strlen($featured['short']) > 512){echo substr($featured['short'],0,512)."...";}else{echo($featured['short']);} ?></p>
+				<?php
+						if(!empty($tags)){
+						drawTags($lang,$tags);
+						}
+				?>
+			<div class="clear"></div>
+			</article>
 			</div>
 			<?php
 			}
@@ -528,20 +531,25 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 	$checkSommaire = $db->prepare("SELECT s.id_subcat, s.`group`, s.rows, csl.name FROM summary s LEFT JOIN category_sub_lang csl ON s.id_subcat = csl.id_subcat AND csl.lang LIKE :lang ORDER BY `group`, priority");
 	$checkSommaire->bindParam(":lang",$lang);
 	$checkSommaire->execute() or die('Unable to get summary');
-	if($action == "index"){
-	$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,:maxItem");
-	}
-	if($action == "subcat"){
-	$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat JOIN item_assoc iaa ON i.id_item = iaa.id_item AND iaa.id_subcat = :filter WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC");
-	$feed->bindParam(":filter",$what,SQLITE3_INTEGER);
-	}
-
-	$feed->bindParam(":lang",$lang);
 	$group = NULL;
 
 	foreach ($checkSommaire as $row) {
+		if($action == "index"){
+			if($row['id_subcat'] == 0){
+				$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,il.image FROM item i JOIN item_lang il ON i.id_item = il.id_item WHERE i.published > 0 AND il.lang LIKE :lang AND i.featured = 1 GROUP BY i.id_item ORDER BY time DESC LIMIT 1,:maxItem");
+			}
+			else{
+				$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat  WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC LIMIT 0,:maxItem");
+			}
+		}
+		if($action == "subcat"){
+		$feed = $db->prepare("SELECT i.id_item,il.title, il.short, i.year,i.month,i.day,ia.id_subcat FROM item i JOIN item_lang il ON i.id_item = il.id_item JOIN item_assoc ia ON i.id_item = ia.id_item AND ia.id_subcat = :subcat JOIN item_assoc iaa ON i.id_item = iaa.id_item AND iaa.id_subcat = :filter WHERE i.published > 0 AND il.lang LIKE :lang  GROUP BY i.id_item ORDER BY time DESC");
+		$feed->bindParam(":filter",$what,SQLITE3_INTEGER);
+		}
+
+		$feed->bindParam(":lang",$lang);
 		($action == "subcat"?:$feed->bindParam(":maxItem",$row['rows']));
-		$feed->bindParam(":subcat",$row['id_subcat']);
+		($row['id_subcat'] == 0 ? :$feed->bindParam(":subcat",$row['id_subcat']));
 		$feed->execute() or die('Unable to retrieve summary groups');
 		$feeds = $feed->fetchAll(PDO::FETCH_ASSOC);
 		if(count($feeds) > 0){
@@ -549,9 +557,11 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 			if($group === NULL){echo('<div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
 			else{echo('</div><div id="group'.$row['group'].'" class="group">');$group = $row['group'];}
 			}
+			if(!empty($row['name'])){
 		?>
 		<h1><?=$row['name']?></h1>
 		<?php
+		}
 		 foreach ($feeds as $article) {
 			if($action == "index"){
 			$url = $current.$article['year']."/".$article['month']."/".$article['day']."/".cleanString($article['title']);
@@ -559,13 +569,25 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 			elseif($action == "subcat"){
 				$url = "/".$lang."/".$article['year']."/".$article['month']."/".$article['day']."/".cleanString($article['title']);
 			}
+			if($row['id_subcat'] == 0 ){
+				(!empty($article['image']) ? $image = '<img src="'.$article['image'].'">' : $image = "");
+		  	(!empty($article['image']) ? $background = 'style="background-image:url(\''.$article['image'].'\')"': $background = '');
 		 	?>
+			<article class="clear relative featured" <?=$background?>>
+				<a href="<?=$url?>" class="pushState filler"></a>
+				<?=$image?>
+				<h1><?=$article['title']?></h1>
+			<div class="clear"></div>
+			</article>
+<?php }
+else{ ?>
 			<article class="clear">
 				<h1><a href="<?=$url?>" class="pushState"><?=$article['title']?></a></h1>
 			</article>
 			<?php
+			}
 		 }
-		if($action == "index"){
+		if($action == "index" AND $row['id_subcat'] != 0){
 		?>
 			<article class="clear">
 				<h1><a href="/<?=$lang?>/find/<?=cleanString($row['name'])?>" class="pushState seeMore"><?=$translation['seeMore']?></a></h1>

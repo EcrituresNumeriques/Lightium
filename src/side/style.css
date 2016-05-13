@@ -1,11 +1,5 @@
 /*@import url(https://fonts.googleapis.com/css?family=Lato|Merriweather);*/
 @import url(https://fonts.googleapis.com/css?family=Oswald);
-@font-face {
-	font-family: 'IcoMoon-Free';
-	src: url('IcoMoon-Free.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
 html,body{
   margin:0;
   padding:0;
@@ -38,8 +32,8 @@ div.inlineCenter > a {
 	color:white;
 }
 a.admin:before{
-    font-family: "icoMoon-free";
-    content:"\e906";
+    font-family: fontAwesome;
+    content:"\f040";
     margin-right:0.5em;
 }
 .wrapper{
@@ -149,6 +143,12 @@ a.admin:before{
 	flex:0 0 auto;
 	margin-left:0.5em;
 }
+#langSwitch a:before{
+	content:"[";
+}
+#langSwitch a:after{
+	content:"]";
+}
 
 #logo > a > img {
   /*max-height:150px;*/
@@ -171,10 +171,12 @@ a.admin:before{
 #menu > a:hover,#menu > a.active{
   background-color:#0056a7;
 }
-
+#menu > a.home {
+	display:none;
+}
 #menu > a.home:before{
-  font-family: "icoMoon-free";
-  content:"\e900";
+  font-family: fontAwesome;
+  content:"\f015";
   margin-right:0rem;
 }
 a.block {
@@ -470,4 +472,10 @@ display:none;
 
 section#logMeIn > form {
 	display:none;
+}
+
+#featured > article,article.featured {
+	background-size:cover;
+	background-position:center;
+	background-repeat: no-repeat;
 }

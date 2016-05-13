@@ -17,6 +17,7 @@
   </nav>
   <div class="black-bg">
     <nav id="menu" class="flex-row-fluid flex-center wrapper">
+      <a href="/<?=$lang?>/" class="block pushState flex0 home"></a>
       <?php
       (empty($_GET['cat'])?$activation = " active":$activation = ""); ?>
   <?php

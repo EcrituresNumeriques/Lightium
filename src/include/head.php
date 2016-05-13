@@ -9,11 +9,13 @@
   $header = $result->fetch();
   ?>
   <title><?=$header['title']?></title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <link href="/side/style.css" rel="stylesheet" type="text/css">
   <link href="/<?=$lang?>/side/customCss.css" rel="stylesheet" type="text/css">
   <script src="/side/jquery.js"></script>
   <script src="/side/function.js"></script>
   <script src="/side/hyphenator.js"></script>
+  <script src="/<?=$lang?>/side/customJS.js"></script>
   <link rel="icon" type="image/png" href="/img/favicon.png">
   <meta name="description" content="<?=$header['meta']?>">
   <style>

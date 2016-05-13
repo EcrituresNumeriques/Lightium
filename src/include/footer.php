@@ -5,6 +5,7 @@ if(isLoged()){
   <footer class="wrapper">
     <a class="admin" id="plugins"><?=$translation["admin_plugins"]?></a>
     <a class="admin" id="CSS"><?=$translation["admin_css"]?></a>
+    <a class="admin" id="JS"><?=$translation["admin_js"]?></a>
     <a class="admin" id="header"><?=$translation["admin_header"]?></a>
     <a class="admin" id="footer"><?=$translation["admin_footer"]?></a>
     <a class="admin" id="editSummary" data-lang="<?=$lang?>"><?=$translation["admin_summary"]?></a>

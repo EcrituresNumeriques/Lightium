@@ -39,6 +39,9 @@ $(document).ready(function(){
 		else if($(this).attr("id") == "CSS"){
 			editCSS();
 		}
+		else if($(this).attr("id") == "JS"){
+			editJS();
+		}
 		else if($(this).attr("id") == "header"){
 			editHeader();
 		}
@@ -357,6 +360,20 @@ $(document).ready(function(){
 			$("#innerPopup > form").append('<input type="hidden" name="action" value="editCSS">');
 			$("#innerPopup > form").append('<input type="submit" value="'+translation.admin_editCSSSubmit+'">');
 
+		})
+		.fail(function(d, textStatus, error) {
+					console.error("getJSON failed, status: " + textStatus + ", error: "+error);
+		});
+	}
+	function editJS(){
+		showAdmin();
+		$("#innerPopup").append('<h1>'+translation.admin_editJS+'</h1>');
+		$("#innerPopup").append('<form action="/api/" method="post"></form>');
+		$.post( '/api/', {action: "getJS"},"json")
+		.done(function(data){
+			$("#innerPopup > form").append('<textarea name="JS" placeholder="'+translation.admin_editJS+'">'+data.JS+'</textarea>');
+			$("#innerPopup > form").append('<input type="hidden" name="action" value="editJS">');
+			$("#innerPopup > form").append('<input type="submit" value="'+translation.admin_editJSSubmit+'">');
 		})
 		.fail(function(d, textStatus, error) {
 					console.error("getJSON failed, status: " + textStatus + ", error: "+error);

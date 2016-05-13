@@ -41,7 +41,8 @@
           ?>
           <!DOCTYPE html>
           <head>
-            <link href="/side/style.css" rel="stylesheet" type="text/css"></head>
+          <meta charset="utf-8">
+          <link href="/side/style.css" rel="stylesheet" type="text/css"></head>
           <body>
             <form action="" method="post">
             <input type="text" name="user" placeholder="<?=$translation['username']?>">
@@ -83,6 +84,7 @@
           ?>
           <!DOCTYPE html>
           <head>
+          <meta charset="utf-8">
           <script src="/side/jquery.js"></script>
           <script type="text/javascript">
             $(document).ready(function(){
@@ -227,6 +229,11 @@
                 $file_db->exec("ALTER TABLE item_lang ADD COLUMN urlTitle TEXT");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 9");
               }
+              if($version['revision'] < 10){
+                $file_db->exec("CREATE TABLE IF NOT EXISTS customJS (time INTEGER DEFAULT 0, JS TEXT)");
+                $file_db->exec("INSERT INTO customJS (time, JS) VALUES (0,'')");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 10");
+              }
             }
         }
 
@@ -327,6 +334,9 @@
     $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 8");
     $file_db->exec("ALTER TABLE item_lang ADD COLUMN urlTitle TEXT");
     $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 9");
+    $file_db->exec("CREATE TABLE IF NOT EXISTS customJS (time INTEGER DEFAULT 0, JS TEXT)");
+    $file_db->exec("INSERT INTO customJS (time, JS) VALUES (0,'')");
+    $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 10");
 
     header("location:".$_SERVER['PHP_SELF']);
 }

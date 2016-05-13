@@ -4,6 +4,7 @@ RewriteEngine On
 RewriteRule ^$ index.php [NC,L,QSA]
 RewriteRule ^[.]*.sqlite3$ index.php [NC,L,QSA]
 RewriteRule ^([a-zA-Z-]{2})/side/customCSS.css$ api.php?action=customCSS&lang=$1 [NC,L,QSA]
+RewriteRule ^([a-zA-Z-]{2})/side/customJS.js$ api.php?action=customJS&lang=$1 [NC,L,QSA]
 RewriteRule ^api/([a-zA-Z-]{2})?/?([a-zA-Z-]+)?/?([a-zA-Z-]+)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([a-zA-Z-]+)?/?$ api.php?lang=$1&cat=$2&subcat=$3&year=$4&month=$5&day=$6&article=$7 [NC,L,QSA]
 RewriteRule ^([a-zA-Z-]{2})/plugins/?$ plugins.php?lang=$1 [NC,L,QSA]
 RewriteRule ^([a-zA-Z-]{2})/([a-zA-Z-]+)?/?([a-zA-Z-]+)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([a-zA-Z-]+)?/?(page_([0-9]+))?$ index.php?lang=$1&cat=$2&subcat=$3&year=$4&month=$5&day=$6&article=$7&page=$9 [NC,L,QSA]

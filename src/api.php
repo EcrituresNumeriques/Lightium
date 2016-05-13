@@ -9,7 +9,14 @@ if(!empty($_GET['action']) AND $_GET['action'] == "customCSS"){
   echo($customCSS['CSS']);
   die();
 }
-
+if(!empty($_GET['action']) AND $_GET['action'] == "customJS"){
+  $customJS = $file_db->query("Select * FROM customJS LIMIT 0,1");
+  $customJS = $customJS->fetch(PDO::FETCH_ASSOC);
+  header('Last-Modified: '.gmdate('D, d M Y H:i:s', $customJS['time']).' GMT', true, 200);
+  header('Content-Type: application/javascript');
+  echo($customJS['JS']);
+  die();
+}
 
 header('Content-type: application/json');
 //treat request if admin and action is set
@@ -54,6 +61,13 @@ if(isLoged() AND !empty($_POST['action'])){
         $customCSS = $file_db->query("Select * FROM customCSS LIMIT 0,1");
         $customCSS = $customCSS->fetch(PDO::FETCH_ASSOC);
         echo(JSON_encode($customCSS));
+        //only request, do not show anything
+        die();
+    }
+    elseif($_POST['action'] == "getJS"){
+        $customJS = $file_db->query("Select * FROM customJS LIMIT 0,1");
+        $customJS = $customJS->fetch(PDO::FETCH_ASSOC);
+        echo(JSON_encode($customJS));
         //only request, do not show anything
         die();
     }
@@ -130,6 +144,14 @@ if(isLoged() AND !empty($_POST['action'])){
       $customCSS->BindParam(":time",$time,SQLITE3_INTEGER);
       $time = time();
       $customCSS->execute() or die('Unable to change CSS');
+
+  }
+  elseif($_POST['action'] == "editJS"){
+      $customCSS = $file_db->prepare("UPDATE customJS SET JS = :js, time = :time");
+      $customCSS->BindParam(":js",$_POST['JS'],SQLITE3_TEXT);
+      $customCSS->BindParam(":time",$time,SQLITE3_INTEGER);
+      $time = time();
+      $customCSS->execute() or die('Unable to change JS');
 
   }
     elseif($_POST['action'] == "editHeader"){
