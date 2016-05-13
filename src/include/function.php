@@ -510,8 +510,8 @@ function	drawSommaire($db,$translation,$current,$lang,$action,$what){
 			<div id="featured">
 			<article class="clear relative featured" <?=$background?>>
 				<a href="<?=$featured['url']?>" class="pushState filler"></a>
-				<?=$image?>
 				<h1><?=$featured['title']?></h1>
+				<?=$image?>
 				<p class="hyphenate"><?php if(strlen($featured['short']) > 512){echo substr($featured['short'],0,512)."...";}else{echo($featured['short']);} ?></p>
 				<?php
 						if(!empty($tags)){
