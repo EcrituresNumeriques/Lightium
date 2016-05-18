@@ -479,3 +479,58 @@ section#logMeIn > form {
 	background-position:center;
 	background-repeat: no-repeat;
 }
+
+div.noList > section#listing > article,div.noList > section#listing > nav#pagination, div.noSummary > section#listing > div#summary{
+display:none;
+}
+
+div.background > section#listing > article > h1 {
+    color: white;
+    text-shadow: 0 0 8px black;
+    text-align: center;
+    font-size: 2em;
+    text-transform: uppercase;
+}
+
+div.background >section#listing {
+display:flex;
+flex-direction:row;
+flex-wrap:wrap;}
+
+div.background >section#listing > a.admin {
+ flex: 0 0 100%;
+box-sizing:border-box;
+}
+div.background >section#listing > article {
+flex: 1 1 50%;
+    box-sizing: border-box;
+padding:4rem 2rem;
+}
+
+div.team > section#listing{
+ display:flex;
+ flex-direction:row;
+ flex-wrap:wrap;
+}
+
+div.team > section#listing > a {
+  flex:0 0 100%;
+box-sizing:border-box;
+}
+
+div.team > section#listing > article {
+flex: 1 1 40%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 1em;
+    background-color: white;}
+div.team > section#listing > article > h1 {
+    margin-bottom:0;
+}
+div.team > section#listing > article > p {
+    color: black;
+    margin:0;
+}
+
+div.team.wrapper, div.background.wrapper{
+max-width:1068px}
