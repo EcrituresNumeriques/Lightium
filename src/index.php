@@ -37,7 +37,7 @@ elseif(!empty($_GET['subcat'])){
   $category->execute() or die('unable to find category');
   $cat = $category->fetch();
   if(!empty($cat['name'])){
-    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'subcat',$cat['id_subcat'],$translation,$lang,NULL, $cat['image'], $cat['caption']);
+    drawLead("subcat cat".$cat['id_cat'],$cat['name'],$cat['description'],'subcat',$cat['id_subcat'],$translation,$lang,NULL, $cat['image'], $cat['caption']);
     $current = drawCookieTrail($lang,$_GET['cat'],$_GET['subcat']);
 		$template = $cat['template'];
 	echo('<div class="flex-row-fluid flex-top wrapper '.$template.'">');
@@ -57,7 +57,7 @@ elseif(!empty($_GET['cat'])){
   $category->execute() or die('unable to find category');
   $cat = $category->fetch();
   if(!empty($cat['name'])){
-    drawLead("cat".$cat['id_cat'],$cat['name'],$cat['description'],'cat',$cat['id_cat'],$translation,$lang, $cat['priority'], NULL, NULL);
+    drawLead("cat cat".$cat['id_cat'],$cat['name'],$cat['description'],'cat',$cat['id_cat'],$translation,$lang, $cat['priority'], NULL, NULL);
     $current = drawCookieTrail($lang,$cat['name']);
 		$template = $cat['template'];
 	echo('<div class="flex-row-fluid wrapper '.$template.'">');
