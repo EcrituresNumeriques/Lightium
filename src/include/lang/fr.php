@@ -43,6 +43,7 @@ $translation = array(
 	"admin_settingsSiteMeta" => "Metadonnée",
 	"admin_settingsSiteDescription" => "Description du site",
 	"admin_settingsLogoDescription" => "Logo du site",
+	"admin_settingsFaviconDescription" => "Favicon du site",
 	"admin_settingsSiteLang" => "Langue du site",
 	"admin_settingsHost" => "Hôte",
 	"admin_editSettingsSubmit" => "Modifier",

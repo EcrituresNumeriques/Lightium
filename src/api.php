@@ -377,6 +377,7 @@ if(isLoged() AND !empty($_POST['action'])){
           if($setting['title'] == "null" OR $setting['title'] == NULL){$setting['title'] = "";}
           if($setting['logo'] == "null" OR $setting['logo'] == NULL){$setting['logo'] = "";}
           if($setting['host'] == "null" OR $setting['host'] == NULL){$setting['host'] = "";}
+          if($setting['favicon'] == "null" OR $setting['favicon'] == NULL){$setting['favicon'] = "";}
 
           $settings[] = array(
             "lang" => $setting['lang'],
@@ -385,6 +386,7 @@ if(isLoged() AND !empty($_POST['action'])){
             "meta" => $setting['meta'],
             "title" => $setting['title'],
             "logo" => $setting['logo'],
+            "favicon" => $setting['favicon'],
             "host" => $setting['host']
           );
         }
@@ -392,7 +394,7 @@ if(isLoged() AND !empty($_POST['action'])){
         die();
   }
   elseif($_POST['action'] == "editSettings"){
-      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title, logo = :logo, host = :host WHERE lang LIKE :lang");
+      $edit = $file_db->prepare("UPDATE settings SET name = :name, description = :description, meta = :meta, title = :title, logo = :logo, host = :host,favicon = :favicon WHERE lang LIKE :lang");
       $edit->bindParam(":name",$name, SQLITE3_TEXT);
       $edit->bindParam(":description",$description, SQLITE3_TEXT);
       $edit->bindParam(":meta",$meta, SQLITE3_TEXT);
@@ -400,6 +402,7 @@ if(isLoged() AND !empty($_POST['action'])){
       $edit->bindParam(":title",$title, SQLITE3_TEXT);
       $edit->bindParam(":lang",$lang, SQLITE3_TEXT);
       $edit->bindParam(":host",$host, SQLITE3_TEXT);
+      $edit->bindParam(":favicon",$favicon, SQLITE3_TEXT);
       for($i=0;$i<count($_POST['lang']);$i++){
         $name = $_POST['name'][$i];
         $description = $_POST['description'][$i];
@@ -408,6 +411,7 @@ if(isLoged() AND !empty($_POST['action'])){
         $logo = $_POST['logo'][$i];
         $lang = $_POST['lang'][$i];
         $host = $_POST['host'][$i];
+        $favicon = $_POST['favicon'][$i];
         $edit->execute() or die('Unable to edit setting');
       }
   }

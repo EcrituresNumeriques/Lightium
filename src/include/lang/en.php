@@ -43,6 +43,7 @@ $translation = array(
 	"admin_settingsSiteMeta" => "metadata of the website",
 	"admin_settingsSiteDescription" => "Description of the website",
 	"admin_settingsLogoDescription" => "Logo of the website",
+	"admin_settingsFaviconDescription" => "Favicon of the website",
 	"admin_settingsSiteLang" => "Lang",
 	"admin_settingsHost" => "Host",
 	"admin_editSettingsSubmit" => "Edit",

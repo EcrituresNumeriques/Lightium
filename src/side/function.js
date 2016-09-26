@@ -209,6 +209,7 @@ $(document).ready(function(){
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].title+'" name=title[] placeholder="'+translation.admin_settingsSiteTitle+'">');
 					$("#innerPopup > form").append('<textarea name="meta[]" placeholder="'+translation.admin_settingsSiteMeta+'">'+data[i].meta+'</textarea>');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].logo+'" name=logo[] placeholder="'+translation.admin_settingsLogoDescription+'">');
+					$("#innerPopup > form").append('<input type="text" value="'+data[i].favicon+'" name=favicon[] placeholder="'+translation.admin_settingsFaviconDescription+'">');
 					$("#innerPopup > form").append('<textarea name="description[]" placeholder="'+translation.admin_settingsSiteDescription+'">'+data[i].description+'</textarea>');
 					$("#innerPopup > form").append('<input type="text" value="'+data[i].host+'" name=host[] placeholder="'+translation.admin_settingsHost+'">');
 				}
