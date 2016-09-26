@@ -267,7 +267,7 @@ elseif($action == "year"){
 	elseif($action == "subcat"){
 		$url = $current.$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
 		$title = $row['title'];
-		(!empty($row['image']) ? $image = '<img src="'.$row['image'].'">' : $image = "");
+		(!empty($row['image']) ? $image = '<a href="'.$url.'"><img src="'.$row['image'].'"></a>' : $image = "");
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
 		if(isLogedNC()){
 		$calendarBackup = '<a id="editItem" data-item="'.$row['id_item'].'" data-lang="'.$lang.'" data-year="'.$row['year'].'" data-month="'.$row['month'].'" data-day="'.$row['day'].'" class="admin">EDIT</a>';
@@ -283,7 +283,7 @@ elseif($action == "year"){
   <article class="clear relative" <?=$background?>>
 		<a href="<?=$url?>" class="pushState filler"></a>
     <?=$image?>
-    <h1><?=$title?></h1>
+    <a href="<?=$url?>"><h1><?=$title?></h1></a>
     <p class="hyphenate"><?=$row['short']?></p><?php
   if(!empty($tags)){
 	drawTags($lang,$tags);

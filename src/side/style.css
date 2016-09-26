@@ -49,6 +49,7 @@ a.admin:before{
 .relative{
 	position:relative;
 }
+
 .filler{
 	display:block;
 	position:absolute;
@@ -56,6 +57,10 @@ a.admin:before{
 	left:0;
 	width:100%;
 	height: 100%;
+}
+
+.subcat > article > .filler {
+  display:none;
 }
 
 .clear{
@@ -276,12 +281,12 @@ section#listing > article {
 	border:1px solid #c0c0c0;
 	margin-bottom: 1rem;
 }
-section#listing > article > h1{
+section#listing > article > h1,section#listing > article > a > h1{
 	font-size: 1.5rem;
 	margin-top:0;
 }
 
-section#listing > article > img{
+section#listing > article > img,section#listing > article > a > img{
 	display:block;
 	max-height:150px;
 	max-width:150px;
