@@ -121,10 +121,10 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
   $admin = $url = "";
 	if(!empty($article['url'])){
 		if(!empty($article['urlTitle'])){
-			$url = '<div class="inlineCenter DownloadThat"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$article['urlTitle'].'</a></div>';
+			$url = '<div class="inlineCenter downloadThat"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$article['urlTitle'].'</a></div>';
 		}
 		else{
-			$url = '<div class="inlineCenter DownloadThat"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$translation['accessThisDocument'].'</a></div>';
+			$url = '<div class="inlineCenter downloadThat"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$translation['accessThisDocument'].'</a></div>';
 		}
 	}
 

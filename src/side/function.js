@@ -643,4 +643,10 @@ $(document).ready(function(){
 		});
 	}
 
+	$("section#article > article").has(".downloadThat").each(function(){
+		if($(this).children(".content").html() == ""){
+     	window.location.assign($(this).children(".downloadThat").children(".downloadThis").attr("href"));
+		}
+	});
+
 });
