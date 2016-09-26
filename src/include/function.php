@@ -138,8 +138,8 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
 				<h1><?=$article['title']?></h1>
 				<?=$url?>
         <?=$admin?>
-				<h2 class="hyphenate"><?=$article['short']?></h2>
-				<div class="hyphenate"><?=$article['content']?></div>
+				<h2 class="hyphenate short"><?=$article['short']?></h2>
+				<div class="hyphenate content"><?=$article['content']?></div>
 			<?=drawTags($lang,$article['subcat'])?>
 			</article>
 		</section>
