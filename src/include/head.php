@@ -7,7 +7,7 @@
   $result->bindParam(":lang",$lang);
   $result->execute() or die('AHAH');
   $header = $result->fetch();
-  (empty($header['favicon'])?:$header['favicon'] = '/img/favicon.png');
+  (!empty($header['favicon'])?:$header['favicon'] = '/img/favicon.png');
   ?>
   <title><?=$header['title']?></title>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
