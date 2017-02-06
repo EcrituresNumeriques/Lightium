@@ -11,7 +11,12 @@ if(!isset($_GET['lang'])){
     header('location:/'.$lang.'/');
   }
   else{
-    header("location:/fr/");
+    //get the first row of settings
+    $getFirstLang = $file_db->prepare("SELECT lang FROM settings LIMIT 0,1");
+    $getFirstLang->execute() or die('Unable to get lang');
+    $lang = $getFirstLang->fetch(PDO::FETCH_ASSOC);
+    $lang = strtolower($lang['lang']);
+    header('location:/'.$lang.'/');
   }
   die();
 }catch(Exception $e){
