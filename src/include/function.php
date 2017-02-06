@@ -121,10 +121,10 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
   $admin = $url = "";
 	if(!empty($article['url'])){
 		if(!empty($article['urlTitle'])){
-			$url = '<div class="inlineCenter"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$article['urlTitle'].'</a></div>';
+			$url = '<div class="inlineCenter downloadThat"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$article['urlTitle'].'</a></div>';
 		}
 		else{
-			$url = '<div class="inlineCenter"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$translation['accessThisDocument'].'</a></div>';
+			$url = '<div class="inlineCenter downloadThat"><a href="'.$article['url'].'" target="_black" class="downloadThis">'.$translation['accessThisDocument'].'</a></div>';
 		}
 	}
 
@@ -138,8 +138,8 @@ function drawArticle($db, $lang, $year, $month, $day, $cleanstring,$translation)
 				<h1><?=$article['title']?></h1>
 				<?=$url?>
         <?=$admin?>
-				<h2 class="hyphenate"><?=$article['short']?></h2>
-				<div class="hyphenate"><?=$article['content']?></div>
+				<h2 class="hyphenate short"><?=$article['short']?></h2>
+				<div class="hyphenate content"><?=$article['content']?></div>
 			<?=drawTags($lang,$article['subcat'])?>
 			</article>
 		</section>
@@ -251,7 +251,7 @@ elseif($action == "year"){
   }
   $rowCount = 0;
   foreach($query as $row){
-  $calendarBackup = $background = $image = $tags = "";
+  $calendarBackup = $background = $image = $tags = $openAnchor = $closeAnchor = "";
   $rowCount++;
 	if($action == "cat"){
 		$url = $current.cleanString($row['name']);
@@ -266,8 +266,10 @@ elseif($action == "year"){
 	}
 	elseif($action == "subcat"){
 		$url = $current.$row['year']."/".$row['month']."/".$row['day']."/".cleanString($row['title']);
+		$openAnchor = '<a href="'.$url.'">';
+		$closeAnchor = '</a>';
 		$title = $row['title'];
-		(!empty($row['image']) ? $image = '<img src="'.$row['image'].'">' : $image = "");
+		(!empty($row['image']) ? $image = $openAnchor.'<img src="'.$row['image'].'">'.$closeAnchor : $image = "");
 		(!empty($row['subcat']) ? $tags = $row['subcat'] : $tags = "");
 		if(isLogedNC()){
 		$calendarBackup = '<a id="editItem" data-item="'.$row['id_item'].'" data-lang="'.$lang.'" data-year="'.$row['year'].'" data-month="'.$row['month'].'" data-day="'.$row['day'].'" class="admin">EDIT</a>';
@@ -283,7 +285,7 @@ elseif($action == "year"){
   <article class="clear relative" <?=$background?>>
 		<a href="<?=$url?>" class="pushState filler"></a>
     <?=$image?>
-    <h1><?=$title?></h1>
+    <?=$openAnchor?><h1><?=$title?></h1><?=$closeAnchor?>
     <p class="hyphenate"><?=$row['short']?></p><?php
   if(!empty($tags)){
 	drawTags($lang,$tags);

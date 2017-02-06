@@ -234,6 +234,10 @@
                 $file_db->exec("INSERT INTO customJS (time, JS) VALUES (0,'')");
                 $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 10");
               }
+              if($version['revision'] < 11){
+                $file_db->exec("ALTER TABLE settings ADD COLUMN favicon TEXT");
+                $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 11");
+              }
             }
         }
 
@@ -337,6 +341,8 @@
     $file_db->exec("CREATE TABLE IF NOT EXISTS customJS (time INTEGER DEFAULT 0, JS TEXT)");
     $file_db->exec("INSERT INTO customJS (time, JS) VALUES (0,'')");
     $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 10");
+    $file_db->exec("ALTER TABLE settings ADD COLUMN favicon TEXT");
+    $file_db->exec("UPDATE version SET version = 0, subversion = 2, revision = 11");
 
     header("location:".$_SERVER['PHP_SELF']);
 }
