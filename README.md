@@ -16,7 +16,20 @@ To install on your server, just copy the src/ folder to your server and execute 
 
 Developped for the Canadian research chair of Digital textualities
 
-Focus for the next version are :
+## Guidelines for v1:
+The proof of concept (v0) revealed few limitations of a naive category/subcategory/item limit, as well as improvment for futur releases:
+- Need to support semantic informations of category/subcategory (especially for authors, type of text)
+- Need to support deeper templating of the website + customization
+- Tools for easy plugin developpement
+- webhooks (in and out) on update
+ 
+The proposed solutions are for now to split backend and front end, and give more freedom to the user on the front-end side.
+- backend sails.js for the API side
+- react + redux frontend, associated with RxJS for communication between front and back-end
+- make sure react classes are easily overwritable to support custom element.
+
+
+## Focus for the next version are :
  - Improving the admin interface (rich text editor etc)
 
 v0.1.3 include:
