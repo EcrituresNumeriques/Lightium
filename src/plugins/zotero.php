@@ -129,7 +129,9 @@ foreach($zoteroFeed as $item){
     unset($time);
     $time = new DateTime($year."-".$month."-".$day);
     $time = $time->getTimestamp();
-    $published = time();
+
+    //Modification, publication time is no more the current server time time at import, but the date specified on ZOTERO, unless the zotero date is not specified
+    $published = is_numeric($time)?$time:time();
     $zoterokey = $item['key'];
     $newItem->bindParam(':year',$year);
     $newItem->bindParam(':month',$month);
