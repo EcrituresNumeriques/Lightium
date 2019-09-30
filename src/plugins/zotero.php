@@ -43,6 +43,9 @@ if(!empty($object['data']['itemType'])){
   elseif($object['data']['itemType'] == "bookSection"){
     $tags[] = "Book Chapters";
   }
+  elseif($object['data']['itemType'] == "presentation"){
+    $tags[] = "Videos";
+  }
 }
 
 
